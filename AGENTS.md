@@ -1,3 +1,7 @@
+# General
+
+> **Language**: The language of expression for this project is **English**. All code, comments, documentation, and contributions must be written in English.
+
 <!--VITE PLUS START-->
 
 # Using Vite+, the Unified Toolchain for the Web
