@@ -2,24 +2,24 @@
 trigger: always_on
 ---
 
-# Styling avec DaisyUI et Tailwind CSS
+# Styling with DaisyUI and Tailwind CSS
 
-## Principe Fondamental
+## Core Principle
 
-**Priorité DaisyUI > Tailwind CSS**
+**Priority: DaisyUI > Tailwind CSS**
 
-Utiliser les classes DaisyUI en priorité. N'utiliser Tailwind que pour :
+Use DaisyUI classes first. Only use Tailwind for:
 
 - Spacing (margin, padding)
 - Layout (flex, grid)
 - Sizing (width, height)
-- Ce qui n'existe pas dans DaisyUI
+- Things that don't exist in DaisyUI
 
-## Classes DaisyUI
+## DaisyUI Classes
 
-### Composants DaisyUI
+### DaisyUI Components
 
-Toujours utiliser les composants DaisyUI plutôt que recréer avec Tailwind.
+Always use DaisyUI components rather than recreating with Tailwind.
 
 ```html
 <!-- ✅ GOOD - DaisyUI components -->
@@ -33,7 +33,7 @@ Toujours utiliser les composants DaisyUI plutôt que recréer avec Tailwind.
 <div class="bg-white rounded-lg shadow-xl p-4">...</div>
 ```
 
-### Modificateurs DaisyUI
+### DaisyUI Modifiers
 
 ```html
 <!-- Sizes -->
@@ -55,9 +55,9 @@ Toujours utiliser les composants DaisyUI plutôt que recréer avec Tailwind.
 <button class="btn btn-primary btn-loading">Loading</button>
 ```
 
-### Couleurs Sémantiques
+### Semantic Colors
 
-Utiliser les couleurs sémantiques DaisyUI, pas Tailwind.
+Use DaisyUI semantic colors, not Tailwind.
 
 ```html
 <!-- ✅ GOOD - DaisyUI semantic colors -->
@@ -77,21 +77,21 @@ Utiliser les couleurs sémantiques DaisyUI, pas Tailwind.
 <button class="bg-blue-500">...</button>
 ```
 
-## Nommage CSS BEM
+## BEM CSS Naming
 
-Pour les styles custom qui ne peuvent pas être gérés par DaisyUI.
+For custom styles that cannot be handled by DaisyUI.
 
-### Structure BEM
+### BEM Structure
 
 ```
 Block__Element--Modifier
 ```
 
-- **Block** : Composant principal
-- **Element** : Partie du composant
-- **Modifier** : Variation du composant/élément
+- **Block**: Main component
+- **Element**: Part of the component
+- **Modifier**: Variation of the component/element
 
-### Exemples
+### Examples
 
 ```vue
 <template>
@@ -153,17 +153,17 @@ Block__Element--Modifier
 </style>
 ```
 
-## Organisation des Styles
+## Style Organization
 
-### 1. Styles au Plus Proche des Composants
+### 1. Styles Close to Components
 
-**Composants Dumb (Design System) :**
+**Dumb Components (Design System):**
 
 ```
 presentation/components/ui/
   Button/
     Button.vue
-    button.css (si styles custom nécessaires)
+    button.css (if custom styles needed)
   Card/
     Card.vue
     card.css
@@ -171,7 +171,7 @@ presentation/components/ui/
 
 ### 2. Scoped Styles
 
-Toujours utiliser `scoped` pour éviter les conflits.
+Always use `scoped` to avoid conflicts.
 
 ```vue
 <style scoped>
@@ -181,9 +181,9 @@ Toujours utiliser `scoped` pour éviter les conflits.
 </style>
 ```
 
-### 3. Variables CSS DaisyUI
+### 3. DaisyUI CSS Variables
 
-Utiliser les variables CSS DaisyUI pour cohérence.
+Use DaisyUI CSS variables for consistency.
 
 ```css
 .custom-element {
@@ -193,7 +193,7 @@ Utiliser les variables CSS DaisyUI pour cohérence.
 }
 ```
 
-### Variables Disponibles
+### Available Variables
 
 ```css
 /* Colors */
@@ -224,9 +224,9 @@ Utiliser les variables CSS DaisyUI pour cohérence.
 --animation-input
 ```
 
-## Composition DaisyUI + Tailwind
+## DaisyUI + Tailwind Composition
 
-### Utilisation Combinée
+### Combined Usage
 
 ```html
 <!-- ✅ GOOD - DaisyUI for component, Tailwind for layout/spacing -->
@@ -242,7 +242,7 @@ Utiliser les variables CSS DaisyUI pour cohérence.
 </div>
 ```
 
-### Classes Utilitaires Tailwind Autorisées
+### Allowed Tailwind Utility Classes
 
 ```html
 <!-- Layout -->
@@ -256,7 +256,7 @@ Utiliser les variables CSS DaisyUI pour cohérence.
           <!-- Display -->
           <div class="hidden md:block">
             <div class="relative absolute top-0 left-0">
-              <!-- Typography (si pas dans DaisyUI) -->
+              <!-- Typography (if not in DaisyUI) -->
               <p class="text-sm font-medium leading-tight"></p>
             </div>
           </div>
@@ -267,7 +267,7 @@ Utiliser les variables CSS DaisyUI pour cohérence.
 </div>
 ```
 
-## Thèmes DaisyUI
+## DaisyUI Themes
 
 ### Configuration
 
@@ -293,7 +293,7 @@ module.exports = {
 };
 ```
 
-### Utilisation dans Composants
+### Usage in Components
 
 ```vue
 <template>
@@ -306,7 +306,7 @@ module.exports = {
 
 ## Responsive Design
 
-### Breakpoints Tailwind
+### Tailwind Breakpoints
 
 ```html
 <!-- Mobile first approach -->
@@ -335,7 +335,7 @@ module.exports = {
 <span class="loading loading-ring loading-lg"></span>
 ```
 
-### Transitions Vue
+### Vue Transitions
 
 ```vue
 <template>
@@ -357,11 +357,11 @@ module.exports = {
 </style>
 ```
 
-## Accessibilité
+## Accessibility
 
-### Utiliser les Composants DaisyUI
+### Use DaisyUI Components
 
-Les composants DaisyUI incluent déjà l'accessibilité.
+DaisyUI components already include accessibility.
 
 ```html
 <!-- ✅ GOOD - Accessible by default -->
@@ -373,14 +373,14 @@ Les composants DaisyUI incluent déjà l'accessibilité.
 </button>
 ```
 
-## Structure CSS Globale
+## Global CSS Structure
 
 ```
 src/
   styles/
     main.css          # Global styles, imports
-    variables.css     # CSS variables custom
-    utilities.css     # Utility classes custom
+    variables.css     # Custom CSS variables
+    utilities.css     # Custom utility classes
 ```
 
 ### main.css
@@ -410,9 +410,9 @@ src/
 }
 ```
 
-## Exemples Complets
+## Complete Examples
 
-### Composant Dumb avec DaisyUI
+### Dumb Component with DaisyUI
 
 ```vue
 <!-- ui/ProductCard.vue -->
@@ -469,7 +469,7 @@ defineEmits<{ (e: "click"): void }>();
 </style>
 ```
 
-### Page avec Layout DaisyUI
+### Page with DaisyUI Layout
 
 ```vue
 <!-- pages/ProductsPage.vue -->
@@ -519,7 +519,7 @@ defineEmits<{ (e: "click"): void }>();
 </template>
 ```
 
-## Formulaires DaisyUI
+## DaisyUI Forms
 
 ```html
 <!-- Form components -->
@@ -557,7 +557,7 @@ defineEmits<{ (e: "click"): void }>();
 </div>
 ```
 
-## Modals et Overlays
+## Modals and Overlays
 
 ```html
 <!-- Modal -->
@@ -591,7 +591,7 @@ defineEmits<{ (e: "click"): void }>();
 </div>
 ```
 
-## Tables et Listes
+## Tables and Lists
 
 ```html
 <!-- Table -->
@@ -625,7 +625,7 @@ defineEmits<{ (e: "click"): void }>();
 </ul>
 ```
 
-## Badges et Indicateurs
+## Badges and Indicators
 
 ```html
 <!-- Badges -->
@@ -649,9 +649,9 @@ defineEmits<{ (e: "click"): void }>();
 </div>
 ```
 
-## Spacing et Layout
+## Spacing and Layout
 
-### Utiliser Tailwind pour Spacing
+### Use Tailwind for Spacing
 
 ```html
 <!-- Padding/Margin -->
@@ -673,7 +673,7 @@ defineEmits<{ (e: "click"): void }>();
 </div>
 ```
 
-### Container et Centering
+### Container and Centering
 
 ```html
 <!-- Container -->
@@ -689,7 +689,7 @@ defineEmits<{ (e: "click"): void }>();
 
 ## Dark Mode
 
-DaisyUI gère automatiquement le dark mode via les thèmes.
+DaisyUI automatically handles dark mode via themes.
 
 ```html
 <!-- Automatic theme switching -->
@@ -707,22 +707,22 @@ function toggleTheme() {
 }
 ```
 
-## Checklist Styling
+## Styling Checklist
 
-Avant de styliser un composant :
+Before styling a component:
 
-- [ ] Vérifier si un composant DaisyUI existe
-- [ ] Utiliser classes DaisyUI en priorité
-- [ ] Tailwind uniquement pour layout/spacing
-- [ ] BEM pour styles custom
-- [ ] Styles scoped
-- [ ] Variables CSS DaisyUI pour couleurs
-- [ ] Responsive avec breakpoints Tailwind
-- [ ] Tester en light et dark mode
+- [ ] Check if a DaisyUI component exists
+- [ ] Use DaisyUI classes first
+- [ ] Tailwind only for layout/spacing
+- [ ] BEM for custom styles
+- [ ] Scoped styles
+- [ ] DaisyUI CSS variables for colors
+- [ ] Responsive with Tailwind breakpoints
+- [ ] Test in light and dark mode
 
 ## Anti-Patterns
 
-### ❌ Recréer des Composants DaisyUI
+### ❌ Recreating DaisyUI Components
 
 ```html
 <!-- BAD -->
@@ -732,7 +732,7 @@ Avant de styliser un composant :
 <button class="btn btn-primary">Button</button>
 ```
 
-### ❌ Styles Inline
+### ❌ Inline Styles
 
 ```vue
 <!-- BAD -->
@@ -742,7 +742,7 @@ Avant de styliser un composant :
 <div class="bg-base-100 p-4">
 ```
 
-### ❌ Classes Tailwind pour Couleurs
+### ❌ Tailwind Classes for Colors
 
 ```html
 <!-- BAD -->
@@ -752,7 +752,7 @@ Avant de styliser un composant :
 </div>
 ```
 
-### ❌ BEM sans Nécessité
+### ❌ BEM Without Necessity
 
 ```html
 <!-- BAD - BEM for everything -->
@@ -762,7 +762,7 @@ Avant de styliser un composant :
 </button>
 ```
 
-## Références
+## References
 
 - [DaisyUI Components](https://daisyui.com/components/)
 - [DaisyUI Themes](https://daisyui.com/docs/themes/)

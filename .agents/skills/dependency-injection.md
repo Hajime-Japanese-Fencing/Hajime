@@ -2,13 +2,13 @@
 trigger: always_on
 ---
 
-# Injection et Inversion de Dépendances
+# Dependency Injection and Inversion
 
-## Principes SOLID
+## SOLID Principles
 
 ### Dependency Inversion Principle (DIP)
 
-**Règle** : Les modules de haut niveau ne doivent pas dépendre des modules de bas niveau. Les deux doivent dépendre d'abstractions.
+**Rule**: High-level modules should not depend on low-level modules. Both should depend on abstractions.
 
 ```typescript
 // ❌ BAD - High-level depends on low-level
@@ -40,11 +40,11 @@ class ApiOrderRepository implements IOrderRepository {
 }
 ```
 
-## Ports et Adapters
+## Ports and Adapters
 
 ### Ports (Interfaces)
 
-Définis dans le **Domain**, représentent les besoins métier.
+Defined in the **Domain**, represent business needs.
 
 ```typescript
 // domain/ports/IProductRepository.ts
@@ -69,9 +69,9 @@ export interface IStorageService {
 }
 ```
 
-### Adapters (Implémentations)
+### Adapters (Implementations)
 
-Définis dans l'**Infrastructure**, implémentent les ports.
+Defined in **Infrastructure**, implement the ports.
 
 ```typescript
 // infrastructure/adapters/repositories/ApiProductRepository.ts
@@ -127,14 +127,14 @@ export class LocalStorageProductRepository implements IProductRepository {
 
 ## Container Pattern
 
-### Responsabilités du Container
+### Container Responsibilities
 
-1. **Créer** les instances des dépendances
-2. **Injecter** les dépendances dans les constructeurs
-3. **Gérer** le cycle de vie (singletons, transients)
-4. **Exposer** les services publics
+1. **Create** dependency instances
+2. **Inject** dependencies into constructors
+3. **Manage** lifecycle (singletons, transients)
+4. **Expose** public services
 
-### Implémentation
+### Implementation
 
 ```typescript
 // application/container.ts
@@ -185,7 +185,7 @@ export class Container {
 export const container = new Container();
 ```
 
-## Injection dans les Use Cases
+## Injection into Use Cases
 
 ### Constructor Injection
 
@@ -229,14 +229,14 @@ export class CreateOrderUseCase {
 }
 ```
 
-### Avantages
+### Benefits
 
-- ✅ Testabilité : Facile de mocker les dépendances
-- ✅ Flexibilité : Changer d'implémentation sans modifier le use case
-- ✅ Clarté : Les dépendances sont explicites
-- ✅ Réutilisabilité : Use case indépendant de l'infrastructure
+- ✅ Testability: Easy to mock dependencies
+- ✅ Flexibility: Change implementation without modifying the use case
+- ✅ Clarity: Dependencies are explicit
+- ✅ Reusability: Use case independent from infrastructure
 
-## Injection dans les Stores
+## Injection into Stores
 
 ### Constructor Injection
 
@@ -291,7 +291,7 @@ export class ProductStore extends Store<ProductState> {
 }
 ```
 
-## Injection dans les Composants
+## Injection into Components
 
 ### Via Container
 
@@ -310,7 +310,7 @@ const createOrderUseCase = container.getCreateOrderUseCase();
 
 ### Provide/Inject (Alternative)
 
-Pour des cas spécifiques où le container n'est pas suffisant.
+For specific cases where the container is not sufficient.
 
 ```typescript
 // main.ts
@@ -332,9 +332,9 @@ const productStore = container.productStore;
 </script>
 ```
 
-## Configuration d'Environnement
+## Environment Configuration
 
-### Injection de Configuration
+### Configuration Injection
 
 ```typescript
 // infrastructure/config/ApiConfig.ts
@@ -368,9 +368,9 @@ export class Container {
 }
 ```
 
-## Tests avec Injection
+## Tests with Injection
 
-### Tester Use Cases
+### Testing Use Cases
 
 ```typescript
 // domain/usecases/__tests__/CreateOrderUseCase.test.ts
@@ -409,7 +409,7 @@ describe("CreateOrderUseCase", () => {
 });
 ```
 
-### Tester Stores
+### Testing Stores
 
 ```typescript
 // application/stores/__tests__/productStore.test.ts
@@ -434,7 +434,7 @@ describe("ProductStore", () => {
 });
 ```
 
-### Tester Adapters
+### Testing Adapters
 
 ```typescript
 // infrastructure/adapters/__tests__/ApiProductRepository.test.ts
@@ -462,11 +462,11 @@ describe("ApiProductRepository", () => {
 });
 ```
 
-## Patterns Avancés
+## Advanced Patterns
 
 ### Factory Pattern
 
-Pour créer des instances complexes.
+For creating complex instances.
 
 ```typescript
 // application/factories/RepositoryFactory.ts
@@ -494,7 +494,7 @@ export class Container {
 
 ### Strategy Pattern
 
-Pour injecter différentes stratégies.
+For injecting different strategies.
 
 ```typescript
 // domain/ports/IPaymentStrategy.ts
@@ -535,11 +535,11 @@ export class Container {
 }
 ```
 
-## Cycle de Vie des Dépendances
+## Dependency Lifecycle
 
 ### Singleton
 
-Une seule instance partagée dans toute l'application.
+A single shared instance across the entire application.
 
 ```typescript
 export class Container {
@@ -554,7 +554,7 @@ export class Container {
 
 ### Transient
 
-Nouvelle instance à chaque demande.
+New instance on each request.
 
 ```typescript
 export class Container {
@@ -569,24 +569,24 @@ export class Container {
 }
 ```
 
-### Quand Utiliser Quoi ?
+### When to Use Which?
 
-**Singleton :**
+**Singleton:**
 
-- Stores (état partagé)
-- Repositories (pas d'état, juste des méthodes)
-- API Clients (configuration partagée)
-- Services sans état
+- Stores (shared state)
+- Repositories (no state, just methods)
+- API Clients (shared configuration)
+- Stateless services
 
-**Transient :**
+**Transient:**
 
-- Use Cases (si état temporaire)
-- Services avec état temporaire
-- Stratégies configurables
+- Use Cases (if temporary state)
+- Services with temporary state
+- Configurable strategies
 
-## Composition de Dépendances
+## Dependency Composition
 
-### Use Case Dépendant d'Autres Use Cases
+### Use Case Depending on Other Use Cases
 
 ```typescript
 // domain/usecases/PlaceOrderUseCase.ts
@@ -625,9 +625,9 @@ export class Container {
 }
 ```
 
-## Configuration Multi-Environnement
+## Multi-Environment Configuration
 
-### Injection Basée sur l'Environnement
+### Environment-Based Injection
 
 ```typescript
 // application/container.ts
@@ -667,7 +667,7 @@ export class Container {
 
 ### Lazy Initialization
 
-Pour optimiser le démarrage de l'application.
+To optimize application startup.
 
 ```typescript
 export class Container {
@@ -690,9 +690,9 @@ export class Container {
 }
 ```
 
-## Testing du Container
+## Testing the Container
 
-### Test du Container Lui-Même
+### Testing the Container Itself
 
 ```typescript
 // application/__tests__/container.test.ts
@@ -729,9 +729,9 @@ describe("Container", () => {
 });
 ```
 
-### Test Container pour Tests
+### Test Container for Tests
 
-Créer un container spécifique pour les tests.
+Create a specific container for tests.
 
 ```typescript
 // application/__tests__/TestContainer.ts
@@ -758,9 +758,9 @@ const testContainer = new TestContainer(mockProductRepo)
 const store = testContainer.productStore
 ```
 
-## Patterns d'Utilisation
+## Usage Patterns
 
-### Dans les Composables
+### In Composables
 
 ```typescript
 // presentation/composables/useProductManagement.ts
@@ -783,7 +783,7 @@ export function useProductManagement() {
 }
 ```
 
-### Dans les Pages
+### In Pages
 
 ```vue
 <script setup lang="ts">
@@ -798,29 +798,29 @@ onMounted(async () => {
 </script>
 ```
 
-## Avantages de l'Injection de Dépendances
+## Benefits of Dependency Injection
 
-1. **Testabilité** : Facile de mocker les dépendances
-2. **Flexibilité** : Changer d'implémentation sans modifier le code
-3. **Découplage** : Modules indépendants
-4. **Maintenabilité** : Code plus clair et organisé
-5. **Réutilisabilité** : Composants réutilisables avec différentes implémentations
+1. **Testability**: Easy to mock dependencies
+2. **Flexibility**: Change implementation without modifying code
+3. **Decoupling**: Independent modules
+4. **Maintainability**: Clearer and more organized code
+5. **Reusability**: Reusable components with different implementations
 
-## Checklist Injection de Dépendances
+## Dependency Injection Checklist
 
-Avant d'implémenter une nouvelle fonctionnalité :
+Before implementing a new feature:
 
-- [ ] Les dépendances sont-elles injectées via constructeur ?
-- [ ] Les interfaces (ports) sont-elles définies dans le domain ?
-- [ ] Les implémentations (adapters) sont-elles dans l'infrastructure ?
-- [ ] Le container gère-t-il la création des instances ?
-- [ ] Les use cases dépendent-ils d'interfaces, pas d'implémentations ?
-- [ ] Les stores reçoivent-ils les use cases via constructeur ?
-- [ ] Le code est-il testable avec des mocks ?
+- [ ] Are dependencies injected via constructor?
+- [ ] Are interfaces (ports) defined in the domain?
+- [ ] Are implementations (adapters) in the infrastructure?
+- [ ] Does the container manage instance creation?
+- [ ] Do use cases depend on interfaces, not implementations?
+- [ ] Do stores receive use cases via constructor?
+- [ ] Is the code testable with mocks?
 
 ## Anti-Patterns
 
-### ❌ Dépendance Directe
+### ❌ Direct Dependency
 
 ```typescript
 // BAD
@@ -832,7 +832,7 @@ export class CreateOrderUseCase {
 }
 ```
 
-### ❌ Import Global
+### ❌ Global Import
 
 ```typescript
 // BAD
@@ -857,7 +857,7 @@ export class CreateOrderUseCase {
 }
 ```
 
-### ❌ New dans le Use Case
+### ❌ New inside Use Case
 
 ```typescript
 // BAD
@@ -878,7 +878,7 @@ export class CreateOrderUseCase {
 }
 ```
 
-## Références
+## References
 
 - [Dependency Inversion Principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle)
 - [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection)

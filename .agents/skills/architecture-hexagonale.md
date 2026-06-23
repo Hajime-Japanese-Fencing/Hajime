@@ -2,32 +2,32 @@
 trigger: always_on
 ---
 
-# Architecture Hexagonale Adaptée au Frontend
+# Hexagonal Architecture Adapted for Frontend
 
-## Principes Fondamentaux (Clean Architecture - Uncle Bob)
+## Core Principles (Clean Architecture - Uncle Bob)
 
 ### The Dependency Rule
 
-**Règle d'or** : Les dépendances du code source pointent toujours vers l'intérieur. Rien dans un cercle intérieur ne peut connaître quoi que ce soit d'un cercle extérieur.
+**Golden rule**: Source code dependencies always point inward. Nothing in an inner circle can know anything about something in an outer circle.
 
-- **Domain** (centre) : Entités métier, règles métier enterprise-wide
-- **Application** : Use cases, logique métier applicative
-- **Infrastructure** : Adapters, implémentations techniques (API, storage)
-- **Presentation** : UI, composants Vue, framework-specific code
+- **Domain** (center): Business entities, enterprise-wide business rules
+- **Application**: Use cases, application business logic
+- **Infrastructure**: Adapters, technical implementations (API, storage)
+- **Presentation**: UI, Vue components, framework-specific code
 
-### Inversion de Dépendances
+### Dependency Inversion
 
-Les couches internes définissent des **ports** (interfaces), les couches externes fournissent des **adapters** (implémentations).
+Inner layers define **ports** (interfaces), outer layers provide **adapters** (implementations).
 
 ```typescript
-// ✅ CORRECT - Domain définit l'interface
+// ✅ CORRECT - Domain defines the interface
 // domain/ports/IUserRepository.ts
 export interface IUserRepository {
   getById(id: string): Promise<User>;
   save(user: User): Promise<void>;
 }
 
-// ✅ CORRECT - Infrastructure implémente
+// ✅ CORRECT - Infrastructure implements
 // infrastructure/adapters/ApiUserRepository.ts
 export class ApiUserRepository implements IUserRepository {
   async getById(id: string): Promise<User> {
@@ -35,7 +35,7 @@ export class ApiUserRepository implements IUserRepository {
   }
 }
 
-// ✅ CORRECT - Use case dépend de l'interface
+// ✅ CORRECT - Use case depends on the interface
 // application/use-cases/GetUserUseCase.ts
 export class GetUserUseCase {
   constructor(private repository: IUserRepository) {}
@@ -46,9 +46,9 @@ export class GetUserUseCase {
 }
 ```
 
-## Structure Feature Folders (Vertical Slicing)
+## Feature Folders Structure (Vertical Slicing)
 
-Organisation par fonctionnalité métier plutôt que par couche technique.
+Organization by business functionality rather than technical layer.
 
 ```
 src/
@@ -79,29 +79,29 @@ src/
     presentation/
 ```
 
-### Avantages du Vertical Slicing
+### Benefits of Vertical Slicing
 
-- Toute la logique d'une feature au même endroit
-- Facilite l'ajout/suppression de features
-- Meilleure cohésion, couplage réduit entre features
-- Développement plus rapide (moins de navigation)
+- All feature logic in one place
+- Easier to add/remove features
+- Better cohesion, reduced coupling between features
+- Faster development (less navigation)
 
-## Couches Détaillées
+## Detailed Layers
 
-### Domain (Cœur Métier)
+### Domain (Business Core)
 
-**Contenu :**
+**Contents:**
 
-- **Entities** : Types TypeScript représentant les objets métier
-- **Ports** : Interfaces des repositories et services
-- **Utils** : Fonctions métier pures, validations, règles de gestion
+- **Entities**: TypeScript types representing business objects
+- **Ports**: Repository and service interfaces
+- **Utils**: Pure business functions, validations, business rules
 
-**Règles :**
+**Rules:**
 
-- ❌ Aucune dépendance externe (pas de Vue, pas de fetch, pas de localStorage)
-- ✅ Code 100% framework-agnostic
-- ✅ Fonctions pures autant que possible
-- ✅ Validations métier dans le domain
+- ❌ No external dependencies (no Vue, no fetch, no localStorage)
+- ✅ 100% framework-agnostic code
+- ✅ Pure functions whenever possible
+- ✅ Business validations in the domain
 
 ```typescript
 // domain/entities/Order.ts
@@ -134,17 +134,17 @@ export function validateOrderItems(items: OrderItem[]): void {
 
 ### Application (Use Cases)
 
-**Contenu :**
+**Contents:**
 
-- **Use Cases** : Orchestration de la logique métier
-- **Stores** : TanStack Store pour état applicatif
+- **Use Cases**: Orchestration of business logic
+- **Stores**: TanStack Store for application state
 
-**Règles :**
+**Rules:**
 
-- ✅ Dépend uniquement du Domain (ports)
-- ✅ Framework-agnostic (sauf TanStack Store autorisé)
-- ✅ Reçoit les repositories via injection de dépendances
-- ❌ Ne connaît pas l'infrastructure concrète
+- ✅ Depends only on Domain (ports)
+- ✅ Framework-agnostic (except TanStack Store allowed)
+- ✅ Receives repositories via dependency injection
+- ❌ Does not know the concrete infrastructure
 
 ```typescript
 // application/use-cases/CreateOrderUseCase.ts
@@ -173,19 +173,19 @@ export class CreateOrderUseCase {
 
 ### Infrastructure (Adapters)
 
-**Contenu :**
+**Contents:**
 
-- **Adapters/Repositories** : Implémentations concrètes des ports
-- **Adapters/API** : Clients HTTP (fetch, axios)
-- **DTOs** : Types pour communication externe
-- **Mappers** : Transformation DTO ↔ Entity
+- **Adapters/Repositories**: Concrete implementations of ports
+- **Adapters/API**: HTTP clients (fetch, axios)
+- **DTOs**: Types for external communication
+- **Mappers**: DTO ↔ Entity transformation
 
-**Règles :**
+**Rules:**
 
-- ✅ Implémente les interfaces du Domain
-- ✅ Gère les détails techniques (HTTP, storage, etc.)
-- ✅ Transforme les DTOs en entities
-- ❌ Ne contient pas de logique métier
+- ✅ Implements Domain interfaces
+- ✅ Handles technical details (HTTP, storage, etc.)
+- ✅ Transforms DTOs into entities
+- ❌ Contains no business logic
 
 ```typescript
 // infrastructure/dtos/OrderDTO.ts
@@ -228,25 +228,25 @@ export class ApiOrderRepository implements IOrderRepository {
 
 ### Presentation (UI)
 
-**Contenu :**
+**Contents:**
 
-- **Components/UI** : Composants dumb du design system
-- **Components/Business** : Composants métier avec logique UI
-- **Composables** : Logique UI réutilisable
-- **Pages** : Composants page/route
+- **Components/UI**: Dumb components from the design system
+- **Components/Business**: Business components with UI logic
+- **Composables**: Reusable UI logic
+- **Pages**: Page/route components
 
-**Règles :**
+**Rules:**
 
-- ✅ Peut dépendre de Application (stores, use cases via container)
-- ✅ Framework-specific (Vue, TanStack Query autorisés)
-- ✅ Composables au plus près des composants
-- ❌ Pas de logique métier directement dans les composants
+- ✅ Can depend on Application (stores, use cases via container)
+- ✅ Framework-specific (Vue, TanStack Query allowed)
+- ✅ Composables close to the components
+- ❌ No business logic directly in components
 
-## Injection de Dépendances
+## Dependency Injection
 
 ### Container Pattern
 
-Utiliser un container pour gérer les dépendances et leur cycle de vie.
+Use a container to manage dependencies and their lifecycle.
 
 ```typescript
 // application/container.ts
@@ -261,7 +261,7 @@ export class Container {
   // Stores (Singletons)
   public orderStore = new OrderStore(this.createOrderUseCase);
 
-  // Getters pour use cases si nécessaire
+  // Getters for use cases if needed
   public getCreateOrderUseCase() {
     return this.createOrderUseCase;
   }
@@ -270,7 +270,7 @@ export class Container {
 export const container = new Container();
 ```
 
-### Utilisation dans les Composants
+### Usage in Components
 
 ```typescript
 // presentation/pages/OrderPage.vue
@@ -279,15 +279,15 @@ import { container } from "@/application/container";
 const orderStore = container.orderStore;
 ```
 
-## Règles de Passage de Données
+## Data Passing Rules
 
 ### DTOs vs Entities
 
-- **DTOs** : Format externe (API, localStorage)
-- **Entities** : Format interne (domain)
-- **Mappers** : Transformation entre les deux
+- **DTOs**: External format (API, localStorage)
+- **Entities**: Internal format (domain)
+- **Mappers**: Transformation between the two
 
-**Ne jamais passer de DTOs vers le domain/application !**
+**Never pass DTOs to domain/application!**
 
 ```typescript
 // ❌ INCORRECT
@@ -300,18 +300,18 @@ const user = mapUserFromApi(userDto); // Transform to entity
 await useCase.execute(user);
 ```
 
-## Testabilité
+## Testability
 
-L'architecture hexagonale rend le code intrinsèquement testable :
+Hexagonal architecture makes code inherently testable:
 
-- **Domain** : Tests unitaires purs, pas de mocks
-- **Application** : Tests unitaires avec mocks des repositories
-- **Infrastructure** : Tests d'intégration avec vrais adapters
-- **Presentation** : Tests uniquement si UX complexe
+- **Domain**: Pure unit tests, no mocks
+- **Application**: Unit tests with mocked repositories
+- **Infrastructure**: Integration tests with real adapters
+- **Presentation**: Tests only for complex UX
 
-## Anti-Patterns à Éviter
+## Anti-Patterns to Avoid
 
-❌ **Logique métier dans les composants**
+❌ **Business logic in components**
 
 ```typescript
 // BAD
@@ -323,7 +323,7 @@ function addToCart(product: Product) {
 }
 ```
 
-✅ **Logique métier dans le domain**
+✅ **Business logic in the domain**
 
 ```typescript
 // GOOD - domain/utils/productValidation.ts
@@ -339,7 +339,7 @@ function addToCart(product: Product) {
 }
 ```
 
-❌ **Use case dépendant de l'infrastructure**
+❌ **Use case depending on infrastructure**
 
 ```typescript
 // BAD
@@ -352,7 +352,7 @@ export class GetUserUseCase {
 }
 ```
 
-✅ **Use case dépendant du port**
+✅ **Use case depending on the port**
 
 ```typescript
 // GOOD
@@ -369,23 +369,23 @@ export class GetUserUseCase {
 
 ### Shared
 
-Code réutilisé par plusieurs features :
+Code reused by multiple features:
 
-- Domain entities communes
+- Common domain entities
 - Infrastructure clients (HTTP, storage)
-- Presentation components design system
+- Presentation design system components
 
 ### Feature-Specific
 
-Code spécifique à une feature :
+Code specific to a feature:
 
-- Domain entities spécifiques
+- Feature-specific domain entities
 - Use cases
 - Stores
-- Repositories adapters
-- Components business
+- Repository adapters
+- Business components
 
-## Références
+## References
 
 - [Clean Architecture - Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 - [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)

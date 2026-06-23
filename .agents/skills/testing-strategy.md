@@ -2,40 +2,40 @@
 trigger: always_on
 ---
 
-# Stratégie de Tests avec Vitest
+# Testing Strategy with Vitest
 
-## Philosophie Générale
+## General Philosophy
 
-**Tester le comportement métier, pas l'implémentation technique.**
+**Test business behavior, not technical implementation.**
 
-## Règles Obligatoires
+## Mandatory Rules
 
-### ✅ Use Cases - Tests Obligatoires
+### ✅ Use Cases - Mandatory Tests
 
-**RÈGLE ABSOLUE** : Chaque use case DOIT avoir un fichier de test correspondant.
+**ABSOLUTE RULE**: Every use case MUST have a corresponding test file.
 
-Cette règle est **non-négociable** et s'applique à **tous** les use cases sans exception.
+This rule is **non-negotiable** and applies to **all** use cases without exception.
 
-**Exigences** :
+**Requirements**:
 
-- **Emplacement** : `__tests__/` au même niveau que le use case
-- **Nommage** : `<UseCase>.test.ts` (même nom que le use case)
-- **Couverture minimale obligatoire** :
-  - ✅ **Scénario nominal** (happy path) - Le cas où tout fonctionne correctement
-  - ✅ **Validation des entrées** - Vérifier que les données invalides sont rejetées
-  - ✅ **Gestion des erreurs métier** - Tester les règles de gestion qui peuvent échouer
-  - ✅ **Cas limites** (edge cases) - Valeurs nulles, tableaux vides, etc.
+- **Location**: `__tests__/` at the same level as the use case
+- **Naming**: `<UseCase>.test.ts` (same name as the use case)
+- **Minimum mandatory coverage**:
+  - ✅ **Nominal scenario** (happy path) - The case where everything works correctly
+  - ✅ **Input validation** - Verify that invalid data is rejected
+  - ✅ **Business error handling** - Test business rules that can fail
+  - ✅ **Edge cases** - Null values, empty arrays, etc.
 
-**Structure obligatoire** :
+**Mandatory structure**:
 
 ```
 application/use-cases/
   CreateOrderUseCase.ts
   __tests__/
-    CreateOrderUseCase.test.ts  ← OBLIGATOIRE
+    CreateOrderUseCase.test.ts  ← MANDATORY
 ```
 
-**Exemple minimal acceptable** :
+**Minimal acceptable example**:
 
 ```typescript
 // application/use-cases/__tests__/CreateOrderUseCase.test.ts
@@ -50,59 +50,59 @@ describe("CreateOrderUseCase", () => {
   beforeEach(() => {
     mockOrderRepo = {
       save: vi.fn().mockResolvedValue({ id: "1" }),
-      // ... autres méthodes mockées
+      // ... other mocked methods
     } as any;
 
     useCase = new CreateOrderUseCase(mockOrderRepo);
   });
 
-  // ✅ OBLIGATOIRE - Scénario nominal
+  // ✅ MANDATORY - Nominal scenario
   it("should create order successfully", async () => {
     const result = await useCase.execute(validData);
     expect(result).toBeDefined();
     expect(mockOrderRepo.save).toHaveBeenCalled();
   });
 
-  // ✅ OBLIGATOIRE - Validation
+  // ✅ MANDATORY - Validation
   it("should throw error for invalid input", async () => {
     await expect(useCase.execute(invalidData)).rejects.toThrow();
   });
 
-  // ✅ OBLIGATOIRE - Gestion erreur métier
+  // ✅ MANDATORY - Business error handling
   it("should handle business rule violation", async () => {
-    // Test des règles métier spécifiques
+    // Test specific business rules
   });
 });
 ```
 
-**Conséquences du non-respect** :
+**Consequences of non-compliance**:
 
-- ❌ Un use case sans test est considéré comme **incomplet**
-- ❌ Le code ne peut pas être mergé sans tests
-- ❌ La revue de code doit systématiquement vérifier la présence des tests
+- ❌ A use case without tests is considered **incomplete**
+- ❌ Code cannot be merged without tests
+- ❌ Code review must systematically check for test presence
 
-### ✅ Stores - Tests Recommandés
+### ✅ Stores - Recommended Tests
 
-**RÈGLE** : Les stores qui contiennent de la logique métier DOIVENT être testés.
+**RULE**: Stores that contain business logic MUST be tested.
 
-- Si le store ne fait qu'encapsuler des use cases → Tests optionnels
-- Si le store contient de la logique (calculs, transformations) → Tests obligatoires
+- If the store only encapsulates use cases → Tests optional
+- If the store contains logic (calculations, transformations) → Tests mandatory
 
-### ✅ Adapters - Tests d'Intégration Obligatoires
+### ✅ Adapters - Mandatory Integration Tests
 
-**RÈGLE** : Chaque repository adapter DOIT avoir des tests d'intégration.
+**RULE**: Every repository adapter MUST have integration tests.
 
-- Vérifier le mapping DTO ↔ Entity
-- Tester la gestion des erreurs HTTP/Storage
-- Valider les transformations de données
+- Verify DTO ↔ Entity mapping
+- Test HTTP/Storage error handling
+- Validate data transformations
 
-## Périmètre des Tests
+## Test Scope
 
-### Tests Unitaires
+### Unit Tests
 
-**Cible** : Unité de comportement métier (use cases) via store ou frontière avant TanStack Query.
+**Target**: Business behavior unit (use cases) via store or boundary before TanStack Query.
 
-**Emplacement** : `__tests__/` au plus près du code testé
+**Location**: `__tests__/` closest to the tested code
 
 ```
 domain/
@@ -117,11 +117,11 @@ application/
       orderStore.test.ts
 ```
 
-### Tests d'Intégration
+### Integration Tests
 
-**Cible** : Adapters uniquement (repositories, API clients).
+**Target**: Adapters only (repositories, API clients).
 
-**Emplacement** : `infrastructure/adapters/__tests__/`
+**Location**: `infrastructure/adapters/__tests__/`
 
 ```
 infrastructure/
@@ -132,15 +132,15 @@ infrastructure/
         ApiOrderRepository.test.ts
 ```
 
-### Tests E2E
+### E2E Tests
 
-**Statut** : Non privilégiés pour le moment.
+**Status**: Not prioritized for now.
 
-## Tests Unitaires - Use Cases
+## Unit Tests - Use Cases
 
-### Principe
+### Principle
 
-Tester la logique métier en isolation avec des mocks des repositories.
+Test business logic in isolation with mocked repositories.
 
 ```typescript
 // domain/usecases/__tests__/CreateOrderUseCase.test.ts
@@ -222,11 +222,11 @@ describe("CreateOrderUseCase", () => {
 });
 ```
 
-## Tests Unitaires - Stores
+## Unit Tests - Stores
 
-### Principe
+### Principle
 
-Tester le comportement du store avec des mocks des use cases.
+Test store behavior with mocked use cases.
 
 ```typescript
 // application/stores/__tests__/basketStore.test.ts
@@ -291,7 +291,7 @@ describe("BasketStore", () => {
 });
 ```
 
-### Tests avec Use Cases Mockés
+### Tests with Mocked Use Cases
 
 ```typescript
 // application/stores/__tests__/orderStore.test.ts
@@ -350,11 +350,11 @@ describe("OrderStore", () => {
 });
 ```
 
-## Tests d'Intégration - Adapters
+## Integration Tests - Adapters
 
-### Principe
+### Principle
 
-Tester les adapters avec des mocks HTTP ou storage réels.
+Test adapters with real HTTP or storage mocks.
 
 ```typescript
 // infrastructure/adapters/repositories/__tests__/ApiOrderRepository.test.ts
@@ -451,9 +451,9 @@ describe("ApiOrderRepository", () => {
 });
 ```
 
-## Tests Domain Utils
+## Domain Utils Tests
 
-### Fonctions Pures
+### Pure Functions
 
 ```typescript
 // domain/utils/__tests__/orderValidation.test.ts
@@ -505,9 +505,9 @@ describe("orderValidation", () => {
 });
 ```
 
-## Pas de Tests sur...
+## No Tests on...
 
-### ❌ Composants (sauf UX complexe)
+### ❌ Components (except complex UX)
 
 ```typescript
 // DON'T test simple components
@@ -523,7 +523,7 @@ describe("orderValidation", () => {
 // Query is already tested by TanStack
 ```
 
-### ❌ Mappers Simples
+### ❌ Simple Mappers
 
 ```typescript
 // DON'T test trivial mappers
@@ -531,7 +531,7 @@ describe("orderValidation", () => {
 // Unless complex transformation logic
 ```
 
-### ❌ Types TypeScript
+### ❌ TypeScript Types
 
 ```typescript
 // DON'T test types
@@ -539,7 +539,7 @@ describe("orderValidation", () => {
 // TypeScript checks types at compile time
 ```
 
-## Configuration Vitest
+## Vitest Configuration
 
 ### vite.config.ts
 
@@ -568,7 +568,7 @@ export default defineConfig({
 });
 ```
 
-### Scripts package.json
+### package.json Scripts
 
 ```json
 {
@@ -581,7 +581,7 @@ export default defineConfig({
 }
 ```
 
-## Patterns de Tests
+## Test Patterns
 
 ### AAA Pattern (Arrange-Act-Assert)
 
@@ -650,7 +650,7 @@ const mockApiClient: ApiClient = {
 } as any;
 ```
 
-## Tests Asynchrones
+## Asynchronous Tests
 
 ### Async/Await
 
@@ -675,9 +675,9 @@ it("should reject with error", async () => {
 });
 ```
 
-## Tests d'État
+## State Tests
 
-### Vérifier les Transitions d'État
+### Verify State Transitions
 
 ```typescript
 it("should transition through loading states", async () => {
@@ -698,9 +698,9 @@ it("should transition through loading states", async () => {
 });
 ```
 
-## Tests d'Erreurs
+## Error Tests
 
-### Tester les Cas d'Erreur
+### Test Error Cases
 
 ```typescript
 describe("error handling", () => {
@@ -725,9 +725,9 @@ describe("error handling", () => {
 });
 ```
 
-## Tests de Règles Métier
+## Business Rule Tests
 
-### Valider les Règles de Gestion
+### Validate Business Rules
 
 ```typescript
 describe("business rules", () => {
@@ -764,9 +764,9 @@ describe("business rules", () => {
 });
 ```
 
-## Fixtures et Test Data
+## Fixtures and Test Data
 
-### Créer des Factories
+### Create Factories
 
 ```typescript
 // domain/entities/__tests__/fixtures/productFixtures.ts
@@ -792,7 +792,7 @@ export function createTestOrder(overrides?: Partial<Order>): Order {
 }
 ```
 
-### Utilisation
+### Usage
 
 ```typescript
 it("should calculate total with discount", () => {
@@ -809,14 +809,14 @@ it("should calculate total with discount", () => {
 
 ## Coverage
 
-### Objectifs de Couverture
+### Coverage Goals
 
-- **Domain** : 100% (code métier critique)
-- **Application** : 90%+ (use cases et stores)
-- **Infrastructure** : 80%+ (adapters)
-- **Presentation** : 0% (sauf UX complexe)
+- **Domain**: 100% (critical business code)
+- **Application**: 90%+ (use cases and stores)
+- **Infrastructure**: 80%+ (adapters)
+- **Presentation**: 0% (except complex UX)
 
-### Commandes
+### Commands
 
 ```bash
 # Run tests
@@ -832,7 +832,7 @@ pnpm test:coverage
 pnpm test:ui
 ```
 
-## Nommage des Tests
+## Test Naming
 
 ### Conventions
 
@@ -865,21 +865,21 @@ describe("BasketStore", () => {
 });
 ```
 
-## Checklist Tests
+## Test Checklist
 
-Avant de créer des tests :
+Before creating tests:
 
-- [ ] Le code testé contient-il de la logique métier ?
-- [ ] Est-ce un use case ou un store ?
-- [ ] Est-ce un adapter (repository) ?
-- [ ] Les dépendances sont-elles mockées ?
-- [ ] Les cas d'erreur sont-ils testés ?
-- [ ] Les règles métier sont-elles validées ?
-- [ ] Les tests sont-ils au plus près du code ?
+- [ ] Does the tested code contain business logic?
+- [ ] Is it a use case or a store?
+- [ ] Is it an adapter (repository)?
+- [ ] Are dependencies mocked?
+- [ ] Are error cases tested?
+- [ ] Are business rules validated?
+- [ ] Are tests closest to the code?
 
 ## Anti-Patterns
 
-### ❌ Tester l'Implémentation
+### ❌ Testing the Implementation
 
 ```typescript
 // BAD - Testing implementation details
@@ -896,7 +896,7 @@ it("should add item to basket", () => {
 });
 ```
 
-### ❌ Tests Fragiles
+### ❌ Fragile Tests
 
 ```typescript
 // BAD - Fragile test
@@ -917,7 +917,7 @@ it("should start with empty basket", () => {
 });
 ```
 
-### ❌ Tests Couplés
+### ❌ Coupled Tests
 
 ```typescript
 // BAD - Tests depend on each other
@@ -943,7 +943,7 @@ it("test 2", () => {
 });
 ```
 
-## Références
+## References
 
 - [Vitest Docs](https://vitest.dev/guide/)
 - [Vue Test Utils](https://test-utils.vuejs.org/)

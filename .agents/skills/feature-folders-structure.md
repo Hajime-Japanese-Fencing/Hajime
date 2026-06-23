@@ -2,13 +2,13 @@
 trigger: always_on
 ---
 
-# Feature Folders Structure - Organisation par Modules
+# Feature Folders Structure - Module Organization
 
-## Principe du Vertical Slicing
+## Vertical Slicing Principle
 
-Organiser le code par **fonctionnalité métier** plutôt que par couche technique.
+Organize code by **business functionality** rather than technical layer.
 
-### ❌ Organisation Horizontale (à éviter)
+### ❌ Horizontal Organization (to avoid)
 
 ```
 src/
@@ -27,9 +27,9 @@ src/
       OrderRepository.ts
 ```
 
-**Problème** : Pour développer une feature "Order", il faut naviguer dans 3+ dossiers différents.
+**Problem**: To develop an "Order" feature, you have to navigate through 3+ different folders.
 
-### ✅ Organisation Verticale (recommandée)
+### ✅ Vertical Organization (recommended)
 
 ```
 src/
@@ -46,9 +46,9 @@ src/
       presentation/
 ```
 
-**Avantage** : Toute la logique d'une feature est au même endroit.
+**Advantage**: All feature logic is in one place.
 
-## Structure Complète d'une Feature
+## Complete Feature Structure
 
 ```
 src/features/<feature-name>/
@@ -92,7 +92,7 @@ src/features/<feature-name>/
       ui/
         <Component>.vue
         <component>.composable.ts
-        <component>.css (si nécessaire)
+        <component>.css (if needed)
       business/
         <BusinessComponent>.vue
         <businessComponent>.composable.ts
@@ -102,13 +102,13 @@ src/features/<feature-name>/
       use<Feature>.ts
 ```
 
-## Règles par Dossier
+## Rules per Folder
 
 ### `domain/entities/`
 
-- Types TypeScript des entités métier
-- Enums pour les états/statuts
-- Pas de classes, préférer les types + factory functions
+- TypeScript types for business entities
+- Enums for states/statuses
+- No classes, prefer types + factory functions
 
 ```typescript
 // domain/entities/Product.ts
@@ -129,10 +129,10 @@ export function createProduct(data: Omit<Product, "id">): Product {
 
 ### `domain/ports/`
 
-- Interfaces des repositories
-- Interfaces des services externes
-- Nommage : `<Name>Repository` ou `<Name>Service` (sans préfixe I)
-- Les adapters auront la notion de l'infrastructure dans le nom (ex: `ApiProductRepository`, `FakeProductRepository`)
+- Repository interfaces
+- External service interfaces
+- Naming: `<Name>Repository` or `<Name>Service` (no I prefix)
+- Adapters will have the infrastructure notion in their name (e.g. `ApiProductRepository`, `FakeProductRepository`)
 
 ```typescript
 // domain/ports/ProductRepository.ts
@@ -146,10 +146,10 @@ export interface ProductRepository {
 
 ### `domain/utils/`
 
-- Fonctions métier pures
-- Validations métier
-- Calculs métier
-- Guards et prédicats
+- Pure business functions
+- Business validations
+- Business calculations
+- Guards and predicates
 
 ```typescript
 // domain/utils/productValidation.ts
@@ -170,10 +170,10 @@ export function isProductAvailable(product: Product): boolean {
 
 ### `application/use-cases/`
 
-- Un fichier par use case
-- Nommage : `<Verb><Entity>UseCase.ts`
-- Reçoit les repositories via constructeur
-- Orchestre la logique métier
+- One file per use case
+- Naming: `<Verb><Entity>UseCase.ts`
+- Receives repositories via constructor
+- Orchestrates business logic
 
 ```typescript
 // application/use-cases/CreateProductUseCase.ts
@@ -190,17 +190,17 @@ export class CreateProductUseCase {
 
 ### `application/stores/`
 
-- TanStack Store pour état applicatif
-- Un store par feature ou sous-domaine
-- Utilise les use cases
-- Voir règle `03-tanstack-usage.md` pour détails
+- TanStack Store for application state
+- One store per feature or subdomain
+- Uses use cases
+- See `03-tanstack-usage.md` rule for details
 
 ### `infrastructure/adapters/repositories/`
 
-- Implémentations concrètes des ports
-- Nommage : `<Type><Entity>Repository.ts` (ex: `ApiProductRepository`, `LocalStorageProductRepository`)
-- Utilise les API clients
-- Transforme DTOs en entities via mappers
+- Concrete implementations of ports
+- Naming: `<Type><Entity>Repository.ts` (e.g. `ApiProductRepository`, `LocalStorageProductRepository`)
+- Uses API clients
+- Transforms DTOs into entities via mappers
 
 ```typescript
 // infrastructure/adapters/repositories/ApiProductRepository.ts
@@ -222,15 +222,15 @@ export class ApiProductRepository implements ProductRepository {
 
 ### `infrastructure/adapters/api/`
 
-- Clients HTTP spécifiques à la feature
-- Configuration endpoints
-- Gestion erreurs HTTP
+- Feature-specific HTTP clients
+- Endpoint configuration
+- HTTP error handling
 
 ### `infrastructure/dtos/`
 
-- Types pour communication externe
-- Représentent le contrat API/storage
-- Peuvent différer des entities domain
+- Types for external communication
+- Represent the API/storage contract
+- May differ from domain entities
 
 ```typescript
 // infrastructure/dtos/ProductDTO.ts
@@ -245,9 +245,9 @@ export interface ProductApiDTO {
 
 ### `infrastructure/mappers/`
 
-- Transformations DTO ↔ Entity
-- Nommage : `map<Entity>FromApi`, `map<Entity>ToApi`
-- Isolent les différences de format
+- DTO ↔ Entity transformations
+- Naming: `map<Entity>FromApi`, `map<Entity>ToApi`
+- Isolate format differences
 
 ```typescript
 // infrastructure/mappers/productMapper.ts
@@ -272,34 +272,34 @@ export function mapProductToApi(entity: Product): ProductApiDTO {
 
 ### `presentation/components/ui/`
 
-- Composants dumb du design system
-- Props/events uniquement
-- Pas de logique métier
-- Réutilisables
-- Voir règle `04-vue-components.md`
+- Dumb design system components
+- Props/events only
+- No business logic
+- Reusable
+- See `04-vue-components.md` rule
 
 ### `presentation/components/business/`
 
-- Composants métier spécifiques
-- Wrappers des composants UI
-- Contient logique UI (pas métier)
-- Utilise stores/composables
+- Feature-specific business components
+- Wrappers of UI components
+- Contains UI logic (not business)
+- Uses stores/composables
 
 ### `presentation/composables/`
 
-- Logique UI réutilisable
-- Au plus près du composant qui l'utilise
-- Nommage : `use<Feature>.ts`
+- Reusable UI logic
+- Close to the component that uses it
+- Naming: `use<Feature>.ts`
 
 ### `presentation/pages/`
 
-- Composants page/route
-- Orchestrent les composants business
-- Gèrent la navigation
+- Page/route components
+- Orchestrate business components
+- Handle navigation
 
 ## Shared Code
 
-Pour le code partagé entre features :
+For code shared between features:
 
 ```
 src/shared/
@@ -320,43 +320,43 @@ src/shared/
     layouts/
 ```
 
-## Nommage des Fichiers
+## File Naming
 
 ### Conventions
 
-- **Entities** : PascalCase (ex: `Product.ts`, `Order.ts`)
-- **Ports** : PascalCase sans préfixe I (ex: `ProductRepository.ts`, `NotificationService.ts`)
-- **Use Cases** : PascalCase + `UseCase` suffix (ex: `CreateProductUseCase.ts`)
-- **Stores** : camelCase + `Store` suffix (ex: `productStore.ts`)
-- **Repositories** : Infrastructure prefix + PascalCase + `Repository` suffix (ex: `ApiProductRepository.ts`, `FakeProductRepository.ts`)
-- **DTOs** : PascalCase + `DTO` suffix (ex: `ProductDTO.ts`)
-- **Mappers** : camelCase + `Mapper` suffix (ex: `productMapper.ts`)
-- **Composables** : camelCase + `use` prefix (ex: `useProduct.ts`)
-- **Components** : PascalCase (ex: `ProductCard.vue`)
+- **Entities**: PascalCase (e.g. `Product.ts`, `Order.ts`)
+- **Ports**: PascalCase without I prefix (e.g. `ProductRepository.ts`, `NotificationService.ts`)
+- **Use Cases**: PascalCase + `UseCase` suffix (e.g. `CreateProductUseCase.ts`)
+- **Stores**: camelCase + `Store` suffix (e.g. `productStore.ts`)
+- **Repositories**: Infrastructure prefix + PascalCase + `Repository` suffix (e.g. `ApiProductRepository.ts`, `FakeProductRepository.ts`)
+- **DTOs**: PascalCase + `DTO` suffix (e.g. `ProductDTO.ts`)
+- **Mappers**: camelCase + `Mapper` suffix (e.g. `productMapper.ts`)
+- **Composables**: camelCase + `use` prefix (e.g. `useProduct.ts`)
+- **Components**: PascalCase (e.g. `ProductCard.vue`)
 
 ### Tests
 
-- Dossier `__tests__/` au plus près du code testé
-- Nommage : `<FileName>.test.ts`
+- `__tests__/` folder closest to the tested code
+- Naming: `<FileName>.test.ts`
 
-## Migration d'une Feature Existante
+## Migrating an Existing Feature
 
-### Étapes
+### Steps
 
-1. Créer la nouvelle structure de dossiers
-2. Déplacer les entities vers `domain/entities/`
-3. Extraire les interfaces vers `domain/ports/`
-4. Déplacer les use cases vers `application/use-cases/`
-5. Déplacer les stores vers `application/stores/`
-6. Déplacer les repositories vers `infrastructure/adapters/repositories/`
-7. Créer les DTOs et mappers dans `infrastructure/`
-8. Déplacer les composants vers `presentation/`
-9. Mettre à jour les imports
-10. Exécuter les tests
+1. Create the new folder structure
+2. Move entities to `domain/entities/`
+3. Extract interfaces to `domain/ports/`
+4. Move use cases to `application/use-cases/`
+5. Move stores to `application/stores/`
+6. Move repositories to `infrastructure/adapters/repositories/`
+7. Create DTOs and mappers in `infrastructure/`
+8. Move components to `presentation/`
+9. Update imports
+10. Run tests
 
-## Exemples Complets
+## Complete Examples
 
-Voir les features existantes comme référence :
+See existing features as reference:
 
 - `src/features/order/`
 - `src/features/product/`

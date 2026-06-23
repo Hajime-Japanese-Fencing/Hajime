@@ -2,328 +2,328 @@
 trigger: always_on
 ---
 
-# Cohérence de la Documentation
+# Documentation Coherence
 
-## Principe Fondamental
+## Core Principle
 
-**Toujours vérifier et maintenir la cohérence entre tous les documents du projet.**
+**Always verify and maintain coherence between all project documents.**
 
-La documentation est un actif critique du projet. Toute incohérence entre les différents documents peut créer de la confusion et des erreurs de développement.
+Documentation is a critical project asset. Any inconsistency between different documents can create confusion and development errors.
 
-## Documents à Maintenir en Cohérence
+## Documents to Keep Coherent
 
-### 1. Brief Projet
+### 1. Project Brief
 
-**Fichier** : `docs/README.md`
+**File**: `docs/README.md`
 
-**Contenu** :
+**Contents**:
 
-- Vue d'ensemble du projet
-- Fonctionnalités principales
-- Liste des use cases documentés
-- Architecture technique
-- État actuel du projet
+- Project overview
+- Main features
+- List of documented use cases
+- Technical architecture
+- Current project state
 
-**Responsabilité** : Document de référence principal, source de vérité pour la vision globale.
+**Responsibility**: Main reference document, source of truth for the global vision.
 
-### 2. Index des Use Cases
+### 2. Use Case Index
 
-**Fichier** : `docs/use-cases/README.md`
+**File**: `docs/use-cases/README.md`
 
-**Contenu** :
+**Contents**:
 
-- Index complet de tous les use cases
-- Organisé par feature
-- Liens vers chaque documentation
+- Complete index of all use cases
+- Organized by feature
+- Links to each documentation
 
-**Responsabilité** : Doit lister TOUS les use cases documentés.
+**Responsibility**: Must list ALL documented use cases.
 
-### 3. Use Cases Individuels
+### 3. Individual Use Cases
 
-**Dossiers** : `docs/use-cases/<feature>/`
+**Folders**: `docs/use-cases/<feature>/`
 
-**Contenu** :
+**Contents**:
 
-- Documentation détaillée de chaque use case
-- Acteurs, scénarios, règles de gestion
-- Exceptions et contraintes
+- Detailed documentation of each use case
+- Actors, scenarios, business rules
+- Exceptions and constraints
 
-**Responsabilité** : Doit être aligné avec le brief et l'implémentation.
+**Responsibility**: Must be aligned with the brief and implementation.
 
-### 4. README Applications
+### 4. Application READMEs
 
-**Fichiers** : `apps/*/README.md`
+**Files**: `apps/*/README.md`
 
-**Contenu** :
+**Contents**:
 
-- Description de l'application
-- Fonctionnalités implémentées
-- Architecture spécifique
+- Application description
+- Implemented features
+- Specific architecture
 
-**Responsabilité** : Doit refléter l'état réel de l'application.
+**Responsibility**: Must reflect the actual state of the application.
 
-## Règles de Cohérence
+## Coherence Rules
 
-### RC-001 : Synchronisation Use Cases
+### RC-001: Use Case Synchronization
 
-**Règle** : Tout use case mentionné dans le brief doit :
+**Rule**: Every use case mentioned in the brief must:
 
-1. Avoir un fichier de documentation dans `docs/use-cases/<feature>/`
-2. Être listé dans l'index `docs/use-cases/README.md`
-3. Correspondre à une implémentation dans `apps/store/src/domain/usecases/`
+1. Have a documentation file in `docs/use-cases/<feature>/`
+2. Be listed in the index `docs/use-cases/README.md`
+3. Correspond to an implementation in `apps/store/src/domain/usecases/`
 
-**Vérification** :
+**Verification**:
 
 ```bash
-# Comparer les fichiers use cases avec l'index
+# Compare use case files with the index
 ls docs/use-cases/*/
 cat docs/use-cases/README.md
 cat docs/README.md
 ```
 
-### RC-002 : Cohérence des Acteurs
+### RC-002: Actor Coherence
 
-**Règle** : Les acteurs définis dans chaque use case doivent être cohérents avec :
+**Rule**: Actors defined in each use case must be consistent with:
 
-- La section "Acteurs" du brief (`docs/README.md`)
-- Les fonctionnalités décrites pour chaque acteur
-- Le scénario nominal du use case
+- The "Actors" section of the brief (`docs/README.md`)
+- The features described for each actor
+- The nominal scenario of the use case
 
-**Acteurs du projet** :
+**Project actors**:
 
-- **Licenciés** : Passent des commandes individuelles
-- **Administrateurs** : Gèrent les commandes globales
+- **Licensees**: Place individual orders
+- **Administrators**: Manage global orders
 
-**Vérification** :
+**Verification**:
 
-- Si le use case concerne une action de licencié → Acteur principal = Licencié
-- Si le use case concerne la gestion globale → Acteur principal = Administrateur
+- If the use case concerns a licensee action → Main actor = Licensee
+- If the use case concerns global management → Main actor = Administrator
 
-### RC-003 : Alignement Fonctionnalités
+### RC-003: Feature Alignment
 
-**Règle** : Les fonctionnalités listées dans le brief doivent avoir :
+**Rule**: Features listed in the brief must have:
 
-- Un ou plusieurs use cases documentés
-- OU une justification explicite si c'est de la logique UI pure
+- One or more documented use cases
+- OR an explicit justification if it is pure UI logic
 
-**Fonctionnalités Licenciés** (brief) :
+**Licensee Features** (brief):
 
-- ✅ Sélection du profil → Logique UI (pas de use case nécessaire)
-- ✅ Consultation du catalogue → Use case `get-all-products`
-- ✅ Gestion du panier → Logique UI locale (TanStack Store)
-- ✅ Passage de commande → Use case `create-licensee-order`
-- ✅ Historique → Use case `get-licensee-order-history`
+- ✅ Profile selection → UI logic (no use case needed)
+- ✅ Catalog browsing → Use case `get-all-products`
+- ✅ Basket management → Local UI logic (TanStack Store)
+- ✅ Order placement → Use case `create-licensee-order`
+- ✅ History → Use case `get-licensee-order-history`
 
-**Fonctionnalités Administrateurs** (brief) :
+**Administrator Features** (brief):
 
-- ✅ Création de commande globale → Use case `create-order`
-- ✅ Gestion du statut → Use case `update-order-status`
-- ✅ Consultation → Use case `get-current-order`
+- ✅ Global order creation → Use case `create-order`
+- ✅ Status management → Use case `update-order-status`
+- ✅ Browsing → Use case `get-current-order`
 
-### RC-004 : Synchronisation Index
+### RC-004: Index Synchronization
 
-**Règle** : L'index `docs/use-cases/README.md` doit :
+**Rule**: The index `docs/use-cases/README.md` must:
 
-1. Lister TOUS les fichiers `.md` présents dans `docs/use-cases/*/`
-2. Être organisé par feature (Order, Licensee, Product)
-3. Utiliser les mêmes titres que dans les fichiers de use cases
+1. List ALL `.md` files present in `docs/use-cases/*/`
+2. Be organized by feature (Order, Licensee, Product)
+3. Use the same titles as in the use case files
 
-**Vérification automatique** :
+**Automatic verification**:
 
 ```bash
-# Lister tous les use cases documentés
+# List all documented use cases
 find docs/use-cases -name "*.md" -not -name "README.md" -not -name "template.md"
 
-# Comparer avec l'index
+# Compare with the index
 grep -E "^\- \[" docs/use-cases/README.md
 ```
 
-### RC-005 : Cohérence Brief ↔ Use Cases
+### RC-005: Brief ↔ Use Cases Coherence
 
-**Règle** : La section "Use Cases Documentés" du brief (`docs/README.md`) doit :
+**Rule**: The "Documented Use Cases" section of the brief (`docs/README.md`) must:
 
-1. Lister exactement les mêmes use cases que l'index
-2. Utiliser les mêmes titres
-3. Être organisé de la même manière (par feature)
+1. List exactly the same use cases as the index
+2. Use the same titles
+3. Be organized the same way (by feature)
 
-**Vérification** :
+**Verification**:
 
-- Comparer `docs/README.md` (section Use Cases Documentés)
-- Avec `docs/use-cases/README.md` (section Index des Use Cases)
+- Compare `docs/README.md` (Documented Use Cases section)
+- With `docs/use-cases/README.md` (Use Cases Index section)
 
-### RC-006 : Versionning de la Documentation
+### RC-006: Documentation Versioning
 
-**Règle** : Lors de modifications importantes :
+**Rule**: When making significant changes:
 
-1. Mettre à jour la section "Historique" du use case modifié
-2. Mettre à jour la date de "Dernière mise à jour" dans le brief
-3. Incrémenter la version si changement majeur
+1. Update the "History" section of the modified use case
+2. Update the "Last updated" date in the brief
+3. Increment the version if major change
 
-**Format Historique** :
+**History Format**:
 
 ```markdown
-| Date       | Version | Auteur | Modifications |
-| ---------- | ------- | ------ | ------------- |
-| YYYY-MM-DD | X.Y     | Nom    | Description   |
+| Date       | Version | Author | Changes     |
+| ---------- | ------- | ------ | ----------- |
+| YYYY-MM-DD | X.Y     | Name   | Description |
 ```
 
-## Workflow de Vérification
+## Verification Workflow
 
-### Avant Chaque Commit
+### Before Each Commit
 
-1. **Vérifier les use cases** :
-   - Tous les fichiers sont dans l'index ?
-   - Tous les use cases de l'index existent ?
+1. **Verify use cases**:
+   - Are all files in the index?
+   - Do all use cases in the index exist?
 
-2. **Vérifier les acteurs** :
-   - Cohérents avec le brief ?
-   - Cohérents avec le scénario nominal ?
+2. **Verify actors**:
+   - Consistent with the brief?
+   - Consistent with the nominal scenario?
 
-3. **Vérifier le brief** :
-   - Liste des use cases à jour ?
-   - Fonctionnalités alignées ?
+3. **Verify the brief**:
+   - Use case list up to date?
+   - Features aligned?
 
-### Lors de l'Ajout d'un Use Case
+### When Adding a Use Case
 
-1. Créer le fichier `docs/use-cases/<feature>/<use-case>.md`
-2. Ajouter à l'index `docs/use-cases/README.md`
-3. Ajouter au brief `docs/README.md` (section Use Cases Documentés)
-4. Vérifier la cohérence des acteurs
+1. Create the file `docs/use-cases/<feature>/<use-case>.md`
+2. Add to the index `docs/use-cases/README.md`
+3. Add to the brief `docs/README.md` (Documented Use Cases section)
+4. Verify actor coherence
 
-### Lors de la Modification d'un Use Case
+### When Modifying a Use Case
 
-1. Mettre à jour le fichier de documentation
-2. Ajouter une entrée dans l'historique
-3. Vérifier si le brief doit être mis à jour
-4. Vérifier la cohérence avec l'implémentation
+1. Update the documentation file
+2. Add an entry in the history
+3. Check if the brief needs updating
+4. Verify coherence with the implementation
 
-### Lors de la Suppression d'un Use Case
+### When Removing a Use Case
 
-1. Supprimer le fichier de documentation
-2. Retirer de l'index `docs/use-cases/README.md`
-3. Retirer du brief `docs/README.md`
-4. Supprimer l'implémentation correspondante
+1. Delete the documentation file
+2. Remove from the index `docs/use-cases/README.md`
+3. Remove from the brief `docs/README.md`
+4. Delete the corresponding implementation
 
-## Checklist de Cohérence
+## Coherence Checklist
 
-Avant de valider une modification de documentation :
+Before validating a documentation change:
 
-- [ ] Tous les use cases du brief sont dans l'index
-- [ ] Tous les use cases de l'index ont un fichier de documentation
-- [ ] Tous les fichiers de documentation sont dans l'index
-- [ ] Les acteurs sont cohérents dans tous les use cases
-- [ ] Les fonctionnalités du brief ont des use cases correspondants
-- [ ] Les titres sont identiques entre brief, index et fichiers
-- [ ] L'organisation par feature est cohérente partout
-- [ ] Les dates de mise à jour sont actuelles
+- [ ] All use cases in the brief are in the index
+- [ ] All use cases in the index have a documentation file
+- [ ] All documentation files are in the index
+- [ ] Actors are consistent across all use cases
+- [ ] Brief features have corresponding use cases
+- [ ] Titles are identical between brief, index and files
+- [ ] Feature organization is consistent everywhere
+- [ ] Update dates are current
 
-## Outils de Vérification
+## Verification Tools
 
-### Script de Vérification (Future)
+### Verification Script (Future)
 
 ```bash
 #!/bin/bash
 # verify-docs-coherence.sh
 
-echo "Vérification de la cohérence de la documentation..."
+echo "Verifying documentation coherence..."
 
-# 1. Lister les use cases documentés
+# 1. List documented use cases
 documented=$(find docs/use-cases -name "*.md" -not -name "README.md" -not -name "template.md" | wc -l)
 
-# 2. Compter les entrées dans l'index
+# 2. Count entries in the index
 indexed=$(grep -c "^\- \[" docs/use-cases/README.md)
 
-# 3. Comparer
+# 3. Compare
 if [ "$documented" -eq "$indexed" ]; then
-  echo "✅ Index cohérent: $documented use cases"
+  echo "✅ Index coherent: $documented use cases"
 else
-  echo "❌ Incohérence: $documented fichiers, $indexed dans l'index"
+  echo "❌ Incoherence: $documented files, $indexed in the index"
   exit 1
 fi
 ```
 
-## Exemples d'Incohérences à Éviter
+## Examples of Inconsistencies to Avoid
 
-### ❌ Use Case dans le Brief mais pas Documenté
+### ❌ Use Case in Brief but Not Documented
 
 ```markdown
 <!-- docs/README.md -->
 
-### Order (Commande)
+### Order
 
-1. Créer une commande globale
-2. Supprimer une commande ← Pas de fichier correspondant!
+1. Create a global order
+2. Delete an order ← No corresponding file!
 ```
 
-### ❌ Use Case Documenté mais pas dans l'Index
+### ❌ Use Case Documented but Not in Index
 
 ```
-docs/use-cases/order/cancel-order.md existe
-Mais absent de docs/use-cases/README.md
+docs/use-cases/order/cancel-order.md exists
+But absent from docs/use-cases/README.md
 ```
 
-### ❌ Acteur Incohérent
+### ❌ Inconsistent Actor
 
 ```markdown
 <!-- Use case: create-licensee-order.md -->
 
-Acteur principal: Administrateur ← ERREUR!
-Scénario: Le licencié ajoute des articles... ← Incohérence!
+Main actor: Administrator ← ERROR!
+Scenario: The licensee adds items... ← Inconsistency!
 ```
 
-### ❌ Titres Différents
+### ❌ Different Titles
 
 ```markdown
 <!-- docs/README.md -->
 
-1. Créer une commande globale
+1. Create a global order
 
 <!-- docs/use-cases/README.md -->
 
-- [Créer une commande](order/create-order.md) ← Titre différent!
+- [Create an order](order/create-order.md) ← Different title!
 ```
 
-## Responsabilités
+## Responsibilities
 
-### Développeur
+### Developer
 
-- Vérifier la cohérence avant chaque commit
-- Mettre à jour la documentation lors de modifications métier
-- Signaler les incohérences détectées
+- Verify coherence before each commit
+- Update documentation when making business changes
+- Report detected inconsistencies
 
 ### Cascade (AI Assistant)
 
-- **TOUJOURS** vérifier la cohérence lors de modifications de documentation
-- Proposer des corrections si incohérences détectées
-- Maintenir l'alignement entre brief, index et use cases
-- Vérifier les acteurs dans les use cases
+- **ALWAYS** verify coherence when modifying documentation
+- Propose corrections if inconsistencies are detected
+- Maintain alignment between brief, index and use cases
+- Verify actors in use cases
 
 ### Reviewer
 
-- Valider la cohérence lors des code reviews
-- Vérifier que la documentation est à jour
-- S'assurer que les use cases reflètent l'implémentation
+- Validate coherence during code reviews
+- Verify that documentation is up to date
+- Ensure use cases reflect the implementation
 
 ## Maintenance
 
-Cette règle doit être appliquée :
+This rule must be applied:
 
-- ✅ Lors de la création de use cases
-- ✅ Lors de la modification de use cases
-- ✅ Lors de la suppression de use cases
-- ✅ Lors de la mise à jour du brief
-- ✅ Lors de l'ajout de fonctionnalités
-- ✅ Avant chaque commit touchant `docs/`
+- ✅ When creating use cases
+- ✅ When modifying use cases
+- ✅ When removing use cases
+- ✅ When updating the brief
+- ✅ When adding features
+- ✅ Before each commit touching `docs/`
 
-## Références
+## References
 
-- [Template Use Case](../../docs/use-cases/template.md)
-- [Brief Projet](../../docs/README.md)
-- [Index Use Cases](../../docs/use-cases/README.md)
+- [Use Case Template](../../docs/use-cases/template.md)
+- [Project Brief](../../docs/README.md)
+- [Use Case Index](../../docs/use-cases/README.md)
 - [Domain-Driven Design](./domain-driven-design.md)
 
 ---
 
-**Version** : 1.0  
-**Dernière mise à jour** : 26 mars 2026  
-**Statut** : Always On - Règle active en permanence
+**Version**: 1.0  
+**Last updated**: March 26, 2026  
+**Status**: Always On - Rule always active

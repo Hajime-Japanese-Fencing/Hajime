@@ -2,45 +2,45 @@
 trigger: always_on
 ---
 
-# TanStack Store vs TanStack Query - Quand Utiliser Quoi
+# TanStack Store vs TanStack Query - When to Use Which
 
-## Vue d'Ensemble
+## Overview
 
 ### TanStack Store
 
-**État applicatif synchrone et logique métier**
+**Synchronous application state and business logic**
 
 ### TanStack Query
 
-**Opérations asynchrones avec le serveur**
+**Asynchronous server operations**
 
-## Règle Générale
+## General Rule
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  TanStack Store                                             │
-│  • État local à la feature                                  │
-│  • Logique métier synchrone                                 │
+│  • Local feature state                                      │
+│  • Synchronous business logic                               │
 │  • Use cases orchestration                                  │
-│  • État UI complexe                                         │
-│  • Calculs dérivés                                          │
+│  • Complex UI state                                         │
+│  • Derived calculations                                     │
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
 │  TanStack Query                                             │
-│  • Fetching données serveur                                 │
-│  • Cache automatique                                        │
-│  • Synchronisation serveur                                  │
-│  • Mutations API                                            │
+│  • Fetching server data                                     │
+│  • Automatic cache                                          │
+│  • Server synchronization                                   │
+│  • API mutations                                            │
 │  • Invalidation/refetch                                     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## TanStack Store - Cas d'Usage
+## TanStack Store - Use Cases
 
-### 1. État Applicatif Local
+### 1. Local Application State
 
-État géré côté client, pas persisté sur le serveur.
+Client-side state, not persisted on the server.
 
 ```typescript
 // application/stores/basketStore.ts
@@ -76,9 +76,9 @@ export class BasketStore extends Store<BasketState> {
 }
 ```
 
-### 2. Orchestration de Use Cases
+### 2. Use Case Orchestration
 
-Store qui encapsule des use cases métier.
+Store that encapsulates business use cases.
 
 ```typescript
 // application/stores/orderStore.ts
@@ -94,10 +94,10 @@ export class OrderStore extends Store<OrderState> {
     this.setState((state) => ({ ...state, isProcessing: true, error: null }));
 
     try {
-      // Validation métier via use case
+      // Business validation via use case
       await this.validateOrderUseCase.execute(items);
 
-      // Création via use case
+      // Creation via use case
       const order = await this.createOrderUseCase.execute(items);
 
       this.setState((state) => ({
@@ -116,9 +116,9 @@ export class OrderStore extends Store<OrderState> {
 }
 ```
 
-### 3. État UI Complexe
+### 3. Complex UI State
 
-Gestion d'état UI multi-étapes, wizards, formulaires complexes.
+Multi-step UI state management, wizards, complex forms.
 
 ```typescript
 // application/stores/checkoutStore.ts
@@ -150,9 +150,9 @@ export class CheckoutStore extends Store<CheckoutState> {
 }
 ```
 
-### 4. État Dérivé et Calculs
+### 4. Derived State and Calculations
 
-Calculs basés sur l'état, memoization.
+Calculations based on state, memoization.
 
 ```typescript
 // application/stores/cartStore.ts
@@ -176,11 +176,11 @@ export class CartStore extends Store<CartState> {
 }
 ```
 
-## TanStack Query - Cas d'Usage
+## TanStack Query - Use Cases
 
-### 1. Fetching Données Serveur
+### 1. Fetching Server Data
 
-Récupération de données avec cache automatique.
+Data retrieval with automatic cache.
 
 ```typescript
 // presentation/composables/useProducts.ts
@@ -200,9 +200,9 @@ export function useProducts() {
 }
 ```
 
-### 2. Mutations API
+### 2. API Mutations
 
-Modifications de données sur le serveur.
+Modifying data on the server.
 
 ```typescript
 // presentation/composables/useCreateProduct.ts
@@ -224,9 +224,9 @@ export function useCreateProduct() {
 }
 ```
 
-### 3. Invalidation et Synchronisation
+### 3. Invalidation and Synchronization
 
-Synchronisation automatique après mutations.
+Automatic synchronization after mutations.
 
 ```typescript
 // presentation/composables/useDeleteProduct.ts
@@ -250,7 +250,7 @@ export function useDeleteProduct() {
 
 ### 4. Optimistic Updates
 
-Mise à jour optimiste de l'UI avant confirmation serveur.
+Optimistic UI update before server confirmation.
 
 ```typescript
 export function useUpdateProduct() {
@@ -286,27 +286,27 @@ export function useUpdateProduct() {
 }
 ```
 
-## Matrice de Décision
+## Decision Matrix
 
-| Besoin                             | TanStack Store | TanStack Query |
-| ---------------------------------- | -------------- | -------------- |
-| État local UI (panier, formulaire) | ✅             | ❌             |
-| Fetching données serveur           | ❌             | ✅             |
-| Cache données serveur              | ❌             | ✅             |
-| Mutations API                      | ❌             | ✅             |
-| Logique métier synchrone           | ✅             | ❌             |
-| Use cases orchestration            | ✅             | ❌             |
-| État dérivé/calculs                | ✅             | ❌             |
-| Invalidation automatique           | ❌             | ✅             |
-| Optimistic updates                 | ❌             | ✅             |
-| Background refetch                 | ❌             | ✅             |
-| Retry logic                        | ❌             | ✅             |
+| Need                                  | TanStack Store | TanStack Query |
+| ------------------------------------- | -------------- | -------------- |
+| Local UI state (basket, form)         | ✅             | ❌             |
+| Fetching server data                  | ❌             | ✅             |
+| Server data cache                     | ❌             | ✅             |
+| API mutations                         | ❌             | ✅             |
+| Synchronous business logic            | ✅             | ❌             |
+| Use cases orchestration               | ✅             | ❌             |
+| Derived state/calculations            | ✅             | ❌             |
+| Automatic invalidation                | ❌             | ✅             |
+| Optimistic updates                    | ❌             | ✅             |
+| Background refetch                    | ❌             | ✅             |
+| Retry logic                           | ❌             | ✅             |
 
-## Patterns d'Intégration
+## Integration Patterns
 
-### Pattern 1 : Store + Query Séparés
+### Pattern 1: Separate Store + Query
 
-Store pour logique métier, Query pour data fetching.
+Store for business logic, Query for data fetching.
 
 ```typescript
 // application/stores/productStore.ts
@@ -340,9 +340,9 @@ export function useProducts() {
 }
 ```
 
-### Pattern 2 : Store Utilise Query Data
+### Pattern 2: Store Uses Query Data
 
-Store réagit aux données de Query.
+Store reacts to Query data.
 
 ```typescript
 // presentation/composables/useOrderManagement.ts
@@ -365,9 +365,9 @@ export function useOrderManagement() {
 }
 ```
 
-### Pattern 3 : Query Utilise Store State
+### Pattern 3: Query Uses Store State
 
-Query dépend de l'état du store.
+Query depends on store state.
 
 ```typescript
 export function useOrderDetails() {
@@ -385,18 +385,18 @@ export function useOrderDetails() {
 }
 ```
 
-## Anti-Patterns à Éviter
+## Anti-Patterns to Avoid
 
-### ❌ Dupliquer l'État
+### ❌ Duplicating State
 
 ```typescript
-// BAD - État dupliqué entre Store et Query
+// BAD - State duplicated between Store and Query
 const productStore = new Store({ products: [] })
 const { data: products } = useQuery({ queryKey: ['products'], ... })
-// Maintenant on a products dans 2 endroits!
+// Now we have products in 2 places!
 ```
 
-### ❌ Logique Métier dans Query
+### ❌ Business Logic in Query
 
 ```typescript
 // BAD - Business logic in queryFn
@@ -416,7 +416,7 @@ const { data } = useQuery({
 });
 ```
 
-### ❌ Store pour Données Serveur
+### ❌ Store for Server Data
 
 ```typescript
 // BAD - Using Store for server data
@@ -436,9 +436,9 @@ export function useProducts() {
 }
 ```
 
-## Frontière des Tests
+## Test Boundaries
 
-### Tests Unitaires - Use Cases via Store
+### Unit Tests - Use Cases via Store
 
 ```typescript
 // application/stores/__tests__/basketStore.test.ts
@@ -454,7 +454,7 @@ describe("BasketStore", () => {
 });
 ```
 
-### Tests d'Intégration - Adapters avant Query
+### Integration Tests - Adapters before Query
 
 ```typescript
 // infrastructure/adapters/__tests__/ApiProductRepository.test.ts
@@ -470,16 +470,16 @@ describe("ApiProductRepository", () => {
 });
 ```
 
-### Pas de Tests sur Query/Mutation
+### No Tests on Query/Mutation
 
-TanStack Query est déjà testé. Tester uniquement :
+TanStack Query is already tested. Only test:
 
-- Les use cases appelés par Query
-- Les adapters utilisés par Query
+- Use cases called by Query
+- Adapters used by Query
 
-## Configuration TanStack Query
+## TanStack Query Configuration
 
-### Setup Global
+### Global Setup
 
 ```typescript
 // main.ts
@@ -501,12 +501,12 @@ app.use(VueQueryPlugin, {
 });
 ```
 
-## Exemples Pratiques
+## Practical Examples
 
-### Exemple 1 : Liste de Produits
+### Example 1: Product List
 
 ```typescript
-// ✅ Query pour fetching
+// ✅ Query for fetching
 export function useProducts() {
   return useQuery({
     queryKey: ["products"],
@@ -514,7 +514,7 @@ export function useProducts() {
   });
 }
 
-// ✅ Store pour sélection et filtres
+// ✅ Store for selection and filters
 export class ProductStore extends Store<ProductState> {
   constructor() {
     super({
@@ -533,17 +533,17 @@ export class ProductStore extends Store<ProductState> {
 }
 ```
 
-### Exemple 2 : Panier d'Achat
+### Example 2: Shopping Cart
 
 ```typescript
-// ✅ Store pour panier (état local)
+// ✅ Store for basket (local state)
 export class BasketStore extends Store<BasketState> {
   addItem(productId: string, quantity: number) { ... }
   removeItem(productId: string) { ... }
   clear() { ... }
 }
 
-// ✅ Mutation pour soumettre la commande
+// ✅ Mutation to submit order
 export function useSubmitOrder() {
   const basketStore = container.basketStore
 
@@ -561,10 +561,10 @@ export function useSubmitOrder() {
 }
 ```
 
-### Exemple 3 : Formulaire Multi-Étapes
+### Example 3: Multi-Step Form
 
 ```typescript
-// ✅ Store pour état du formulaire
+// ✅ Store for form state
 export class CheckoutFormStore extends Store<CheckoutFormState> {
   constructor(private validateStepUseCase: ValidateStepUseCase) {
     super({
@@ -589,7 +589,7 @@ export class CheckoutFormStore extends Store<CheckoutFormState> {
   }
 }
 
-// ✅ Mutation pour soumission finale
+// ✅ Mutation for final submission
 export function useSubmitCheckout() {
   const formStore = container.checkoutFormStore;
 
@@ -602,12 +602,12 @@ export function useSubmitCheckout() {
 }
 ```
 
-## Règles de Composition
+## Composition Rules
 
-### 1. Ne Pas Mélanger les Responsabilités
+### 1. Don't Mix Responsibilities
 
 ```typescript
-// ❌ BAD - Store qui fait du fetching
+// ❌ BAD - Store that fetches
 export class ProductStore extends Store<ProductState> {
   async loadProducts() {
     const products = await fetch("/api/products");
@@ -615,8 +615,8 @@ export class ProductStore extends Store<ProductState> {
   }
 }
 
-// ✅ GOOD - Séparation claire
-// Query pour fetching
+// ✅ GOOD - Clear separation
+// Query for fetching
 export function useProducts() {
   return useQuery({
     queryKey: ["products"],
@@ -624,7 +624,7 @@ export function useProducts() {
   });
 }
 
-// Store pour logique métier
+// Store for business logic
 export class ProductStore extends Store<ProductState> {
   selectProduct(product: Product) {
     this.setState({ selectedProduct: product });
@@ -632,12 +632,12 @@ export class ProductStore extends Store<ProductState> {
 }
 ```
 
-### 2. Use Cases comme Interface
+### 2. Use Cases as Interface
 
-Les use cases sont l'interface entre Store/Query et Infrastructure.
+Use cases are the interface between Store/Query and Infrastructure.
 
 ```typescript
-// ✅ GOOD - Use case appelé par Query
+// ✅ GOOD - Use case called by Query
 export function useCreateProduct() {
   return useMutation({
     mutationFn: (data: CreateProductData) => {
@@ -647,7 +647,7 @@ export function useCreateProduct() {
   })
 }
 
-// ✅ GOOD - Use case appelé par Store
+// ✅ GOOD - Use case called by Store
 export class ProductStore extends Store<ProductState> {
   constructor(private validateProductUseCase: ValidateProductUseCase) {
     super({ ... })
@@ -662,9 +662,9 @@ export class ProductStore extends Store<ProductState> {
 }
 ```
 
-### 3. Store pour Coordination
+### 3. Store for Coordination
 
-Store peut coordonner plusieurs use cases.
+Store can coordinate multiple use cases.
 
 ```typescript
 export class OrderProcessingStore extends Store<OrderProcessingState> {
@@ -692,32 +692,32 @@ export class OrderProcessingStore extends Store<OrderProcessingState> {
 }
 ```
 
-## Checklist de Décision
+## Decision Checklist
 
-Avant de choisir entre Store et Query, posez-vous ces questions :
+Before choosing between Store and Query, ask yourself:
 
-1. **Les données viennent-elles du serveur ?**
-   - Oui → TanStack Query
-   - Non → TanStack Store
+1. **Does the data come from the server?**
+   - Yes → TanStack Query
+   - No → TanStack Store
 
-2. **L'état doit-il être synchronisé avec le serveur ?**
-   - Oui → TanStack Query
-   - Non → TanStack Store
+2. **Does the state need to be synchronized with the server?**
+   - Yes → TanStack Query
+   - No → TanStack Store
 
-3. **Y a-t-il de la logique métier complexe ?**
-   - Oui → TanStack Store (avec use cases)
-   - Non → Peut-être juste Query
+3. **Is there complex business logic?**
+   - Yes → TanStack Store (with use cases)
+   - No → Maybe just Query
 
-4. **L'état est-il purement UI ?**
-   - Oui et simple → ref/reactive Vue
-   - Oui et complexe → TanStack Store
-   - Non (données serveur) → TanStack Query
+4. **Is the state purely UI?**
+   - Yes and simple → Vue ref/reactive
+   - Yes and complex → TanStack Store
+   - No (server data) → TanStack Query
 
-5. **Besoin de cache et invalidation automatique ?**
-   - Oui → TanStack Query
-   - Non → TanStack Store
+5. **Need automatic cache and invalidation?**
+   - Yes → TanStack Query
+   - No → TanStack Store
 
-## Références
+## References
 
 - [TanStack Store Docs](https://tanstack.com/store/latest/docs/overview)
 - [TanStack Query Docs](https://tanstack.com/query/v5/docs/framework/vue/overview)

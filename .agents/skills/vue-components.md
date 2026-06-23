@@ -2,25 +2,25 @@
 trigger: always_on
 ---
 
-# Règles Composants Vue
+# Vue Component Rules
 
-## Typologie des Composants
+## Component Types
 
-### 1. Composants Dumb (Design System)
+### 1. Dumb Components (Design System)
 
-**Définition** : Composants de présentation pure, réutilisables, sans logique métier.
+**Definition**: Pure presentation components, reusable, without business logic.
 
-**Caractéristiques :**
+**Characteristics:**
 
-- ✅ Props/Events uniquement
-- ✅ Pas d'accès aux stores
-- ✅ Pas d'appels API
-- ✅ Pas de logique métier
-- ✅ Styles DaisyUI/BEM
-- ✅ Réutilisables dans tout le projet
-- ✅ Peuvent être externalisés dans le package UI
+- ✅ Props/Events only
+- ✅ No store access
+- ✅ No API calls
+- ✅ No business logic
+- ✅ DaisyUI/BEM styles
+- ✅ Reusable throughout the project
+- ✅ Can be externalized into the UI package
 
-**Emplacement :** `presentation/components/ui/`
+**Location:** `presentation/components/ui/`
 
 ```vue
 <!-- presentation/components/ui/ProductCard.vue -->
@@ -77,19 +77,19 @@ defineEmits<Emits>();
 </style>
 ```
 
-### 2. Composants Business (Métier)
+### 2. Business Components
 
-**Définition** : Wrappers des composants dumb avec logique UI spécifique.
+**Definition**: Wrappers of dumb components with specific UI logic.
 
-**Caractéristiques :**
+**Characteristics:**
 
-- ✅ Utilise composants dumb
-- ✅ Accède aux stores via container
-- ✅ Contient logique UI (pas métier)
-- ✅ Utilise composables pour extraction logique
-- ❌ Pas de logique métier directe
+- ✅ Uses dumb components
+- ✅ Accesses stores via container
+- ✅ Contains UI logic (not business)
+- ✅ Uses composables for logic extraction
+- ❌ No direct business logic
 
-**Emplacement :** `presentation/components/business/`
+**Location:** `presentation/components/business/`
 
 ```vue
 <!-- presentation/components/business/ProductCardWithCart.vue -->
@@ -130,19 +130,19 @@ const formattedPrice = computed(() => {
 </template>
 ```
 
-### 3. Composables (Logique UI)
+### 3. Composables (UI Logic)
 
-**Définition** : Extraction de la logique UI réutilisable.
+**Definition**: Extraction of reusable UI logic.
 
-**Caractéristiques :**
+**Characteristics:**
 
-- ✅ Au plus près du composant qui l'utilise
-- ✅ Accède aux stores
-- ✅ Peut utiliser TanStack Query
-- ✅ Logique UI, pas métier
-- ✅ Nommage : `use<Feature>.ts`
+- ✅ Close to the component that uses it
+- ✅ Accesses stores
+- ✅ Can use TanStack Query
+- ✅ UI logic, not business
+- ✅ Naming: `use<Feature>.ts`
 
-**Emplacement :** À côté du composant ou dans `presentation/composables/`
+**Location:** Next to the component or in `presentation/composables/`
 
 ```typescript
 // presentation/components/business/useProductActions.ts
@@ -180,16 +180,16 @@ export function useProductActions(product: Product) {
 
 ### 4. Pages
 
-**Définition** : Composants route/page qui orchestrent les composants business.
+**Definition**: Route/page components that orchestrate business components.
 
-**Caractéristiques :**
+**Characteristics:**
 
-- ✅ Gèrent la navigation
-- ✅ Orchestrent les composants business
-- ✅ Peuvent utiliser TanStack Query directement
-- ✅ Layout et structure de la page
+- ✅ Handle navigation
+- ✅ Orchestrate business components
+- ✅ Can use TanStack Query directly
+- ✅ Page layout and structure
 
-**Emplacement :** `presentation/pages/`
+**Location:** `presentation/pages/`
 
 ```vue
 <!-- presentation/pages/ProductsPage.vue -->
@@ -236,7 +236,7 @@ const { products, isLoading, error } = useProducts();
 
 ## Composition API - Script Setup
 
-**Toujours utiliser `<script setup>` :**
+**Always use `<script setup>`:**
 
 ```vue
 <script setup lang="ts">
@@ -255,29 +255,29 @@ const doubled = computed(() => count.value * 2);
 </script>
 ```
 
-## Séparation Logique UI
+## UI Logic Separation
 
-### Quand Extraire dans un Composable ?
+### When to Extract into a Composable?
 
-**Extraire si :**
+**Extract if:**
 
-- Logique réutilisée dans plusieurs composants
-- Logique complexe (>20 lignes)
-- Accès aux stores/services
-- Logique de navigation
-- Gestion d'état UI complexe
+- Logic reused across multiple components
+- Complex logic (>20 lines)
+- Store/service access
+- Navigation logic
+- Complex UI state management
 
-**Garder dans le composant si :**
+**Keep in the component if:**
 
-- Logique simple (<10 lignes)
-- Spécifique à ce composant uniquement
-- Formatage simple
-- Handlers d'événements simples
+- Simple logic (<10 lines)
+- Specific to this component only
+- Simple formatting
+- Simple event handlers
 
-### Exemple de Séparation
+### Separation Example
 
 ```vue
-<!-- ❌ BAD - Tout dans le composant -->
+<!-- ❌ BAD - Everything in the component -->
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -310,7 +310,7 @@ const filteredProducts = computed(() => {
 ```
 
 ```vue
-<!-- ✅ GOOD - Logique extraite -->
+<!-- ✅ GOOD - Logic extracted -->
 <script setup lang="ts">
 import { useProductList } from "./useProductList";
 import ProductCard from "../ui/ProductCard.vue";
@@ -331,7 +331,7 @@ const {
 ```
 
 ```typescript
-// useProductList.ts - Composable avec la logique
+// useProductList.ts - Composable with the logic
 export function useProductList() {
   const basketStore = container.basketStore;
   const products = ref<Product[]>([]);
@@ -371,26 +371,26 @@ export function useProductList() {
 }
 ```
 
-## Tests sur les Composants
+## Tests on Components
 
-### Règle Générale : Pas de Tests
+### General Rule: No Tests
 
-**Ne pas tester les composants** sauf si :
+**Do not test components** unless:
 
-- ✅ UX très complexe (formulaire multi-étapes, drag & drop)
-- ✅ Spécifications UI précises et critiques
-- ✅ Logique d'interaction complexe
-- ✅ Demande explicite du client
+- ✅ Very complex UX (multi-step form, drag & drop)
+- ✅ Precise and critical UI specifications
+- ✅ Complex interaction logic
+- ✅ Explicit client request
 
-### Pourquoi Pas de Tests ?
+### Why No Tests?
 
-1. Les composants dumb sont testés visuellement
-2. La logique métier est testée dans les use cases
-3. La logique UI est testée dans les composables (si critique)
-4. Les tests de composants sont coûteux à maintenir
-5. Les tests E2E couvriront les parcours critiques (plus tard)
+1. Dumb components are tested visually
+2. Business logic is tested in use cases
+3. UI logic is tested in composables (if critical)
+4. Component tests are expensive to maintain
+5. E2E tests will cover critical paths (later)
 
-### Si Tests Nécessaires
+### If Tests Are Needed
 
 ```typescript
 // presentation/components/business/__tests__/ComplexForm.test.ts
@@ -411,7 +411,7 @@ describe("ComplexForm", () => {
 });
 ```
 
-## Props et Events
+## Props and Events
 
 ### Props
 
@@ -445,9 +445,9 @@ function handleAdd() {
 }
 ```
 
-## Accès aux Stores
+## Store Access
 
-### Dans les Composants Business
+### In Business Components
 
 ```vue
 <script setup lang="ts">
@@ -459,7 +459,7 @@ const orderStore = container.orderStore;
 </script>
 ```
 
-### Dans les Composants Dumb
+### In Dumb Components
 
 ```vue
 <script setup lang="ts">
@@ -468,22 +468,22 @@ const orderStore = container.orderStore;
 </script>
 ```
 
-## Organisation des Fichiers
+## File Organization
 
-### Composant Simple
+### Simple Component
 
 ```
 ProductCard.vue
 ```
 
-### Composant avec Composable
+### Component with Composable
 
 ```
 ProductCard.vue
 useProductCard.ts
 ```
 
-### Composant avec Styles Custom
+### Component with Custom Styles
 
 ```
 ProductCard.vue
@@ -491,7 +491,7 @@ useProductCard.ts
 ProductCard.css
 ```
 
-### Composant Complexe
+### Complex Component
 
 ```
 ComplexForm/
@@ -502,9 +502,9 @@ ComplexForm/
   complexForm.css
 ```
 
-## Slots et Composition
+## Slots and Composition
 
-### Utiliser les Slots pour Flexibilité
+### Use Slots for Flexibility
 
 ```vue
 <!-- ui/Card.vue - Dumb component with slots -->
@@ -540,7 +540,7 @@ ComplexForm/
 </template>
 ```
 
-## Réactivité
+## Reactivity
 
 ### Refs vs Reactive
 
@@ -594,7 +594,7 @@ watch(selectedCategory, (newCategory) => {
 
 ## TypeScript
 
-### Toujours Typer
+### Always Type
 
 ```vue
 <script setup lang="ts">
@@ -613,7 +613,7 @@ const emit = defineEmits<Emits>();
 </script>
 ```
 
-### Éviter Any
+### Avoid Any
 
 ```typescript
 // ❌ BAD
@@ -626,33 +626,33 @@ function handleData(data: Product) { ... }
 function handleData<T>(data: T) { ... }
 ```
 
-## Checklist Composant Dumb
+## Dumb Component Checklist
 
-Avant de créer/valider un composant dumb :
+Before creating/validating a dumb component:
 
-- [ ] Pas d'import de stores
-- [ ] Pas d'import de use cases
-- [ ] Pas d'import de repositories
-- [ ] Pas d'appels API
-- [ ] Uniquement props/events
-- [ ] Styles DaisyUI ou BEM
-- [ ] TypeScript strict
-- [ ] Réutilisable dans plusieurs contextes
+- [ ] No store imports
+- [ ] No use case imports
+- [ ] No repository imports
+- [ ] No API calls
+- [ ] Props/events only
+- [ ] DaisyUI or BEM styles
+- [ ] Strict TypeScript
+- [ ] Reusable in multiple contexts
 
-## Checklist Composant Business
+## Business Component Checklist
 
-Avant de créer/valider un composant business :
+Before creating/validating a business component:
 
-- [ ] Utilise composants dumb
-- [ ] Logique UI extraite dans composable si >20 lignes
-- [ ] Accède aux stores via container
-- [ ] Pas de logique métier directe
-- [ ] TypeScript strict
-- [ ] Gère les états loading/error
+- [ ] Uses dumb components
+- [ ] UI logic extracted into composable if >20 lines
+- [ ] Accesses stores via container
+- [ ] No direct business logic
+- [ ] Strict TypeScript
+- [ ] Handles loading/error states
 
-## Exemples Anti-Patterns
+## Anti-Pattern Examples
 
-### ❌ Logique Métier dans Composant
+### ❌ Business Logic in Component
 
 ```vue
 <script setup lang="ts">
@@ -666,9 +666,9 @@ function calculateDiscount(product: Product): number {
 </script>
 ```
 
-**Solution** : Déplacer dans `domain/utils/` ou use case.
+**Solution**: Move to `domain/utils/` or use case.
 
-### ❌ Appel Direct Repository
+### ❌ Direct Repository Call
 
 ```vue
 <script setup lang="ts">
@@ -680,9 +680,9 @@ const products = await repository.getAll();
 </script>
 ```
 
-**Solution** : Utiliser TanStack Query ou store.
+**Solution**: Use TanStack Query or store.
 
-### ❌ Store Access dans Composant Dumb
+### ❌ Store Access in Dumb Component
 
 ```vue
 <!-- ui/Button.vue -->
@@ -694,9 +694,9 @@ const store = container.someStore;
 </script>
 ```
 
-**Solution** : Passer les données via props.
+**Solution**: Pass data via props.
 
-## Références
+## References
 
 - [Vue 3 Composition API](https://vuejs.org/guide/extras/composition-api-faq.html)
 - [Vue 3 TypeScript](https://vuejs.org/guide/typescript/overview.html)

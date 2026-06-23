@@ -6,49 +6,49 @@ trigger: always_on
 
 ## Introduction
 
-Le Domain-Driven Design (DDD) est une approche de conception logicielle qui met l'accent sur la modélisation du domaine métier et la collaboration entre experts techniques et experts métier. Cette documentation présente les concepts clés du DDD appliqués à notre projet.
+Domain-Driven Design (DDD) is a software design approach that emphasizes modeling the business domain and collaboration between technical experts and business experts. This documentation presents the key DDD concepts applied to our project.
 
-## Concepts Fondamentaux
+## Core Concepts
 
-### 1. Ubiquitous Language (Langage Omniprésent)
+### 1. Ubiquitous Language
 
-Un langage partagé entre les développeurs et les experts métier, utilisé dans le code, la documentation et les conversations. Ce langage doit être cohérent et refléter fidèlement les concepts du domaine.
+A shared language between developers and business experts, used in code, documentation, and conversations. This language must be consistent and faithfully reflect domain concepts.
 
-**Exemple dans notre projet :**
+**Examples in our project:**
 
-- `Licensee` (licencié)
-- `Order` (commande)
-- `Product` (produit)
+- `Licensee`
+- `Order`
+- `Product`
 
-### 2. Bounded Context (Contexte Délimité)
+### 2. Bounded Context
 
-Une limite explicite dans laquelle un modèle de domaine particulier est défini et applicable. Chaque bounded context a son propre modèle et son propre langage omniprésent.
+An explicit boundary within which a particular domain model is defined and applicable. Each bounded context has its own model and its own ubiquitous language.
 
-**Dans notre architecture :**
+**In our architecture:**
 
 ```
 apps/store/src/
 ├── features/
-│   ├── order/          # Bounded Context: Gestion des commandes
-│   ├── licensee/       # Bounded Context: Gestion des licenciés
-│   └── product/        # Bounded Context: Gestion des produits
+│   ├── order/          # Bounded Context: Order management
+│   ├── licensee/       # Bounded Context: Licensee management
+│   └── product/        # Bounded Context: Product management
 ```
 
-### 3. Entities (Entités)
+### 3. Entities
 
-Objets définis par leur identité plutôt que par leurs attributs. Deux entités avec les mêmes attributs mais des identités différentes sont considérées comme distinctes.
+Objects defined by their identity rather than their attributes. Two entities with the same attributes but different identities are considered distinct.
 
-**Caractéristiques :**
+**Characteristics:**
 
-- Possède un identifiant unique
-- Peut changer d'état au cours du temps
-- L'identité persiste tout au long du cycle de vie
+- Has a unique identifier
+- Can change state over time
+- Identity persists throughout the lifecycle
 
-**Exemple :**
+**Example:**
 
 ```typescript
 interface Licensee {
-  id: string; // Identité unique
+  id: string; // Unique identity
   firstName: string;
   lastName: string;
   licenseNumber: string;
@@ -56,17 +56,17 @@ interface Licensee {
 }
 ```
 
-### 4. Value Objects (Objets Valeur)
+### 4. Value Objects
 
-Objets définis uniquement par leurs attributs, sans identité conceptuelle. Deux value objects avec les mêmes attributs sont considérés comme identiques.
+Objects defined solely by their attributes, without conceptual identity. Two value objects with the same attributes are considered identical.
 
-**Caractéristiques :**
+**Characteristics:**
 
-- Immuables
-- Pas d'identifiant
-- Définis par leurs valeurs
+- Immutable
+- No identifier
+- Defined by their values
 
-**Exemple :**
+**Example:**
 
 ```typescript
 interface Address {
@@ -82,66 +82,66 @@ interface Money {
 }
 ```
 
-### 5. Aggregates (Agrégats)
+### 5. Aggregates
 
-Un cluster d'objets de domaine (entités et value objects) traités comme une unité pour les modifications de données. Chaque agrégat a une racine (Aggregate Root) et une limite.
+A cluster of domain objects (entities and value objects) treated as a unit for data changes. Each aggregate has a root (Aggregate Root) and a boundary.
 
-**Règles :**
+**Rules:**
 
-- L'accès externe se fait uniquement via la racine de l'agrégat
-- Les invariants métier sont maintenus à l'intérieur de l'agrégat
-- Les transactions ne doivent pas traverser les limites des agrégats
+- External access only through the aggregate root
+- Business invariants are maintained inside the aggregate
+- Transactions must not cross aggregate boundaries
 
-**Exemple :**
+**Example:**
 
 ```typescript
-// Order est la racine de l'agrégat
+// Order is the aggregate root
 interface Order {
   id: string;
   licenseeId: string;
-  items: OrderItem[]; // Entités internes à l'agrégat
+  items: OrderItem[]; // Entities internal to the aggregate
   totalAmount: Money; // Value object
   status: OrderStatus;
 
-  // Méthodes qui maintiennent les invariants
+  // Methods that maintain invariants
   addItem(item: OrderItem): void;
   removeItem(itemId: string): void;
   calculateTotal(): Money;
 }
 ```
 
-### 6. Domain Services (Services de Domaine)
+### 6. Domain Services
 
-Opérations qui ne relèvent naturellement d'aucune entité ou value object. Ils encapsulent la logique métier qui implique plusieurs objets du domaine.
+Operations that don't naturally belong to any entity or value object. They encapsulate business logic that involves multiple domain objects.
 
-**Quand utiliser un Domain Service :**
+**When to use a Domain Service:**
 
-- L'opération représente un concept métier important
-- L'opération implique plusieurs agrégats
-- L'opération ne relève naturellement d'aucune entité
+- The operation represents an important business concept
+- The operation involves multiple aggregates
+- The operation doesn't naturally belong to any entity
 
-**Exemple :**
+**Example:**
 
 ```typescript
 class OrderPricingService {
   calculateOrderTotal(items: OrderItem[], licensee: Licensee): Money {
-    // Logique de calcul complexe impliquant
-    // plusieurs objets du domaine
+    // Complex calculation logic involving
+    // multiple domain objects
   }
 }
 ```
 
-### 7. Repositories (Dépôts)
+### 7. Repositories
 
-Abstractions qui encapsulent la logique d'accès aux données et fournissent une interface orientée collection pour accéder aux agrégats.
+Abstractions that encapsulate data access logic and provide a collection-oriented interface for accessing aggregates.
 
-**Responsabilités :**
+**Responsibilities:**
 
-- Récupérer et persister les agrégats
-- Fournir une abstraction sur la couche de persistance
-- Maintenir l'illusion d'une collection en mémoire
+- Retrieve and persist aggregates
+- Provide an abstraction over the persistence layer
+- Maintain the illusion of an in-memory collection
 
-**Exemple :**
+**Example:**
 
 ```typescript
 interface OrderRepository {
@@ -152,17 +152,17 @@ interface OrderRepository {
 }
 ```
 
-### 8. Domain Events (Événements de Domaine)
+### 8. Domain Events
 
-Représentent quelque chose qui s'est passé dans le domaine et qui est important pour les experts métier.
+Represent something that happened in the domain that is important to business experts.
 
-**Caractéristiques :**
+**Characteristics:**
 
-- Nommés au passé (OrderCreated, PaymentProcessed)
-- Immuables
-- Contiennent toutes les informations nécessaires
+- Named in past tense (OrderCreated, PaymentProcessed)
+- Immutable
+- Contain all necessary information
 
-**Exemple :**
+**Example:**
 
 ```typescript
 interface OrderCreatedEvent {
@@ -173,13 +173,13 @@ interface OrderCreatedEvent {
 }
 ```
 
-## Couches de l'Architecture DDD
+## DDD Architecture Layers
 
-### 1. Domain Layer (Couche Domaine)
+### 1. Domain Layer
 
-Le cœur de l'application, contient la logique métier pure.
+The core of the application, contains pure business logic.
 
-**Contenu :**
+**Contents:**
 
 - Entities
 - Value Objects
@@ -188,7 +188,7 @@ Le cœur de l'application, contient la logique métier pure.
 - Domain Events
 - Repository Interfaces
 
-**Localisation :**
+**Location:**
 
 ```
 features/[feature-name]/domain/
@@ -199,18 +199,18 @@ features/[feature-name]/domain/
 └── repositories/
 ```
 
-### 2. Application Layer (Couche Application)
+### 2. Application Layer
 
-Coordonne les opérations de l'application et orchestre le flux de données.
+Coordinates application operations and orchestrates data flow.
 
-**Contenu :**
+**Contents:**
 
-- Use Cases (cas d'utilisation)
+- Use Cases
 - Application Services
 - DTOs (Data Transfer Objects)
 - Command/Query Handlers
 
-**Localisation :**
+**Location:**
 
 ```
 features/[feature-name]/application/
@@ -221,18 +221,18 @@ features/[feature-name]/application/
     └── get-order/
 ```
 
-### 3. Infrastructure Layer (Couche Infrastructure)
+### 3. Infrastructure Layer
 
-Implémentations techniques des interfaces définies dans le domaine.
+Technical implementations of interfaces defined in the domain.
 
-**Contenu :**
+**Contents:**
 
 - Repository Implementations
 - External Services Adapters
 - Database Access
 - API Clients
 
-**Localisation :**
+**Location:**
 
 ```
 features/[feature-name]/infrastructure/
@@ -241,18 +241,18 @@ features/[feature-name]/infrastructure/
     └── services/
 ```
 
-### 4. Presentation Layer (Couche Présentation)
+### 4. Presentation Layer
 
-Interface utilisateur et points d'entrée de l'application.
+User interface and application entry points.
 
-**Contenu :**
+**Contents:**
 
 - Components
 - Pages
 - Composables
 - View Models
 
-**Localisation :**
+**Location:**
 
 ```
 presentation/
@@ -261,11 +261,11 @@ presentation/
 └── composables/
 ```
 
-## Patterns Tactiques DDD
+## DDD Tactical Patterns
 
 ### 1. Specification Pattern
 
-Encapsule la logique métier de validation ou de sélection dans des objets réutilisables.
+Encapsulates validation or selection business logic in reusable objects.
 
 ```typescript
 interface Specification<T> {
@@ -283,12 +283,12 @@ class MinimumAgeSpecification implements Specification<Licensee> {
 
 ### 2. Factory Pattern
 
-Encapsule la logique complexe de création d'objets du domaine.
+Encapsulates complex domain object creation logic.
 
 ```typescript
 class OrderFactory {
   static createFromLicensee(licensee: Licensee, items: OrderItem[]): Order {
-    // Logique complexe de création
+    // Complex creation logic
     return {
       id: generateId(),
       licenseeId: licensee.id,
@@ -302,7 +302,7 @@ class OrderFactory {
 
 ### 3. Strategy Pattern
 
-Permet de définir une famille d'algorithmes et de les rendre interchangeables.
+Allows defining a family of algorithms and making them interchangeable.
 
 ```typescript
 interface PricingStrategy {
@@ -311,50 +311,50 @@ interface PricingStrategy {
 
 class StandardPricingStrategy implements PricingStrategy {
   calculatePrice(order: Order): Money {
-    // Calcul standard
+    // Standard calculation
   }
 }
 
 class MemberPricingStrategy implements PricingStrategy {
   calculatePrice(order: Order): Money {
-    // Calcul avec réduction membre
+    // Calculation with member discount
   }
 }
 ```
 
-## Principes de Conception DDD
+## DDD Design Principles
 
-### 1. Maintenir l'Intégrité du Modèle
+### 1. Maintain Model Integrity
 
-- Les invariants métier doivent toujours être respectés
-- Les agrégats sont responsables de leur propre cohérence
-- Les transactions respectent les limites des agrégats
+- Business invariants must always be respected
+- Aggregates are responsible for their own consistency
+- Transactions respect aggregate boundaries
 
-### 2. Isoler le Domaine
+### 2. Isolate the Domain
 
-- La logique métier ne dépend pas de l'infrastructure
-- Les dépendances pointent vers le domaine (Dependency Inversion)
-- Le domaine est testable sans infrastructure
+- Business logic does not depend on infrastructure
+- Dependencies point toward the domain (Dependency Inversion)
+- The domain is testable without infrastructure
 
-### 3. Modéliser de Manière Expressive
+### 3. Model Expressively
 
-- Le code reflète le langage métier
-- Les noms sont significatifs et cohérents
-- La structure du code suit la structure du domaine
+- Code reflects business language
+- Names are meaningful and consistent
+- Code structure follows domain structure
 
-### 4. Itérer avec les Experts Métier
+### 4. Iterate with Business Experts
 
-- Collaboration continue avec le métier
-- Raffiner le modèle en fonction des retours
-- Adapter le code aux changements de compréhension
+- Continuous collaboration with the business
+- Refine the model based on feedback
+- Adapt code to changes in understanding
 
-## Anti-Patterns à Éviter
+## Anti-Patterns to Avoid
 
 ### 1. Anemic Domain Model
 
-Un modèle où les entités ne contiennent que des données sans comportement.
+A model where entities contain only data without behavior.
 
-**❌ Mauvais :**
+**❌ Bad:**
 
 ```typescript
 interface Order {
@@ -363,7 +363,7 @@ interface Order {
   total: number;
 }
 
-// Logique métier dans un service
+// Business logic in a service
 class OrderService {
   calculateTotal(order: Order): number {
     // ...
@@ -371,7 +371,7 @@ class OrderService {
 }
 ```
 
-**✅ Bon :**
+**✅ Good:**
 
 ```typescript
 class Order {
@@ -381,33 +381,33 @@ class Order {
   ) {}
 
   calculateTotal(): Money {
-    // Logique métier dans l'entité
+    // Business logic in the entity
   }
 }
 ```
 
 ### 2. God Object
 
-Un objet qui en sait trop ou fait trop de choses.
+An object that knows too much or does too many things.
 
-**Solution :** Diviser en agrégats plus petits et cohérents.
+**Solution:** Divide into smaller, cohesive aggregates.
 
-### 3. Ignorer les Bounded Contexts
+### 3. Ignoring Bounded Contexts
 
-Mélanger des concepts de différents contextes dans un seul modèle.
+Mixing concepts from different contexts in a single model.
 
-**Solution :** Définir clairement les limites et créer des modèles séparés.
+**Solution:** Define clear boundaries and create separate models.
 
-## Ressources Complémentaires
+## Additional Resources
 
-- **Livre de référence :** "Domain-Driven Design" par Eric Evans
-- **Livre pratique :** "Implementing Domain-Driven Design" par Vaughn Vernon
-- **Documentation projet :** Voir les règles d'architecture dans `.windsurf/rules/`
+- **Reference book:** "Domain-Driven Design" by Eric Evans
+- **Practical book:** "Implementing Domain-Driven Design" by Vaughn Vernon
+- **Project documentation:** See architecture rules in `.windsurf/rules/`
 
-## Application dans Notre Projet
+## Application in Our Project
 
-Notre projet utilise DDD en combinaison avec l'architecture hexagonale. Consultez les documents suivants pour plus de détails :
+Our project uses DDD in combination with hexagonal architecture. See the following documents for more details:
 
-- `@.windsurf/rules/01-architecture-hexagonale.md` - Architecture globale
-- `@.windsurf/rules/02-feature-folders-structure.md` - Organisation des features
-- `@docs/use-cases/` - Exemples de cas d'utilisation
+- `@.windsurf/rules/01-architecture-hexagonale.md` - Overall architecture
+- `@.windsurf/rules/02-feature-folders-structure.md` - Feature organization
+- `@docs/use-cases/` - Use case examples
