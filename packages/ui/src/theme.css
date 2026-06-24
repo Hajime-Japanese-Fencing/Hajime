@@ -1,2 +1,4 @@
 @import "tailwindcss";
+@source "./components";
+@source inline("btn btn-primary btn-secondary btn-accent btn-ghost btn-outline btn-xs btn-sm btn-lg");
 @plugin "daisyui";

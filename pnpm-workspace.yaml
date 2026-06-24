@@ -8,6 +8,7 @@ catalogMode: prefer
 catalog:
   "@types/node": ^24
   "@tanstack/store": ^0.7.1
+  "@tailwindcss/vite": ^4.1.11
   "@vitejs/plugin-vue": ^6.0.6
   daisyui: ^5.0.43
   tailwindcss: ^4.1.11
@@ -15,6 +16,8 @@ catalog:
   vite: npm:@voidzero-dev/vite-plus-core@latest
   vitest: 4.1.9
   vite-plus: latest
+  unplugin-vue: ^7.2.0
+  vue-tsc: ^3.3.5
 overrides:
   vite: "catalog:"
   vitest: "catalog:"
