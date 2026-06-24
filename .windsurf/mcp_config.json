@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "context7": {
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ],
+      "command": "npx",
+      "disabled": true
+    },
+    "daisyui-github": {
+      "serverUrl": "https://gitmcp.io/saadeghi/daisyui"
+    },
+    "vue-docs": {
+      "url": "https://mcp.vue-mcp.org/mcp"
+    }
+  }
+}
