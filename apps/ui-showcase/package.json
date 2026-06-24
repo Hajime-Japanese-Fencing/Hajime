@@ -1,5 +1,5 @@
 {
-  "name": "@hajime/main",
+  "name": "@hajime/ui-showcase",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,6 @@
     "preview": "vp preview"
   },
   "dependencies": {
-    "@hajime/core": "workspace:*",
     "@hajime/ui": "workspace:*",
     "vue": "^3.5.34"
   },

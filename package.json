@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "ready": "vp check && vp run -r test && vp run -r build",
-    "dev": "vp run -r --parallel dev"
+    "dev:main": "vp run --parallel -F @hajime/main -F @hajime/ui -F @hajime/core dev",
+    "dev:ui": "vp run --parallel -F @hajime/ui-showcase -F @hajime/ui dev"
   },
   "devDependencies": {
     "vite-plus": "catalog:"
