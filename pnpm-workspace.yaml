@@ -7,6 +7,10 @@ catalogMode: prefer
 
 catalog:
   "@types/node": ^24
+  "@tanstack/store": ^0.7.1
+  "@vitejs/plugin-vue": ^6.0.6
+  daisyui: ^5.0.43
+  tailwindcss: ^4.1.11
   typescript: ^5
   vite: npm:@voidzero-dev/vite-plus-core@latest
   vitest: 4.1.9
