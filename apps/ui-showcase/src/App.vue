@@ -1,5 +1,36 @@
 <script setup lang="ts">
 import { Button } from "@hajime/ui";
+import RankingDetails from "@hajime/ui/src/components/ranking-details.vue";
+import {ref} from "vue";
+
+const fighters = ref(
+    [
+      {
+        number: 1,
+        fighterName: "john",
+        points: 2,
+        nbVictories: 3,
+        nbGivenIppons: 4,
+        nbReceivedIppons: 2
+      },
+      {
+        number: 2,
+        fighterName: "dave",
+        points: -1,
+        nbVictories: 1,
+        nbGivenIppons: 2,
+        nbReceivedIppons: 4
+      },
+      {
+        number: 2,
+        fighterName: "dave",
+        points: -1,
+        nbVictories: 1,
+        nbGivenIppons: 2,
+        nbReceivedIppons: 4
+      },
+    ])
+
 </script>
 
 <template>
@@ -33,6 +64,11 @@ import { Button } from "@hajime/ui";
         <Button disabled>Disabled</Button>
         <Button variant="secondary" disabled>Disabled Secondary</Button>
       </div>
+    </section>
+
+    <section class="flex flex-col gap-4">
+      <h2 class="text-xl font-semibold">Mon composant</h2>
+      <ranking-details v-model="fighters"></ranking-details>
     </section>
   </main>
 </template>
