@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { Button } from "@hajime/ui";
+import { Button, FightList } from "@hajime/ui";
+
+
 </script>
 
 <template>
   <main class="min-h-screen bg-base-200 p-10 flex flex-col gap-8">
     <h1 class="text-3xl font-bold">UI Showcase — Button</h1>
+
+    <section>
+      <h2 class="text-xl font-semibold">Liste des combats</h2>
+      <FightList fights="" />
+    </section>
 
     <section class="flex flex-col gap-4">
       <h2 class="text-xl font-semibold">Variants</h2>
