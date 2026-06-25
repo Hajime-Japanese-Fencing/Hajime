@@ -1,7 +1,29 @@
 <script setup lang="ts">
 import { Button, FightList } from "@hajime/ui";
 
-
+const fights = [
+  {
+    id: 1,
+    fighter1: "Tanaka",
+    fighter2: "Suzuki",
+    score: null,
+    status: "Waiting",
+  },
+  {
+    id: 2,
+    fighter1: "Yamamoto",
+    fighter2: "Sato",
+    score: "2 - 1",
+    status: "Finished",
+  },
+  {
+    id: 3,
+    fighter1: "Ito",
+    fighter2: "Kobayashi",
+    score: null,
+    status: "In Progress",
+  },
+];
 </script>
 
 <template>
@@ -10,7 +32,7 @@ import { Button, FightList } from "@hajime/ui";
 
     <section>
       <h2 class="text-xl font-semibold">Liste des combats</h2>
-      <FightList fights="" />
+      <FightList fights="fights"/>
     </section>
 
     <section class="flex flex-col gap-4">
