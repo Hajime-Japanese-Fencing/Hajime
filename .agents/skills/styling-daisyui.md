@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+name: styling-daisyui
+description: Règles de style avec DaisyUI et Tailwind CSS (priorité DaisyUI > Tailwind). Utilise quand tu crées ou modifies des composants Vue pour appliquer les classes et tokens de design system dans le bon ordre de priorité.
 ---
 
 # Styling with DaisyUI and Tailwind CSS

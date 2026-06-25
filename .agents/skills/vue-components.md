@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+name: vue-components
+description: Règles de création de composants Vue (dumb components, business components, composables). Utilise quand tu crées ou modifies un composant Vue pour respecter la séparation des responsabilités et les conventions du projet.
 ---
 
 # Vue Component Rules

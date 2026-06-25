@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+name: tanstack-usage
+description: Guide de choix entre TanStack Store et TanStack Query. Utilise quand tu gères de l'état ou des données distantes pour choisir le bon outil selon le contexte (état local/partagé vs données serveur).
 ---
 
 # TanStack Store vs TanStack Query - When to Use Which

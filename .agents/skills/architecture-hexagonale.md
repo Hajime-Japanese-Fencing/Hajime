@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+name: architecture-hexagonale
+description: Règles d'architecture hexagonale adaptées au frontend. Utilise quand tu crées ou modifies des fichiers source pour respecter la règle de dépendance (domaine → ports → adapters), le découpage vertical par feature et l'isolation des effets de bord.
 ---
 
 # Hexagonal Architecture Adapted for Frontend

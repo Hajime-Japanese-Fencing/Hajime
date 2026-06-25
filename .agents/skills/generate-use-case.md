@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+name: generate-use-case
+description: Génère un document de spécification de use case et le sauvegarde dans docs/use-cases/. Utilise quand l'utilisateur demande de créer ou documenter un nouveau use case.
 ---
 
 # Generate Use Case Document
