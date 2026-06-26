@@ -18,6 +18,7 @@ catalog:
   vite-plus: latest
   unplugin-vue: ^7.2.0
   vue-tsc: ^3.3.5
+  vue-icons-plus: ^0.1.9
 overrides:
   vite: "catalog:"
   vitest: "catalog:"
