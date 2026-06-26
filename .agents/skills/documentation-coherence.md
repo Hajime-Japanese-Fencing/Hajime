@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+name: documentation-coherence
+description: Règles de cohérence entre les documents du projet (project brief, index des use cases, etc.). Utilise quand tu crées ou modifies de la documentation pour vérifier et maintenir la cohérence entre tous les documents existants.
 ---
 
 # Documentation Coherence

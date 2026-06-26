@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+name: testing-strategy
+description: Stratégie de tests avec Vitest (tester le comportement métier, pas l'implémentation technique). Utilise quand tu écris ou révises des tests pour respecter les règles de couverture et de structure selon le type de code (use case, store, composant).
 ---
 
 # Testing Strategy with Vitest
