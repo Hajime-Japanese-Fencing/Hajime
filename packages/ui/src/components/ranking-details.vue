@@ -1,15 +1,15 @@
 <script setup lang="ts">
   import Button from "./Button.vue";
-  import {ref} from "vue";
+  import CgDetailsMore from "vue-icons-plus/sl";
+  import type {IFighterPoints} from "./fighterPoints.interface.ts";
 
-  const fighters = defineModel()
-  const isOpen = ref(true)
+  const fighters = defineModel<IFighterPoints[]>()
 
 
 </script>
 
 <template>
-  <Button onclick="modal1.showModal()">Open</Button>
+  <Button variant="ghost" onclick="modal1.showModal()"><CgDetailsMore></CgDetailsMore></Button>
 
   <dialog id="modal1" class="modal">
     <div class="modal-box bg-black text-neutral-300 p-10 min-w-max">
@@ -33,8 +33,8 @@
           </tr>
           </thead>
           <tbody>
-          <tr v-for="fighter in fighters">
-            <td>{{ fighter.number }}</td>
+          <tr v-for="(fighter, index) in fighters">
+            <td>{{ index + 1 }}</td>
             <td>{{ fighter.fighterName }}</td>
             <td>{{ fighter.points }}</td>
             <td>{{ fighter.nbVictories }}</td>

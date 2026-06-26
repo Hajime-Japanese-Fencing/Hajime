@@ -6,7 +6,6 @@ import {ref} from "vue";
 const fighters = ref(
     [
       {
-        number: 1,
         fighterName: "john",
         points: 2,
         nbVictories: 3,
@@ -14,7 +13,6 @@ const fighters = ref(
         nbReceivedIppons: 2
       },
       {
-        number: 2,
         fighterName: "dave",
         points: -1,
         nbVictories: 1,
@@ -22,7 +20,6 @@ const fighters = ref(
         nbReceivedIppons: 4
       },
       {
-        number: 2,
         fighterName: "dave",
         points: -1,
         nbVictories: 1,
