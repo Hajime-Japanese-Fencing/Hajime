@@ -9,17 +9,20 @@
 </script>
 
 <template>
-  <div class="bg-black text-neutral-300 p-10 w-max" v-show="isOpen">
+  <Button onclick="modal1.showModal()">Open</Button>
 
-    <div class="flex justify-end">
-      <Button variant="ghost" size="xs" @click="isOpen=false">X</Button>
-    </div>
+  <dialog id="modal1" class="modal">
+    <div class="modal-box bg-black text-neutral-300 p-10 min-w-max">
 
-    <h2 class="card-title mb-2">Ranking details</h2>
+      <form class="flex justify-end">
+        <Button variant="ghost" size="xs">X</Button>
+      </form>
 
-    <div id="content" class="mb-5">
-      <table class="table w-auto">
-        <thead class="text-neutral-300">
+      <h2 class="card-title mb-2">Ranking details</h2>
+
+      <div id="content" class="mb-5">
+        <table class="table w-auto">
+          <thead class="text-neutral-300">
           <tr>
             <td>#</td>
             <td>Name</td>
@@ -28,8 +31,8 @@
             <td>Ippons Given</td>
             <td>Ippons Received</td>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           <tr v-for="fighter in fighters">
             <td>{{ fighter.number }}</td>
             <td>{{ fighter.fighterName }}</td>
@@ -38,16 +41,18 @@
             <td>{{ fighter.nbGivenIppons }}</td>
             <td>{{ fighter.nbReceivedIppons }}</td>
           </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+
+      </div>
+      <form method="dialog" class="flex justify-end">
+        <Button variant="primary">Close</Button>
+      </form>
+
 
     </div>
-    <div class="flex justify-end">
-      <Button variant="primary" @click="isOpen=false">Close</Button>
-    </div>
+  </dialog>
 
-
-  </div>
 </template>
 
 <style scoped>
