@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Button, Modal } from "@hajime/ui";
 import {ref} from "vue";
+import type {FighterPoints, ModalContent} from "@hajime/ui";
 
-const fighters = ref(
+const fighters = ref<FighterPoints>(
     [
       {
         fighterName: "john",
@@ -26,6 +27,12 @@ const fighters = ref(
         nbReceivedIppons: 4
       },
     ])
+const rankingDetailsContent = ref<ModalContent>(
+    {
+      name: "Ranking Details",
+      content: fighters
+    }
+)
 
 </script>
 
@@ -64,7 +71,7 @@ const fighters = ref(
 
     <section class="flex flex-col gap-4">
       <h2 class="text-xl font-semibold">Mon composant</h2>
-      <Modal v-model="fighters"></Modal>
+      <Modal v-model="rankingDetailsContent"></Modal>
     </section>
   </main>
 </template>

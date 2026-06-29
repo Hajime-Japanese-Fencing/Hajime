@@ -2,13 +2,10 @@
 import Button from "./Button.vue";
 import {CgDetailsMore} from "vue-icons-plus/cg";
 import {EpCloseBold} from "vue-icons-plus/ep";
-import type {IFighterPoints} from "./fighter-points.interface.ts";
 import RankingDetails from "./RankingDetails.vue";
+import type {ModalContent} from "./modal-content.interface.ts";
 
-const fighters = defineModel<IFighterPoints[]>()
-const modalContent = ({
-  name:'nom'
-})
+const modalContent = defineModel<ModalContent>()
 
 </script>
 
@@ -25,7 +22,7 @@ const modalContent = ({
       <h2 class="card-title mb-2">{{ modalContent.name }}</h2>
 
       <div id="content" class="mb-5">
-        <ranking-details v-model="fighters"></ranking-details>
+        <ranking-details v-model="modalContent.content"></ranking-details>
       </div>
 
       <form method="dialog" class="flex justify-end">

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import type {IFighterPoints} from "./fighter-points.interface.ts";
+  import type {FighterPoints} from "./fighter-points.interface.ts";
 
-  const fighters = defineModel<IFighterPoints[]>()
+  const fighters = defineModel<FighterPoints[]>()
 
 </script>
 
