@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
-import IpponButtons from "../IpponButtons.vue";
 import { BiArchiveOut } from 'vue-icons-plus/bi'
 import { BsEye } from 'vue-icons-plus/bs'
+import IpponButtons from "./IpponButtons.vue";
 
 interface Fight {
   id: number;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button, FightList } from "@hajime/ui";
+import { Button, FightRow } from "@hajime/ui";
 import {ref} from "vue";
 
 const fights = ref([
@@ -84,8 +84,30 @@ function onForfeitFight() {}
 
     <section>
       <h2 class="text-xl font-semibold">Liste des combats (table)</h2>
-      <FightList :fights="fights" :activeFightId="activeFightId" @toggleFight="onToggleFight"
-      @cancelFight="onCancelFight" @validateFight="onValidateFight" @forfeitFight="onForfeitFight"/>
+      <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+        <table class="table">
+          <thead>
+          <tr>
+            <th class="text-right">Red</th>
+            <th class="text-center">↔</th>
+            <th class="text-left">White</th>
+            <th class="">Status</th>
+            <th class=""></th>
+          </tr>
+          </thead>
+          <tbody>
+          <FightRow
+              :fight="fight"
+              :active="activeFightId === fight.id"
+              @toggleFight="onToggleFight"
+              @cancelFight="onCancelFight"
+              @validateFight="onValidateFight"
+              @forfeitFight="onForfeitFight"
+              v-for="fight in fights" :key="fight.id"
+          />
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section class="flex flex-col gap-4">
