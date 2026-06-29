@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+name: feature-folders-structure
+description: Convention d'organisation des fichiers par feature (vertical slicing). Utilise quand tu crées un nouveau module, feature ou fichier pour respecter la structure de dossiers attendue et éviter l'organisation horizontale par couche technique.
 ---
 
 # Feature Folders Structure - Module Organization

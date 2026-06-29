@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+name: dependency-injection
+description: Règles d'injection de dépendances et d'inversion de contrôle (DIP). Utilise quand tu crées ou modifies des services, use cases ou composants pour t'assurer que les dépendances sont injectées via des interfaces (ports) plutôt qu'instanciées directement.
 ---
 
 # Dependency Injection and Inversion

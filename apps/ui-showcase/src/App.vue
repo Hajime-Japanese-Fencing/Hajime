@@ -1,6 +1,39 @@
 <script setup lang="ts">
-import { Button, FightRow } from "@hajime/ui";
+import { Button, Modal, FightRow } from "@hajime/ui";
 import {ref} from "vue";
+import type {FighterPoints, ModalContent} from "@hajime/ui";
+
+const fighters = ref<FighterPoints>(
+    [
+      {
+        fighterName: "john",
+        points: 2,
+        nbVictories: 3,
+        nbGivenIppons: 4,
+        nbReceivedIppons: 2
+      },
+      {
+        fighterName: "dave",
+        points: -1,
+        nbVictories: 1,
+        nbGivenIppons: 2,
+        nbReceivedIppons: 4
+      },
+      {
+        fighterName: "dave",
+        points: -1,
+        nbVictories: 1,
+        nbGivenIppons: 2,
+        nbReceivedIppons: 4
+      },
+    ])
+const rankingDetailsContent = ref<ModalContent>(
+    {
+      name: "Ranking Details",
+      content: fighters
+    }
+)
+
 
 const fights = ref([
   {
@@ -137,6 +170,11 @@ function onForfeitFight() {}
         <Button disabled>Disabled</Button>
         <Button variant="secondary" disabled>Disabled Secondary</Button>
       </div>
+    </section>
+
+    <section class="flex flex-col gap-4">
+      <h2 class="text-xl font-semibold">Mon composant</h2>
+      <Modal v-model="rankingDetailsContent"></Modal>
     </section>
   </main>
 </template>

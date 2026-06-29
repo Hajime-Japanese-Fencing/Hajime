@@ -1,5 +1,6 @@
 ---
-trigger: always_on
+name: domain-driven-design
+description: Concepts et règles DDD appliqués au projet (langage ubiquitaire, bounded contexts, entités, value objects, agrégats). Utilise quand tu modélises le domaine métier, nommes des concepts ou structures des modules.
 ---
 
 # Domain-Driven Design (DDD)
