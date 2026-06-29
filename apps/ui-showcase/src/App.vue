@@ -2,7 +2,7 @@
 import { Button, FightList } from "@hajime/ui";
 import {ref} from "vue";
 
-const fights = [
+const fights = ref([
   {
     id: 1,
     fighter1: "Tanaka",
@@ -22,19 +22,60 @@ const fights = [
     fighter1: "Ito",
     fighter2: "Kobayashi",
     score: null,
-    status: "In Progress",
+    status: "Waiting",
   },
-];
+]);
 
 const activeFightId = ref<number | null>(null);
 
-function toggleFight(id: number) {
+function onToggleFight(id: number) {
   if (activeFightId.value === id) {
     activeFightId.value = null;
   } else {
+    const fight = fights.value.find(f => f.id === id);
+
+    if (!fight) {
+      return;
+    }
+
+    if (fight.status !== "Finished") {
+      fight.status = "In progress";
+    }
+
     activeFightId.value = id;
   }
 }
+
+function onCancelFight(id: number) {
+  const fight = fights.value.find(f => f.id === id);
+
+  if (!fight) {
+    return;
+  }
+
+  if (fight.status !== "Finished") {
+    fight.status = "Waiting";
+  }
+
+  activeFightId.value = null;
+}
+
+function onValidateFight(id: number) {
+  const fight = fights.value.find(f => f.id === id);
+
+  if (!fight) {
+    return;
+  }
+
+  if (fight.status !== "Finished") {
+    fight.status = "Finished";
+  }
+
+  activeFightId.value = null;
+}
+
+function onForfeitFight() {}
+
 </script>
 
 <template>
@@ -43,7 +84,8 @@ function toggleFight(id: number) {
 
     <section>
       <h2 class="text-xl font-semibold">Liste des combats (table)</h2>
-      <FightList :fights="fights" :activeFightId="activeFightId" @toggleFight="toggleFight"/>
+      <FightList :fights="fights" :activeFightId="activeFightId" @toggleFight="onToggleFight"
+      @cancelFight="onCancelFight" @validateFight="onValidateFight" @forfeitFight="onForfeitFight"/>
     </section>
 
     <section class="flex flex-col gap-4">

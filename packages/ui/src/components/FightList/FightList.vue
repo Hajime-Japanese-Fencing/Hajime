@@ -17,17 +17,32 @@ defineProps<{
 
 const emit = defineEmits<{
   (e: "toggleFight", id: number): void;
+  (e: "cancelFight", id: number): void;
+  (e: "validateFight", id: number): void;
+  (e: "forfeitFight", id: number): void;
 }>();
 
 function onToggleFight(id: number) {
   emit("toggleFight", id);
 }
 
+function onCancelFight(id: number) {
+  emit("cancelFight", id);
+}
+
+function onValidateFight(id: number) {
+  emit("validateFight", id);
+}
+
+function onForfeitFight(id: number) {
+  emit("forfeitFight", id);
+}
+
 </script>
 <template>
   <!-- Table -->
-  <div class="overflow-x-auto">
-    <table class="table ">
+  <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+    <table class="table">
       <thead>
       <tr>
         <th class="text-right">Red</th>
@@ -42,6 +57,9 @@ function onToggleFight(id: number) {
             :fight="fight"
             :active="activeFightId === fight.id"
             @toggleFight="onToggleFight"
+            @cancelFight="onCancelFight"
+            @validateFight="onValidateFight"
+            @forfeitFight="onForfeitFight"
             v-for="fight in fights" :key="fight.id"
         />
       </tbody>
