@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Button, FightList } from "@hajime/ui";
+import {ref} from "vue";
 
 const fights = [
   {
@@ -24,6 +25,16 @@ const fights = [
     status: "In Progress",
   },
 ];
+
+const activeFightId = ref<number | null>(null);
+
+function toggleFight(id: number) {
+  if (activeFightId.value === id) {
+    activeFightId.value = null;
+  } else {
+    activeFightId.value = id;
+  }
+}
 </script>
 
 <template>
@@ -31,8 +42,8 @@ const fights = [
     <h1 class="text-3xl font-bold">UI Showcase — Button</h1>
 
     <section>
-      <h2 class="text-xl font-semibold">Liste des combats</h2>
-      <FightList fights="fights"/>
+      <h2 class="text-xl font-semibold">Liste des combats (table)</h2>
+      <FightList :fights="fights" :activeFightId="activeFightId" @toggleFight="toggleFight"/>
     </section>
 
     <section class="flex flex-col gap-4">

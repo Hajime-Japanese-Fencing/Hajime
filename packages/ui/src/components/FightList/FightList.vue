@@ -1,4 +1,7 @@
 <script setup lang="ts">
+
+import FightRow from "../FightRow/FightRow.vue";
+
 interface Fight {
   id: number;
   fighter1: string;
@@ -7,36 +10,40 @@ interface Fight {
   status: string;
 }
 
-interface Props {
+defineProps<{
   fights: Fight[];
+  activeFightId: number | null;
+}>();
+
+const emit = defineEmits<{
+  (e: "toggleFight", id: number): void;
+}>();
+
+function onToggleFight(id: number) {
+  emit("toggleFight", id);
 }
 
-defineProps<Props>();
 </script>
-
 <template>
   <!-- Table -->
   <div class="overflow-x-auto">
-    <table class="table table-zebra">
+    <table class="table ">
       <thead>
       <tr>
-        <th>Red</th>
-        <th>↔</th>
-        <th>White</th>
-        <th>Status</th>
-        <th></th>
+        <th class="text-right">Red</th>
+        <th class="text-center">↔</th>
+        <th class="text-left">White</th>
+        <th class="">Status</th>
+        <th class=""></th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="fight in fights" :key="fight.id" class="hover:bg-base-300">
-        <td>{{ fight.fighter1 }}</td>
-        <td>{{ fight.score ? fight.score : "VS" }}</td>
-        <td>{{ fight.fighter2  }}</td>
-        <td>{{ fight.status }}</td>
-        <td>
-          <button class="btn btn-ghost btn-xs">📂</button>
-        </td>
-      </tr>
+        <FightRow
+            :fight="fight"
+            :active="activeFightId === fight.id"
+            @toggleFight="onToggleFight"
+            v-for="fight in fights" :key="fight.id"
+        />
       </tbody>
     </table>
   </div>
