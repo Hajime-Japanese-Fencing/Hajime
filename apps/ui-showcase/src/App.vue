@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { Button } from "@hajime/ui";
+import { Button, Modal } from "@hajime/ui";
 import {ref} from "vue";
-import { Modal } from '@hajime/ui';
-import { RankingDetails } from "@hajime/ui";
 
 const fighters = ref(
     [

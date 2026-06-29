@@ -18,10 +18,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(fighter, index) in fighters"
-        :class="index % 2 === 0 ?
-        'bg-base-500 border-y border-base-100/60' :
-        'bg-base-300'">
+      <tr v-for="(fighter, index) in fighters">
         <td>{{ index + 1 }}</td>
         <td>{{ fighter.fighterName }}</td>
         <td>{{ fighter.points }}</td>
