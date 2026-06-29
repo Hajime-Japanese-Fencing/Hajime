@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Button } from "@hajime/ui";
-import RankingDetails from "@hajime/ui/src/components/ranking-details.vue";
 import {ref} from "vue";
+import { Modal } from '@hajime/ui';
+import { RankingDetails } from "@hajime/ui";
 
 const fighters = ref(
     [
@@ -65,7 +66,7 @@ const fighters = ref(
 
     <section class="flex flex-col gap-4">
       <h2 class="text-xl font-semibold">Mon composant</h2>
-      <ranking-details v-model="fighters"></ranking-details>
+      <Modal v-model="fighters"></Modal>
     </section>
   </main>
 </template>
