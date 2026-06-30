@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Button from "./Button.vue";
+import Button from "../Button.vue";
 import {CgDetailsMore} from "vue-icons-plus/cg";
 import {EpCloseBold} from "vue-icons-plus/ep";
-import RankingDetails from "./RankingDetails.vue";
+import RankingDetails from "../RankingDetails/RankingDetails.vue";
 import type {ModalContent} from "./modal-content.interface.ts";
 
 const modalContent = defineModel<ModalContent>()
