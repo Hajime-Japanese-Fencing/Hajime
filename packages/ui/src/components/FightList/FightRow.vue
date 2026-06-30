@@ -3,6 +3,7 @@
 import { BiArchiveOut } from 'vue-icons-plus/bi'
 import { BsEye } from 'vue-icons-plus/bs'
 import IpponButtons from "./IpponButtons.vue";
+import DropdownComboButton from "./DropdownComboButton.vue";
 
 interface Fight {
   id: number;
@@ -11,6 +12,8 @@ interface Fight {
   score: string | null;
   status: string;
 }
+
+type Action = "validate" | "cancel" | "forfeit";
 
 defineProps<{
   fight: Fight;
@@ -32,6 +35,20 @@ function addRightIppon(code: string) {
   console.log("right", code);
 }
 
+function handleAction(id: number, action: Action) {
+  switch (action) {
+    case "validate":
+      emit("validateFight", id)
+      break;
+    case "cancel":
+      emit("cancelFight", id)
+      break;
+    case "forfeit":
+      emit("forfeitFight", id)
+      break;
+  }
+}
+
 </script>
 
 <template>
@@ -39,60 +56,71 @@ function addRightIppon(code: string) {
 
     <td class="align-top">
       <div class="grid grid-rows-[auto_1fr_auto] h-full">
-        <!-- Nom -->
-        <div class="text-right font-medium">
-          {{ fight.fighter1 }}
-        </div>
-        <!-- Boutons -->
-        <div v-if="active" class="flex justify-end gap-2 mt-6">
-          <IpponButtons @addIppon="addLeftIppon"/>
-        </div>
-        <div class="flex flex-col min-h-28 p-4" v-if="active">
-          <!-- Ippons -->
-          <div class="flex flex-1 justify-center items-center gap-3 my-8">
-            <div class="btn btn-circle btn-lg btn-outline">M</div>
-            <div class="btn btn-circle btn-lg btn-ghost">K</div>
+
+        <div class="grid grid-cols-[auto_1fr] items-center">
+          <!-- Boutons -->
+          <div class="w-48">
+            <span v-if="active" class="gap-2">
+              <IpponButtons @addIppon="addLeftIppon"/>
+            </span>
           </div>
-          <!-- Hansoku -->
-          <div class="flex justify-end gap-2">
-            <div class="btn btn-circle btn-sm btn-ghost">
-              Δ
-            </div>
-          </div>
+          <!-- Nom -->
+          <span class="text-right font-medium justify-self-end">
+            {{ fight.fighter1 }}
+          </span>
         </div>
+
+        <!-- Hansoku -->
+        <div class="flex justify-start gap-2 mt-4" v-if="active">
+          <span class="btn btn-circle btn-sm btn-ghost">
+            Δ
+          </span>
+        </div>
+
       </div>
     </td>
 
-    <td class="align-top">
+    <td class="w-40 align-top">
       <div class="grid grid-rows-[auto_1fr_auto]">
         <div class="text-center font-semibold">
           {{ fight.score ?? "VS" }}
         </div>
-        <div v-if="active"></div>
-        <div v-if="active"></div>
+        <div v-if="active" class="grid grid-cols-[1fr_auto_1fr] items-center mt-4">
+          <!-- Ippons left fighter -->
+          <div class="flex justify-end gap-2 mr-3">
+            <span class="btn btn-circle btn-md btn-ghost">K</span>
+            <span class="btn btn-circle btn-md btn-outline">M</span>
+          </div>
+          <div></div>
+          <!-- Ippons right fighter -->
+          <div class="flex justify-start gap-2 ml-3">
+            <span class="btn btn-circle btn-md btn-ghost">D</span>
+          </div>
+        </div>
       </div>
     </td>
 
     <td class="align-top">
       <div class="grid grid-rows-[auto_1fr_auto] h-full">
-        <!-- Nom -->
-        <div class="text-left font-medium">
-          {{ fight.fighter1 }}
-        </div>
-        <!-- Boutons -->
-        <div v-if="active" class="flex justify-start gap-2 mt-6">
-          <IpponButtons @addIppon="addRightIppon"/>
-        </div>
-        <div class="flex flex-col min-h-28 p-4" v-if="active">
-          <!-- Ippons -->
-          <div class="flex flex-1 justify-center items-center gap-3 my-8">
-            <div class="btn btn-circle btn-lg btn-ghost">D</div>
+
+        <div class="grid grid-cols-[1fr_auto] items-center">
+          <!-- Nom -->
+          <span class="text-left font-medium justify-self-start">
+            {{ fight.fighter2 }}
+          </span>
+          <!-- Boutons -->
+          <div class="w-48">
+            <span v-if="active" class="gap-2">
+              <IpponButtons @addIppon="addRightIppon"/>
+            </span>
           </div>
-          <!-- Hansoku -->
-          <div class="flex justify-start gap-2">
-            <div class="btn btn-circle btn-sm btn-ghost">
-              Δ
-            </div>
+
+        </div>
+
+        <!-- Hansoku -->
+        <div class="flex justify-end gap-2 mt-4" v-if="active">
+          <div class="btn btn-circle btn-sm btn-ghost">
+            Δ
           </div>
         </div>
       </div>
@@ -110,16 +138,9 @@ function addRightIppon(code: string) {
         </button>
       </div>
       <div v-else class="flex flex-col gap-3 items-center justify-center ">
-        <button class="btn btn-outline btn-sm w-24" @click="emit('cancelFight', fight.id)">
-          Cancel
-        </button>
-        <button class="btn btn-primary btn-sm w-24" @click="emit('validateFight', fight.id)">
-          Validate
-        </button>
-        <button class="btn btn-secondary btn-sm w-24" @click="emit('forfeitFight', fight.id)">
-          Forfeit
-        </button>
+        <DropdownComboButton :id="fight.id" @action="handleAction"/>
       </div>
+
     </td>
 
   </tr>
