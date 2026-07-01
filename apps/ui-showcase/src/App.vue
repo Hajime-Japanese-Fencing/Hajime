@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Button, Modal, FightRow } from "@hajime/ui";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import type {FighterPoints, ModalContent} from "@hajime/ui";
+import { CgArrowsExchange } from 'vue-icons-plus/cg'
 
 const fighters = ref<FighterPoints>(
     [
@@ -110,6 +111,18 @@ function setFightStatus(id: number, status: FightStatus) {
   fight.status = status;
 }
 
+const leftSide = ref<"Red" | "White">("Red")
+
+const rightSide = computed(() =>
+    leftSide.value === "Red" ? "White" : "Red"
+)
+
+function swapColors() {
+  leftSide.value = leftSide.value === "Red"
+      ? "White"
+      : "Red"
+}
+
 </script>
 
 <template>
@@ -122,9 +135,13 @@ function setFightStatus(id: number, status: FightStatus) {
         <table class="table border-solid border-2">
           <thead>
           <tr>
-            <th class="text-right">Red</th>
-            <th class="text-center w-40">↔</th>
-            <th class="text-left">White</th>
+            <th class="text-right">{{ leftSide }}</th>
+            <th class="text-center w-40">
+              <button @click="swapColors">
+                <CgArrowsExchange />
+              </button>
+            </th>
+            <th class="text-left">{{ rightSide }}</th>
             <th class="">Status</th>
             <th class=""></th>
           </tr>
