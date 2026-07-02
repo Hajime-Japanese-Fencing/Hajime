@@ -4,6 +4,7 @@ import { BiArchiveOut } from 'vue-icons-plus/bi'
 import { BsEye } from 'vue-icons-plus/bs'
 import IpponButtons from "./IpponButtons.vue";
 import DropdownComboButton from "./DropdownComboButton.vue";
+import Badge from "./Badge.vue";
 
 interface Fight {
   id: number;
@@ -14,6 +15,7 @@ interface Fight {
 }
 
 type Action = "validate" | "cancel" | "forfeit";
+type BadgeColor = "primary" | "secondary" | "accent" | "neutral" | "success" | "info" | "warning" | "error";
 
 defineProps<{
   fight: Fight;
@@ -48,6 +50,12 @@ function handleAction(id: number, action: Action) {
       break;
   }
 }
+
+const statusColors: Record<string, BadgeColor> = {
+  "Waiting": "info",
+  "In progress": "accent",
+  "Finished": "success",
+};
 
 </script>
 
@@ -127,7 +135,9 @@ function handleAction(id: number, action: Action) {
     </td>
 
     <td class="align-top">
-      {{ fight.status }}
+      <Badge :color="statusColors[fight.status]" variant="outline">
+        {{ fight.status }}
+      </Badge>
     </td>
 
     <td class="align-top">
