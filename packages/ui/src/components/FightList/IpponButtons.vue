@@ -20,7 +20,7 @@
 </script>
 
 <template>
-  <div class="flex justify-center gap-2">
+  <div class="flex justify-center gap-1">
     <button
         v-for="ippon in ippons"
         :key="ippon.code"

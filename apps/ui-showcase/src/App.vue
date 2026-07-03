@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Button, FightRow, PoolCard } from "@hajime/ui";
-import {ref} from "vue";
 import type {FighterDetails} from "@hajime/ui/src/components/PoolCard/fighter-details.interface.ts";
 import type {PoolDetails} from "@hajime/ui/src/components/PoolCard/pool-details.interface.ts";
 import type {FighterPoints} from "@hajime/ui/src/components/RankingDetails/fighter-points.interface.ts";
+import { Button, Modal, FightRow } from "@hajime/ui";
+import {computed, ref} from "vue";
+import { CgArrowsExchange } from 'vue-icons-plus/cg'
 
 const fighterPoints = ref<FighterPoints>(
     [
@@ -55,8 +56,8 @@ const fighters = ref<FighterDetails[]>(
 
 const poolDetails = ref<PoolDetails>(
     {
-      poolId: 1,
-      fighters: fighters
+      name: "Ranking Details",
+      content: fighters
     }
 )
 
@@ -97,10 +98,6 @@ function onToggleFight(id: number) {
       return;
     }
 
-    if (fight.status !== "Finished") {
-      fight.status = "In progress";
-    }
-
     activeFightId.value = id;
   }
 }
@@ -112,10 +109,7 @@ function onCancelFight(id: number) {
     return;
   }
 
-  if (fight.status !== "Finished") {
-    fight.status = "Waiting";
-  }
-
+  setFightStatus(id, "Waiting");
   activeFightId.value = null;
 }
 
@@ -126,14 +120,34 @@ function onValidateFight(id: number) {
     return;
   }
 
-  if (fight.status !== "Finished") {
-    fight.status = "Finished";
-  }
-
+  setFightStatus(id, "Finished");
   activeFightId.value = null;
 }
 
 function onForfeitFight() {}
+
+type FightStatus = "Waiting" | "In progress" | "Finished";
+
+function setFightStatus(id: number, status: FightStatus) {
+  const fight = fights.value.find(f => f.id === id);
+
+  if (!fight || fight.status === "Finished") return;
+
+  // TODO: remplacer par l'appel API lorsque le backend sera prêt
+  fight.status = status;
+}
+
+const leftSide = ref<"Red" | "White">("Red")
+
+const rightSide = computed(() =>
+    leftSide.value === "Red" ? "White" : "Red"
+)
+
+function swapColors() {
+  leftSide.value = leftSide.value === "Red"
+      ? "White"
+      : "Red"
+}
 
 </script>
 
@@ -142,14 +156,18 @@ function onForfeitFight() {}
     <h1 class="text-3xl font-bold">UI Showcase — Button</h1>
 
     <section>
-      <h2 class="text-xl font-semibold">Liste des combats (table)</h2>
+      <h2 class="text-xl font-semibold">Fight list</h2>
       <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
-        <table class="table">
+        <table class="table border-solid border-2">
           <thead>
           <tr>
-            <th class="text-right">Red</th>
-            <th class="text-center">↔</th>
-            <th class="text-left">White</th>
+            <th class="text-right">{{ leftSide }}</th>
+            <th class="text-center w-40">
+              <button @click="swapColors">
+                <CgArrowsExchange />
+              </button>
+            </th>
+            <th class="text-left">{{ rightSide }}</th>
             <th class="">Status</th>
             <th class=""></th>
           </tr>
@@ -200,7 +218,7 @@ function onForfeitFight() {}
 
     <section class="flex flex-col gap-4">
       <h2 class="text-xl font-semibold">Mon composant</h2>
-      <PoolCard :poolDetails="poolDetails" :rankingDetails="fighterPoints"></PoolCard>
+      <Modal v-model="rankingDetailsContent"></Modal>
     </section>
   </main>
 </template>
