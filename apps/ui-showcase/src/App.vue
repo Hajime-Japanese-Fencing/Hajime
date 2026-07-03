@@ -1,36 +1,62 @@
 <script setup lang="ts">
-import { Button, Modal, FightRow } from "@hajime/ui";
+import { Button, FightRow, PoolCard } from "@hajime/ui";
 import {ref} from "vue";
-import type {FighterPoints, ModalContent} from "@hajime/ui";
+import type {FighterDetails} from "@hajime/ui/src/components/PoolCard/fighter-details.interface.ts";
+import type {PoolDetails} from "@hajime/ui/src/components/PoolCard/pool-details.interface.ts";
+import type {FighterPoints} from "@hajime/ui/src/components/RankingDetails/fighter-points.interface.ts";
 
-const fighters = ref<FighterPoints>(
+const fighterPoints = ref<FighterPoints>(
     [
       {
         fighterName: "john",
         points: 2,
         nbVictories: 3,
         nbGivenIppons: 4,
-        nbReceivedIppons: 2
+        nbReceivedIppons: 2,
+        poolRank: 1,
       },
       {
         fighterName: "dave",
         points: -1,
         nbVictories: 1,
         nbGivenIppons: 2,
-        nbReceivedIppons: 4
+        nbReceivedIppons: 4,
+        poolRank: 3
       },
       {
         fighterName: "dave",
         points: -1,
         nbVictories: 1,
         nbGivenIppons: 2,
-        nbReceivedIppons: 4
+        nbReceivedIppons: 4,
+        poolRank: 2
       },
     ])
-const rankingDetailsContent = ref<ModalContent>(
+
+const fighters = ref<FighterDetails[]>(
+    [
+      {
+        fighterName: 'john',
+        poolRank: 1,
+        number: 2,
+      },
+      {
+        fighterName: 'dave',
+        poolRank: 3,
+        number: 1,
+      },
+      {
+        fighterName: 'dave',
+        poolRank: 2,
+        number: 3,
+      },
+    ]
+)
+
+const poolDetails = ref<PoolDetails>(
     {
-      name: "Ranking Details",
-      content: fighters
+      poolId: 1,
+      fighters: fighters
     }
 )
 
@@ -174,7 +200,7 @@ function onForfeitFight() {}
 
     <section class="flex flex-col gap-4">
       <h2 class="text-xl font-semibold">Mon composant</h2>
-      <Modal v-model="rankingDetailsContent"></Modal>
+      <PoolCard :poolDetails="poolDetails" :rankingDetails="fighterPoints"></PoolCard>
     </section>
   </main>
 </template>

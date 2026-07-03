@@ -1,4 +1,4 @@
-export interface ModalContent {
-    name: String,
-    content: any,
+export interface ModalContent<T = unknown> {
+    title: string,
+    content: T,
 }

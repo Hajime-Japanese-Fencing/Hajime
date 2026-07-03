@@ -4,4 +4,5 @@ export interface FighterPoints {
     nbVictories: number,
     nbGivenIppons: number,
     nbReceivedIppons: number,
+    poolRank: number,
 }

@@ -1,7 +1,13 @@
 <script setup lang="ts">
   import type {FighterPoints} from "./fighter-points.interface.ts";
+  import {computed} from "vue";
 
-  const fighters = defineModel<FighterPoints[]>()
+  const props = defineProps<{ fighters: FighterPoints[] }>()
+
+  const sortedFighters = computed(() => {
+    if (!props.fighters) throw new Error("Aucune donnée de ranking")
+    return [...props.fighters].sort((a, b) => a.poolRank - b.poolRank)
+  })
 
 </script>
 
@@ -18,8 +24,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(fighter, index) in fighters">
-        <td>{{ index + 1 }}</td>
+      <tr v-for="(fighter) in sortedFighters">
+        <td>{{ fighter.poolRank }}</td>
         <td>{{ fighter.fighterName }}</td>
         <td>{{ fighter.points }}</td>
         <td>{{ fighter.nbVictories }}</td>
