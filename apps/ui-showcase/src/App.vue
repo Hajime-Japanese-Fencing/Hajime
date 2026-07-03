@@ -2,7 +2,7 @@
 import type {FighterDetails} from "@hajime/ui/src/components/PoolCard/fighter-details.interface.ts";
 import type {PoolDetails} from "@hajime/ui/src/components/PoolCard/pool-details.interface.ts";
 import type {FighterPoints} from "@hajime/ui/src/components/RankingDetails/fighter-points.interface.ts";
-import { Button, Modal, FightRow } from "@hajime/ui";
+import { Button, PoolCard, FightRow } from "@hajime/ui";
 import {computed, ref} from "vue";
 import { CgArrowsExchange } from 'vue-icons-plus/cg'
 
@@ -56,8 +56,8 @@ const fighters = ref<FighterDetails[]>(
 
 const poolDetails = ref<PoolDetails>(
     {
-      name: "Ranking Details",
-      content: fighters
+      poolId: 1,
+      fighters: fighters
     }
 )
 
@@ -218,7 +218,7 @@ function swapColors() {
 
     <section class="flex flex-col gap-4">
       <h2 class="text-xl font-semibold">Mon composant</h2>
-      <Modal v-model="rankingDetailsContent"></Modal>
+      <PoolCard :pool-details="poolDetails" :rankingDetails="fighterPoints"></PoolCard>
     </section>
   </main>
 </template>
