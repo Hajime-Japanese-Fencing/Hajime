@@ -5,6 +5,7 @@ import type {PoolDetails} from "./pool-details.interface.ts";
 import type {FighterPoints} from "../RankingDetails/fighter-points.interface.ts";
 import RankingDetails from "../RankingDetails/RankingDetails.vue";
 import {computed} from "vue";
+import {getRankBadgeClass} from "../../services/badgeClass.service.ts";
 
 const props = defineProps<{
   poolDetails: PoolDetails,
@@ -15,19 +16,6 @@ const sortedFighters = computed(() => {
   if (!props.poolDetails) throw new Error("Aucune donnée de pool")
   return [...props.poolDetails.fighters].sort((a, b) => a.number - b.number)
 })
-
-function badgeClass(rank:number): string {
-  switch (rank) {
-    case 1:
-      return "first"
-    case 2:
-      return "second"
-    case 3:
-      return "third"
-    default:
-      return ""
-  }
-}
 
 // const poolDetails = defineModel<PoolDetails>()
 //
@@ -65,7 +53,7 @@ function badgeClass(rank:number): string {
       <div v-for="fighter in sortedFighters" class="flex justify-between">
         <span>{{props.poolDetails.poolId}}.{{fighter.number}}</span>
         <span>{{fighter.fighterName}}</span>
-        <span class="badge" :class="badgeClass(fighter.poolRank)">#{{fighter.poolRank}}</span>
+        <span class="badge" :class="getRankBadgeClass(fighter.poolRank)">#{{fighter.poolRank}}</span>
       </div>
 
 

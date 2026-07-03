@@ -6,8 +6,7 @@ import { Button, PoolCard, FightRow } from "@hajime/ui";
 import {computed, ref} from "vue";
 import { CgArrowsExchange } from 'vue-icons-plus/cg'
 
-const fighterPoints = ref<FighterPoints>(
-    [
+const fighterPoints = ref<FighterPoints[]>([
       {
         fighterName: "john",
         points: 2,
@@ -34,8 +33,7 @@ const fighterPoints = ref<FighterPoints>(
       },
     ])
 
-const fighters = ref<FighterDetails[]>(
-    [
+const fighters = ref<FighterDetails[]>([
       {
         fighterName: 'john',
         poolRank: 1,
@@ -51,15 +49,12 @@ const fighters = ref<FighterDetails[]>(
         poolRank: 2,
         number: 3,
       },
-    ]
-)
+    ])
 
-const poolDetails = ref<PoolDetails>(
-    {
+const poolDetails = ref<PoolDetails>({
       poolId: 1,
       fighters: fighters
-    }
-)
+    })
 
 
 const fights = ref([
@@ -218,6 +213,7 @@ function swapColors() {
 
     <section class="flex flex-col gap-4">
       <h2 class="text-xl font-semibold">Mon composant</h2>
+      <a></a>
       <PoolCard :pool-details="poolDetails" :rankingDetails="fighterPoints"></PoolCard>
     </section>
   </main>
