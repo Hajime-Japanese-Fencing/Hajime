@@ -2,14 +2,14 @@
 
 import Modal from "../Modal/Modal.vue";
 import type {PoolDetails} from "./pool-details.interface.ts";
-import type {FighterPoints} from "../RankingDetails/fighter-points.interface.ts";
 import RankingDetails from "../RankingDetails/RankingDetails.vue";
 import {computed} from "vue";
 import {getRankBadgeClass} from "../../services/badgeClass.service.ts";
+import type {FighterPointsRanked} from "../RankingDetails/fighter-points-ranked.interface.ts";
 
 const props = defineProps<{
   poolDetails: PoolDetails,
-  rankingDetails: FighterPoints[]
+  rankingDetails: FighterPointsRanked[]
 }>()
 
 const sortedFighters = computed(() => {
@@ -55,7 +55,6 @@ const sortedFighters = computed(() => {
         <span>{{fighter.fighterName}}</span>
         <span class="badge" :class="getRankBadgeClass(fighter.poolRank)">#{{fighter.poolRank}}</span>
       </div>
-
 
     </div>
   </div>

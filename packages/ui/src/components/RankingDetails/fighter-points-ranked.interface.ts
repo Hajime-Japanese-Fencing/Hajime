@@ -1,4 +1,4 @@
-export interface FighterPoints {
+export interface FighterPointsRanked {
     fighterName: String,
     points: number,
     nbVictories: number,

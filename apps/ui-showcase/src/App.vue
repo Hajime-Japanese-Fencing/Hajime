@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type {FighterDetails} from "@hajime/ui/src/components/PoolCard/fighter-details.interface.ts";
 import type {PoolDetails} from "@hajime/ui/src/components/PoolCard/pool-details.interface.ts";
-import type {FighterPoints} from "@hajime/ui/src/components/RankingDetails/fighter-points.interface.ts";
+import type {FighterPointsRanked} from "@hajime/ui/src/components/RankingDetails/fighter-points-ranked.interface.ts";
 import { Button, PoolCard, FightRow } from "@hajime/ui";
 import {computed, ref} from "vue";
 import { CgArrowsExchange } from 'vue-icons-plus/cg'
 
-const fighterPoints = ref<FighterPoints[]>([
+const fighterPoints = ref<FighterPointsRanked[]>([
       {
         fighterName: "john",
         points: 2,

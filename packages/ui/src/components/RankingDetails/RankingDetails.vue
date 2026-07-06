@@ -1,8 +1,8 @@
 <script setup lang="ts">
-  import type {FighterPoints} from "./fighter-points.interface.ts";
+  import type {FighterPointsRanked} from "./fighter-points-ranked.interface.ts";
   import {computed} from "vue";
 
-  const props = defineProps<{ fighters: FighterPoints[] }>()
+  const props = defineProps<{ fighters: FighterPointsRanked[] }>()
 
   const sortedFighters = computed(() => {
     if (!props.fighters) throw new Error("Aucune donnée de ranking")
