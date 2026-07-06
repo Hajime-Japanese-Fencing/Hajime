@@ -135,6 +135,11 @@ const statusColors: Record<string, BadgeColor> = {
     </td>
 
     <td class="align-top">
+      <!-- Pour charger le composant DaisyUi ?
+      <span class="badge badge-outline badge-success">
+        TEST
+      </span>
+      -->
       <Badge :color="statusColors[fight.status]" variant="outline">
         {{ fight.status }}
       </Badge>
