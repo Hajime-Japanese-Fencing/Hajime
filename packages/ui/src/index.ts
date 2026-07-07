@@ -10,5 +10,5 @@ export { default as Modal } from './components/Modal/Modal.vue';
 export { default as RankingDetails } from './components/RankingDetails/RankingDetails.vue';
 export { default as PoolCard } from './components/PoolCard/PoolCard.vue';
 
-export { default as FightRow } from "./components/FightList/FightRow.vue";
-export { default as FightList } from './components/FightList/FightList.vue';
+export { default as FightRow } from "./components/FightScreen/FightRow.vue";
+export { default as FightList } from './components/FightScreen/FightList.vue';

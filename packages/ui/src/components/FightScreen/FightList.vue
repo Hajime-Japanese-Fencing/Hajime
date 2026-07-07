@@ -4,85 +4,71 @@
   import {computed, ref} from "vue";
   import RoundButton from "../Button/RoundButton.vue";
 
-  const fights = ref([
-    {
-      id: 1,
-      fighter1: "Tanaka",
-      fighter2: "Suzuki",
-      score: null,
-      status: "Waiting",
-    },
-    {
-      id: 2,
-      fighter1: "Yamamoto",
-      fighter2: "Sato",
-      score: "2 - 1",
-      status: "Finished",
-    },
-    {
-      id: 3,
-      fighter1: "Ito",
-      fighter2: "Kobayashi",
-      score: null,
-      status: "Waiting",
-    },
-  ]);
-
-  const activeFightId = ref<number | null>(null);
-
-  function onToggleFight(id: number) {
-    if (activeFightId.value === id) {
-      activeFightId.value = null;
-    } else {
-      const fight = fights.value.find(f => f.id === id);
-
-      if (!fight) {
-        return;
-      }
-
-      activeFightId.value = id;
-    }
-  }
-
-  function onCancelFight(id: number) {
-    const fight = fights.value.find(f => f.id === id);
-
-    if (!fight) {
-      return;
-    }
-
-    setFightStatus(id, "Waiting");
-    activeFightId.value = null;
-  }
-
-  function onValidateFight(id: number) {
-    const fight = fights.value.find(f => f.id === id);
-
-    if (!fight) {
-      return;
-    }
-
-    setFightStatus(id, "Finished");
-    activeFightId.value = null;
-  }
-
-  function onForfeitFight() {}
+  type Fight = {
+    id: number;
+    fighter1: string;
+    fighter2: string;
+    score: string | null;
+    status: FightStatus;
+  };
 
   type FightStatus = "Waiting" | "In progress" | "Finished";
-
-  function setFightStatus(id: number, status: FightStatus) {
-    const fight = fights.value.find(f => f.id === id);
-
-    if (!fight || fight.status === "Finished") return;
-
-    // TODO: remplacer par l'appel API lorsque le backend sera prêt
-    fight.status = status;
-  }
 
   type Side = {
     label: "Red" | "White"
     bgClass: string
     textClass: string
+  }
+
+  const props = defineProps<{
+    fights: Fight[];
+    openedFightId: number | null;
+  }>();
+
+  const emit = defineEmits<{
+    openFight: [id: number];
+    closeFight: [];
+    cancelFight: [id: number];
+    validateFight: [id: number];
+    forfeitFight: [id: number];
+  }>();
+
+
+  function onOpenFight(id: number) {
+    emit("openFight", id);
+  }
+
+  function onCloseFight() {
+    emit("closeFight");
+  }
+
+  function onCancelFight(id: number) {
+    emit("cancelFight", id);
+  }
+
+  function onValidateFight(id: number) {
+    emit("validateFight", id);
+  }
+
+  function onForfeitFight(id: number) {
+    emit("forfeitFight", id);
+  }
+
+  const activeFightId = computed(() =>
+      props.fights.find(fight => fight.status === "In progress")?.id ?? null
+  );
+
+  function isLocked(fight: Fight) {
+    return (
+        activeFightId.value !== null
+        && activeFightId.value !== fight.id
+    );
+  }
+
+  function swapColors() {
+    leftSide.value = leftSide.value.label === "Red"
+        ? WHITE
+        : RED
   }
 
   const RED: Side = {
@@ -103,11 +89,7 @@
       leftSide.value.label === "Red" ? WHITE : RED
   )
 
-  function swapColors() {
-    leftSide.value = leftSide.value.label === "Red"
-        ? WHITE
-        : RED
-  }
+
 </script>
 
 <template>
@@ -144,12 +126,15 @@
       <tbody>
       <FightRow
           :fight="fight"
-          :active="activeFightId === fight.id"
-          @toggleFight="onToggleFight"
+          :active="props.openedFightId === fight.id"
+          :locked="isLocked(fight)"
+          @openFight="onOpenFight"
+          @closeFight="onCloseFight"
           @cancelFight="onCancelFight"
           @validateFight="onValidateFight"
           @forfeitFight="onForfeitFight"
-          v-for="fight in fights" :key="fight.id"
+          v-for="fight in props.fights"
+          :key="fight.id"
           :leftSide="leftSide"
           :rightSide="rightSide"
       />
