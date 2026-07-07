@@ -2,9 +2,8 @@
 import type {FighterDetails} from "@hajime/ui/src/components/PoolCard/fighter-details.interface.ts";
 import type {PoolDetails} from "@hajime/ui/src/components/PoolCard/pool-details.interface.ts";
 import type {FighterPointsRanked} from "@hajime/ui/src/components/RankingDetails/fighter-points-ranked.interface.ts";
-import { Button, PoolCard, FightRow } from "@hajime/ui";
-import {computed, ref} from "vue";
-import { CgArrowsExchange } from 'vue-icons-plus/cg'
+import { Button, SecondaryButton, GhostButton, OutlineButton, AccentButton, RoundButton, SquareButton, PoolCard, FightList } from "@hajime/ui";
+import { ref} from "vue";
 
 const fighterPoints = ref<FighterPointsRanked[]>([
       {
@@ -56,94 +55,6 @@ const poolDetails = ref<PoolDetails>({
       fighters: fighters
     })
 
-
-const fights = ref([
-  {
-    id: 1,
-    fighter1: "Tanaka",
-    fighter2: "Suzuki",
-    score: null,
-    status: "Waiting",
-  },
-  {
-    id: 2,
-    fighter1: "Yamamoto",
-    fighter2: "Sato",
-    score: "2 - 1",
-    status: "Finished",
-  },
-  {
-    id: 3,
-    fighter1: "Ito",
-    fighter2: "Kobayashi",
-    score: null,
-    status: "Waiting",
-  },
-]);
-
-const activeFightId = ref<number | null>(null);
-
-function onToggleFight(id: number) {
-  if (activeFightId.value === id) {
-    activeFightId.value = null;
-  } else {
-    const fight = fights.value.find(f => f.id === id);
-
-    if (!fight) {
-      return;
-    }
-
-    activeFightId.value = id;
-  }
-}
-
-function onCancelFight(id: number) {
-  const fight = fights.value.find(f => f.id === id);
-
-  if (!fight) {
-    return;
-  }
-
-  setFightStatus(id, "Waiting");
-  activeFightId.value = null;
-}
-
-function onValidateFight(id: number) {
-  const fight = fights.value.find(f => f.id === id);
-
-  if (!fight) {
-    return;
-  }
-
-  setFightStatus(id, "Finished");
-  activeFightId.value = null;
-}
-
-function onForfeitFight() {}
-
-type FightStatus = "Waiting" | "In progress" | "Finished";
-
-function setFightStatus(id: number, status: FightStatus) {
-  const fight = fights.value.find(f => f.id === id);
-
-  if (!fight || fight.status === "Finished") return;
-
-  // TODO: remplacer par l'appel API lorsque le backend sera prêt
-  fight.status = status;
-}
-
-const leftSide = ref<"Red" | "White">("Red")
-
-const rightSide = computed(() =>
-    leftSide.value === "Red" ? "White" : "Red"
-)
-
-function swapColors() {
-  leftSide.value = leftSide.value === "Red"
-      ? "White"
-      : "Red"
-}
-
 </script>
 
 <template>
@@ -152,44 +63,17 @@ function swapColors() {
 
     <section>
       <h2 class="text-xl font-semibold">Fight list</h2>
-      <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
-        <table class="table border-solid border-2">
-          <thead>
-          <tr>
-            <th class="text-right">{{ leftSide }}</th>
-            <th class="text-center w-40">
-              <button @click="swapColors">
-                <CgArrowsExchange />
-              </button>
-            </th>
-            <th class="text-left">{{ rightSide }}</th>
-            <th class="">Status</th>
-            <th class=""></th>
-          </tr>
-          </thead>
-          <tbody>
-          <FightRow
-              :fight="fight"
-              :active="activeFightId === fight.id"
-              @toggleFight="onToggleFight"
-              @cancelFight="onCancelFight"
-              @validateFight="onValidateFight"
-              @forfeitFight="onForfeitFight"
-              v-for="fight in fights" :key="fight.id"
-          />
-          </tbody>
-        </table>
-      </div>
+      <FightList></FightList>
     </section>
 
     <section class="flex flex-col gap-4">
       <h2 class="text-xl font-semibold">Variants</h2>
       <div class="flex flex-wrap gap-3">
-        <Button variant="primary">Primary</Button>
-        <Button variant="secondary">Secondary</Button>
-        <Button variant="accent">Accent</Button>
-        <Button variant="ghost">Ghost</Button>
-        <Button variant="outline">Outline</Button>
+        <Button>Primary</Button>
+        <SecondaryButton>Secondary</SecondaryButton>
+        <AccentButton>Accent</AccentButton>
+        <GhostButton>Ghost</GhostButton>
+        <OutlineButton>Outline</OutlineButton>
       </div>
     </section>
 
@@ -208,6 +92,15 @@ function swapColors() {
       <div class="flex flex-wrap gap-3">
         <Button disabled>Disabled</Button>
         <Button variant="secondary" disabled>Disabled Secondary</Button>
+      </div>
+    </section>
+
+    <section class="flex flex-col gap-4">
+      <h2 class="text-xl font-semibold">Shape</h2>
+      <div class="flex flex-wrap gap-3">
+        <Button>Default</Button>
+        <SquareButton>Square</SquareButton>
+        <RoundButton>Circle</RoundButton>
       </div>
     </section>
 

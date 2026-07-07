@@ -13,6 +13,11 @@
     { code: "Δ", label: "Hansoku" },
   ];
 
+
+  defineProps<{
+    textColor: string;
+  }>();
+
   const emit = defineEmits<{
     (e: "addIppon", code: string): void;
   }>();
@@ -25,6 +30,7 @@
         v-for="ippon in ippons"
         :key="ippon.code"
         class="btn btn-xs btn-outline btn-circle tooltip"
+        :class="textColor"
         :data-tip="ippon.label"
         @click="emit('addIppon', ippon.code)"
     >
