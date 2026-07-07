@@ -35,35 +35,37 @@ function forfeit() {
       Validate
     </button>
     <button
-        class="btn btn-outline btn-sm join-item btn-success"
-        :popovertarget="popoverId"
-        :style="{ anchorName: `--${popoverId}` }"
+      class="btn btn-outline btn-sm join-item btn-success"
+      :popovertarget="popoverId"
+      :style="{ anchorName: `--${popoverId}` }"
     >
       <BiSolidDownArrow size="16" />
     </button>
   </div>
 
   <ul
-      class="dropdown dropdown-end menu rounded-box bg-base-100 shadow-sm"
-      popover
-      :id="popoverId"
-      :style="{ positionAnchor: `--${popoverId}` }"
+    class="dropdown dropdown-end menu rounded-box bg-base-100 shadow-sm"
+    popover
+    :id="popoverId"
+    :style="{ positionAnchor: `--${popoverId}` }"
   >
-    <li class="items-center"><a @click="cancel">
-      <Badge color="error">
-        <TiCancel />
-        Cancel
-      </Badge>
-    </a></li>
-    <li class="items-center"><a @click="forfeit">
-      <Badge color="warning">
-        <TiFlag />
-        Forfeit
-      </Badge>
-    </a></li>
+    <li class="items-center">
+      <a @click="cancel">
+        <Badge color="error">
+          <TiCancel />
+          Cancel
+        </Badge>
+      </a>
+    </li>
+    <li class="items-center">
+      <a @click="forfeit">
+        <Badge color="warning">
+          <TiFlag />
+          Forfeit
+        </Badge>
+      </a>
+    </li>
   </ul>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

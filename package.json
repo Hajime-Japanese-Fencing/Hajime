@@ -8,6 +8,9 @@
     "dev:main": "vp run --parallel -F @hajime/main -F @hajime/ui -F @hajime/core dev",
     "dev:ui": "vp run --parallel -F @hajime/ui -F @hajime/ui-showcase dev"
   },
+  "dependencies": {
+    "vue-icons-plus": "catalog:"
+  },
   "devDependencies": {
     "vite-plus": "catalog:"
   },
@@ -19,12 +22,14 @@
       "name": "pnpm",
       "version": "11.8.0",
       "onFail": "download"
+    },
+    "runtime": {
+      "name": "node",
+      "version": "22.23.1",
+      "onFail": "download"
     }
   },
   "engines": {
-    "node": ">=22.18.0"
-  },
-  "dependencies": {
-    "vue-icons-plus": "catalog:"
+    "node": ">=22.23.1"
   }
 }

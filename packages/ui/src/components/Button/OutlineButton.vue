@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Button from "./Button.vue";
-import type {ButtonProps} from "./button-props.type.ts";
-
+import type { ButtonProps } from "./button-props.type.ts";
 
 type OutlineButtonProps = Omit<ButtonProps, "variant">;
 
@@ -16,15 +15,9 @@ defineEmits<{
 </script>
 
 <template>
-  <Button
-      v-bind="props"
-      variant="outline"
-      @click="$emit('click', $event)"
-  >
+  <Button v-bind="props" variant="outline" @click="$emit('click', $event)">
     <slot />
   </Button>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

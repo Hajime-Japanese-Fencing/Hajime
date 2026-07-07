@@ -30,14 +30,17 @@ Example: `docs/use-cases/UC-01-create-competition.md`
 **Postconditions**: <what is true after>
 
 ### Main Flow
+
 1. <step>
 2. <step>
 3. ...
 
 ### Alternate Flows
+
 - **<condition>** → `<ErrorName>` / <what happens>
 
 ### Business Rules
+
 - BR1: <rule>
 - BR2: <rule>
 ```
@@ -57,16 +60,19 @@ Example: `docs/use-cases/UC-01-create-competition.md`
 **Postconditions**: Competition is saved with status `Creation`
 
 ### Main Flow
+
 1. Organiser provides name*, date*, location, type (Individual/Team), format (Pools/Bracket/Both)
 2. If Team mode: organiser provides fighters per team (default: 5)
 3. System validates required fields
 4. System creates the competition with status `Creation`
 
 ### Alternate Flows
+
 - **Missing required field** → `MissingFieldError`
 - **Date is in the past** → `InvalidDateError`
 
 ### Business Rules
+
 - BR1: Name and date are mandatory
 - BR2: Team mode requires fighters-per-team > 0
 - BR3: Competition starts in status `Creation`, never directly `In Progress`
@@ -85,6 +91,7 @@ Example: `docs/use-cases/UC-01-create-competition.md`
 **Postconditions**: Fight is in status `Finished`, result is saved
 
 ### Main Flow
+
 1. Referee selects the winning fighter (White or Red)
 2. Referee provides ippons scored (Men, Kote, Do, Tsuki) and penalties (Hansoku)
 3. Referee confirms the result
@@ -92,11 +99,13 @@ Example: `docs/use-cases/UC-01-create-competition.md`
 5. System updates pool or bracket standings
 
 ### Alternate Flows
+
 - **Tie with no Hantei** → Referee must enable Enshō (sudden death) before confirming
 - **Fighter forfeits** → Referee selects forfeit action; result recorded without fight data
 - **Fight not in progress** → `FightNotInProgressError`
 
 ### Business Rules
+
 - BR1: Only one fight can be `In Progress` at a time within a competition
 - BR2: A finished fight is read-only — no modifications allowed
 - BR3: Hansoku counts as a point for the opposing fighter

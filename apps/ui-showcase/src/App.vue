@@ -1,59 +1,69 @@
 <script setup lang="ts">
-import type {FighterDetails} from "@hajime/ui/src/components/PoolCard/fighter-details.interface.ts";
-import type {PoolDetails} from "@hajime/ui/src/components/PoolCard/pool-details.interface.ts";
-import type {FighterPointsRanked} from "@hajime/ui/src/components/RankingDetails/fighter-points-ranked.interface.ts";
-import { Button, SecondaryButton, GhostButton, OutlineButton, AccentButton, RoundButton, SquareButton, PoolCard, FightList } from "@hajime/ui";
-import { ref} from "vue";
+import type { FighterDetails } from "@hajime/ui/src/components/PoolCard/fighter-details.interface.ts";
+import type { PoolDetails } from "@hajime/ui/src/components/PoolCard/pool-details.interface.ts";
+import type { FighterPointsRanked } from "@hajime/ui/src/components/RankingDetails/fighter-points-ranked.interface.ts";
+import {
+  Button,
+  SecondaryButton,
+  GhostButton,
+  OutlineButton,
+  AccentButton,
+  RoundButton,
+  SquareButton,
+  PoolCard,
+  FightList,
+} from "@hajime/ui";
+import { ref } from "vue";
 
 const fighterPoints = ref<FighterPointsRanked[]>([
-      {
-        fighterName: "john",
-        points: 2,
-        nbVictories: 3,
-        nbGivenIppons: 4,
-        nbReceivedIppons: 2,
-        poolRank: 1,
-      },
-      {
-        fighterName: "dave",
-        points: -1,
-        nbVictories: 1,
-        nbGivenIppons: 2,
-        nbReceivedIppons: 4,
-        poolRank: 3
-      },
-      {
-        fighterName: "dave",
-        points: -1,
-        nbVictories: 1,
-        nbGivenIppons: 2,
-        nbReceivedIppons: 4,
-        poolRank: 2
-      },
-    ])
+  {
+    fighterName: "john",
+    points: 2,
+    nbVictories: 3,
+    nbGivenIppons: 4,
+    nbReceivedIppons: 2,
+    poolRank: 1,
+  },
+  {
+    fighterName: "dave",
+    points: -1,
+    nbVictories: 1,
+    nbGivenIppons: 2,
+    nbReceivedIppons: 4,
+    poolRank: 3,
+  },
+  {
+    fighterName: "dave",
+    points: -1,
+    nbVictories: 1,
+    nbGivenIppons: 2,
+    nbReceivedIppons: 4,
+    poolRank: 2,
+  },
+]);
 
 const fighters = ref<FighterDetails[]>([
-      {
-        fighterName: 'john',
-        poolRank: 1,
-        number: 2,
-      },
-      {
-        fighterName: 'dave',
-        poolRank: 3,
-        number: 1,
-      },
-      {
-        fighterName: 'dave',
-        poolRank: 2,
-        number: 3,
-      },
-    ])
+  {
+    fighterName: "john",
+    poolRank: 1,
+    number: 2,
+  },
+  {
+    fighterName: "dave",
+    poolRank: 3,
+    number: 1,
+  },
+  {
+    fighterName: "dave",
+    poolRank: 2,
+    number: 3,
+  },
+]);
 
 const poolDetails = ref<PoolDetails>({
-      poolId: 1,
-      fighters: fighters
-    })
+  poolId: 1,
+  fighters: fighters,
+});
 
 type Fight = {
   id: number;
@@ -84,10 +94,10 @@ const fights = ref<Fight[]>([
     score: "2 - 1",
     status: "Finished",
     scoreEvents: [
-      {id: 1, leftFighter: true, type: "ippon", code: "M", variant: "outline"},
-      {id: 2, leftFighter: false, type: "hansoku", code: "Δ", variant: "filled"},
-      {id: 3, leftFighter: false, type: "ippon", code: "D", variant: "filled"},
-      {id: 4, leftFighter: true, type: "ippon", code: "K", variant: "filled"},
+      { id: 1, leftFighter: true, type: "ippon", code: "M", variant: "outline" },
+      { id: 2, leftFighter: false, type: "hansoku", code: "Δ", variant: "filled" },
+      { id: 3, leftFighter: false, type: "ippon", code: "D", variant: "filled" },
+      { id: 4, leftFighter: true, type: "ippon", code: "K", variant: "filled" },
     ],
     editable: false
   },
@@ -111,10 +121,10 @@ type ScoreEvent = {
 };
 
 
-const openedFightId = ref<number  | null>(null);
+const openedFightId = ref<number | null>(null);
 
 function onOpenFight(id: number) {
-  const fight = fights.value.find(f => f.id === id);
+  const fight = fights.value.find((f) => f.id === id);
 
   if (!fight) {
     return;
@@ -147,7 +157,7 @@ function onForfeitFight(id: number) {
 }
 
 function updateFightStatus(id: number, status: FightStatus) {
-  const fight = fights.value.find(f => f.id === id);
+  const fight = fights.value.find((f) => f.id === id);
 
   if (!fight) {
     return;
@@ -156,7 +166,6 @@ function updateFightStatus(id: number, status: FightStatus) {
   // TODO: remplacer par appel API
   fight.status = status;
 }
-
 </script>
 
 <template>
@@ -165,15 +174,8 @@ function updateFightStatus(id: number, status: FightStatus) {
 
     <section>
       <h2 class="text-xl font-semibold">Fight list</h2>
-      <FightList
-          :fights="fights"
-          :opened-fight-id="openedFightId"
-          @open-fight="onOpenFight"
-          @close-fight="onCloseFight"
-          @cancel-fight="onCancelFight"
-          @validate-fight="onValidateFight"
-          @forfeit-fight="onForfeitFight"
-      />
+      <FightList :fights="fights" :opened-fight-id="openedFightId" @open-fight="onOpenFight" @close-fight="onCloseFight"
+        @cancel-fight="onCancelFight" @validate-fight="onValidateFight" @forfeit-fight="onForfeitFight" />
     </section>
 
     <section class="flex flex-col gap-4">

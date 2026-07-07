@@ -289,19 +289,19 @@ export function useUpdateProduct() {
 
 ## Decision Matrix
 
-| Need                                  | TanStack Store | TanStack Query |
-| ------------------------------------- | -------------- | -------------- |
-| Local UI state (basket, form)         | ✅             | ❌             |
-| Fetching server data                  | ❌             | ✅             |
-| Server data cache                     | ❌             | ✅             |
-| API mutations                         | ❌             | ✅             |
-| Synchronous business logic            | ✅             | ❌             |
-| Use cases orchestration               | ✅             | ❌             |
-| Derived state/calculations            | ✅             | ❌             |
-| Automatic invalidation                | ❌             | ✅             |
-| Optimistic updates                    | ❌             | ✅             |
-| Background refetch                    | ❌             | ✅             |
-| Retry logic                           | ❌             | ✅             |
+| Need                          | TanStack Store | TanStack Query |
+| ----------------------------- | -------------- | -------------- |
+| Local UI state (basket, form) | ✅             | ❌             |
+| Fetching server data          | ❌             | ✅             |
+| Server data cache             | ❌             | ✅             |
+| API mutations                 | ❌             | ✅             |
+| Synchronous business logic    | ✅             | ❌             |
+| Use cases orchestration       | ✅             | ❌             |
+| Derived state/calculations    | ✅             | ❌             |
+| Automatic invalidation        | ❌             | ✅             |
+| Optimistic updates            | ❌             | ✅             |
+| Background refetch            | ❌             | ✅             |
+| Retry logic                   | ❌             | ✅             |
 
 ## Integration Patterns
 
