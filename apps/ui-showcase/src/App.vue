@@ -61,6 +61,8 @@ type Fight = {
   fighter2: string;
   score: string | null;
   status: FightStatus;
+  scoreEvents: ScoreEvent[];
+  editable: boolean;
 };
 
 type FightStatus = "Waiting" | "In progress" | "Finished";
@@ -72,6 +74,8 @@ const fights = ref<Fight[]>([
     fighter2: "Suzuki",
     score: null,
     status: "Waiting",
+    scoreEvents: [],
+    editable: true
   },
   {
     id: 2,
@@ -79,6 +83,13 @@ const fights = ref<Fight[]>([
     fighter2: "Sato",
     score: "2 - 1",
     status: "Finished",
+    scoreEvents: [
+      {id: 1, leftFighter: true, type: "ippon", code: "M", variant: "outline"},
+      {id: 2, leftFighter: false, type: "hansoku", code: "Δ", variant: "filled"},
+      {id: 3, leftFighter: false, type: "ippon", code: "D", variant: "filled"},
+      {id: 4, leftFighter: true, type: "ippon", code: "K", variant: "filled"},
+    ],
+    editable: false
   },
   {
     id: 3,
@@ -86,8 +97,19 @@ const fights = ref<Fight[]>([
     fighter2: "Kobayashi",
     score: null,
     status: "Waiting",
+    scoreEvents: [],
+    editable: true
   },
 ]);
+
+type ScoreEvent = {
+  id: number;
+  leftFighter: boolean
+  type: "ippon" | "hansoku";
+  code: "K" | "M" | "D" | "T" | "Δ";
+  variant: "filled" | "outline";
+};
+
 
 const openedFightId = ref<number  | null>(null);
 

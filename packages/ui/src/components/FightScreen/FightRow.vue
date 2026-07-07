@@ -6,14 +6,19 @@ import IpponButtons from "./IpponButtons.vue";
 import DropdownComboButton from "./DropdownComboButton.vue";
 import Badge from "./Badge.vue";
 import RoundButton from "../Button/RoundButton.vue";
+import { computed } from "vue";
+import ScoreTokenList from "./ScoreTokenList.vue";
+import type {FightStatus} from "./FightList.vue";
 
-interface Fight {
+type Fight = {
   id: number;
   fighter1: string;
   fighter2: string;
   score: string | null;
-  status: string;
-}
+  status: FightStatus;
+  scoreEvents: ScoreEvent[];
+  editable: boolean;
+};
 
 type Action = "validate" | "cancel" | "forfeit";
 type BadgeColor = "primary" | "secondary" | "accent" | "neutral" | "success" | "info" | "warning" | "error";
@@ -79,11 +84,54 @@ const statusColors: Record<string, BadgeColor> = {
   "Finished": "success",
 };
 
+export type ScoreEvent = {
+  id: number;
+  leftFighter: boolean
+  type: "ippon" | "hansoku";
+  code: "K" | "M" | "D" | "T" | "Δ";
+  variant: "filled" | "outline";
+};
+
+const leftHansokus = computed(() =>
+    props.fight.scoreEvents
+        .filter(({ leftFighter, type }) => leftFighter && type === "hansoku")
+        .map(({ id, code, variant }) => ({ id, code, variant }))
+)
+
+const rightHansokus = computed(() =>
+    props.fight.scoreEvents
+        .filter(({ leftFighter, type }) => !leftFighter && type === "hansoku")
+        .map(({ id, code, variant }) => ({ id, code, variant }))
+)
+
+const leftIppons = computed(() =>
+    props.fight.scoreEvents
+        .filter(({ leftFighter, type }) => leftFighter && type === "ippon")
+        .map(({ id, code, variant }) => ({ id, code, variant }))
+)
+
+const rightIppons = computed(() =>
+    props.fight.scoreEvents
+        .filter(({ leftFighter, type }) => !leftFighter && type === "ippon")
+        .map(({ id, code, variant }) => ({ id, code, variant }))
+)
+
+function removeLeftHansoku(id: number) {
+}
+
+function removeRightHansoku(id: number) {
+}
+
+function removeLeftIppon(id: number) {
+}
+
+function removeRightIppon(id: number) {
+}
 
 </script>
 
 <template>
-  <tr :class="[props.active ? 'bg-base-200  ' : 'hover:bg-base-200']">
+  <tr :class="[props.active ? 'bg-base-200' : 'hover:bg-base-200']">
 
     <td class="p-0" :class="[props.leftSide.bgClass, props.leftSide.textClass]">
       <div :class="props.active ? 'grid grid-rows-[auto_1fr_auto] h-full' : ''">
@@ -102,10 +150,8 @@ const statusColors: Record<string, BadgeColor> = {
         </div>
 
         <!-- Hansoku -->
-        <div class="flex justify-start gap-2 mt-4" v-if="props.active">
-          <span class="btn btn-circle btn-sm btn-ghost" :class="props.leftSide.textClass">
-            Δ
-          </span>
+        <div class="flex justify-start gap-2 mt-4 h-8" v-if="props.active">
+          <ScoreTokenList :tokens="leftHansokus" :removable="props.fight.editable" @remove="removeLeftHansoku"/>
         </div>
 
       </div>
@@ -128,14 +174,13 @@ const statusColors: Record<string, BadgeColor> = {
 
           <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
             <div class="flex justify-end gap-2 mr-2">
-              <span class="btn btn-circle btn-sm btn-ghost">K</span>
-              <span class="btn btn-circle btn-sm btn-outline">M</span>
+              <ScoreTokenList :tokens="leftIppons" :removable="props.fight.editable" @remove="removeLeftIppon"/>
             </div>
 
             <div></div>
 
             <div class="flex justify-start gap-2 ml-2">
-              <span class="btn btn-circle btn-sm btn-ghost">D</span>
+              <ScoreTokenList :tokens="rightIppons" :removable="props.fight.editable" @remove="removeRightIppon"/>
             </div>
           </div>
         </div>
@@ -165,10 +210,8 @@ const statusColors: Record<string, BadgeColor> = {
         </div>
 
         <!-- Hansoku -->
-        <div class="flex justify-end gap-2 mt-4" v-if="props.active">
-          <div class="btn btn-circle btn-sm btn-ghost" :class="props.rightSide.textClass">
-            Δ
-          </div>
+        <div class="flex justify-end gap-2 mt-4 h-8" v-if="props.active">
+          <ScoreTokenList :tokens="rightHansokus" :removable="props.fight.editable" @remove="removeRightHansoku"/>
         </div>
       </div>
     </td>
@@ -217,4 +260,7 @@ const statusColors: Record<string, BadgeColor> = {
 
 <style scoped>
 
+  .table td {
+    border-color: #33333340;
+  }
 </style>

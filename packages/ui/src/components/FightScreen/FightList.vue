@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import {CgArrowsExchange} from "vue-icons-plus/cg";
-  import FightRow from "./FightRow.vue";
+  import FightRow, {type ScoreEvent} from "./FightRow.vue";
   import {computed, ref} from "vue";
   import RoundButton from "../Button/RoundButton.vue";
 
@@ -10,9 +10,11 @@
     fighter2: string;
     score: string | null;
     status: FightStatus;
+    scoreEvents: ScoreEvent[];
+    editable: boolean;
   };
 
-  type FightStatus = "Waiting" | "In progress" | "Finished";
+  export type FightStatus = "Waiting" | "In progress" | "Finished";
 
   type Side = {
     label: "Red" | "White"
@@ -145,4 +147,8 @@
 
 <style scoped>
 
+  .table th,
+  .tb-border {
+    border-color: #33333340;
+  }
 </style>

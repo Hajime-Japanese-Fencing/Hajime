@@ -4,9 +4,4 @@
 @plugin "daisyui";
 
 
-.table td,
-.table th,
-.tb-border {
-    border-color: #33333340;
-}
 
