@@ -11,6 +11,9 @@
   "devDependencies": {
     "vite-plus": "catalog:"
   },
+  "optionalDependencies": {
+    "@voidzero-dev/vite-plus-linux-x64-gnu": "^0.2.1"
+  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",

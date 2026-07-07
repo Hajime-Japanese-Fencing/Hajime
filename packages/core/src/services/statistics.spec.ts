@@ -22,11 +22,11 @@ describe('factorial', () => {
         expect(factorial(0)).toBe(1)
     })
 
-    it('returns error for a negative',() => {
+    it('throws error for a negative',() => {
         expect(() => factorial(-5)).toThrow('Number must be a positive integer')
     })
 
-    it('returns error for a decimal',() => {
+    it('throws error for a decimal',() => {
         expect(() => factorial(2.3)).toThrow('Number must be a positive integer')
     })
 })
