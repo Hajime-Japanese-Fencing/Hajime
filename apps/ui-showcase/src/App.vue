@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { FighterDetails } from "@hajime/ui/src/components/PoolCard/fighter-details.interface.ts";
-import type { PoolDetails } from "@hajime/ui/src/components/PoolCard/pool-details.interface.ts";
-import type { FighterPointsRanked } from "@hajime/ui/src/components/RankingDetails/fighter-points-ranked.interface.ts";
+import type { FighterDetails, FighterPointsRanked, PoolDetails } from "@hajime/ui";
 import {
   Button,
   SecondaryButton,
@@ -62,7 +60,7 @@ const fighters = ref<FighterDetails[]>([
 
 const poolDetails = ref<PoolDetails>({
   poolId: 1,
-  fighters: fighters,
+  fighters: fighters.value,
 });
 
 type Fight = {
@@ -85,7 +83,7 @@ const fights = ref<Fight[]>([
     score: null,
     status: "Waiting",
     scoreEvents: [],
-    editable: true
+    editable: true,
   },
   {
     id: 2,
@@ -99,7 +97,7 @@ const fights = ref<Fight[]>([
       { id: 3, leftFighter: false, type: "ippon", code: "D", variant: "filled" },
       { id: 4, leftFighter: true, type: "ippon", code: "K", variant: "filled" },
     ],
-    editable: false
+    editable: false,
   },
   {
     id: 3,
@@ -108,18 +106,17 @@ const fights = ref<Fight[]>([
     score: null,
     status: "Waiting",
     scoreEvents: [],
-    editable: true
+    editable: true,
   },
 ]);
 
 type ScoreEvent = {
   id: number;
-  leftFighter: boolean
+  leftFighter: boolean;
   type: "ippon" | "hansoku";
   code: "K" | "M" | "D" | "T" | "Δ";
   variant: "filled" | "outline";
 };
-
 
 const openedFightId = ref<number | null>(null);
 
@@ -174,8 +171,15 @@ function updateFightStatus(id: number, status: FightStatus) {
 
     <section>
       <h2 class="text-xl font-semibold">Fight list</h2>
-      <FightList :fights="fights" :opened-fight-id="openedFightId" @open-fight="onOpenFight" @close-fight="onCloseFight"
-        @cancel-fight="onCancelFight" @validate-fight="onValidateFight" @forfeit-fight="onForfeitFight" />
+      <FightList
+        :fights="fights"
+        :opened-fight-id="openedFightId"
+        @open-fight="onOpenFight"
+        @close-fight="onCloseFight"
+        @cancel-fight="onCancelFight"
+        @validate-fight="onValidateFight"
+        @forfeit-fight="onForfeitFight"
+      />
     </section>
 
     <section class="flex flex-col gap-4">
