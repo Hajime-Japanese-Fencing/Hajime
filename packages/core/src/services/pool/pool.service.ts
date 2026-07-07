@@ -4,8 +4,12 @@ import {factorial} from "../statistics.service.ts";
 
 export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
 
-    if (!Number.isInteger(nbFighters)) {
-        throw new Error("number of fighters must be integer")
+    if (!Number.isInteger(nbFighters) || nbFighters < 0) {
+        throw new Error("number of fighters must be a positive integer")
+    }
+
+    if (nbFighters < 4) {
+        throw new Error("cannot create pools for less than 4 fighters")
     }
 
     const possiblePoolSetups: PoolSetup[] = []
@@ -13,27 +17,43 @@ export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
 
     for (let poolSize = 3; poolSize <= maxPoolSize; poolSize ++ ) {
 
+        let poolGroups: PoolGroup[] = []
+
         // REPARTITION PARFAITE
         if (nbFighters % poolSize == 0) {
 
-            const poolGroups: PoolGroup[] = [{
+            poolGroups = [{
                 poolSize: poolSize,
                 amount: Math.floor(nbFighters / poolSize)
             }]
 
-            const newPoolSetup: PoolSetup = {
-                poolGroups: poolGroups,
-                nbFights: calculateNbFightsInPool(poolGroups),
-            }
-
-            possiblePoolSetups.push(newPoolSetup)
+        } else if (nbFighters % poolSize == 1) {
+            poolGroups = [
+                {
+                    poolSize: poolSize,
+                    amount: Math.floor(nbFighters / poolSize) - 1
+                },
+                {
+                    poolSize: poolSize + 1,
+                    amount: 1
+                },
+            ]
+        } else {
+            continue
         }
+
+        const newPoolSetup: PoolSetup = {
+            poolGroups: poolGroups,
+            nbFights: calculateNbFightsInPool(poolGroups),
+        }
+
+        possiblePoolSetups.push(newPoolSetup)
     }
 
     return possiblePoolSetups
 }
 
-function calculateNbFightsInPool(poolGroups: PoolGroup[]): number {
+export function calculateNbFightsInPool(poolGroups: PoolGroup[]): number {
     let nbFightsTotal = 0
 
     for (let group of poolGroups) {
