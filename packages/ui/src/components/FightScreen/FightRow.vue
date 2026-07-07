@@ -85,10 +85,10 @@ const statusColors: Record<string, BadgeColor> = {
 <template>
   <tr :class="[props.active ? 'bg-base-200  ' : 'hover:bg-base-200']">
 
-    <td class="align-top p-0" :class="[props.leftSide.bgClass, props.leftSide.textClass]">
-      <div class="grid grid-rows-[auto_1fr_auto] h-full">
+    <td class="p-0" :class="[props.leftSide.bgClass, props.leftSide.textClass]">
+      <div :class="props.active ? 'grid grid-rows-[auto_1fr_auto] h-full' : ''">
 
-        <div class="grid grid-cols-[auto_1fr] items-center">
+        <div class="grid grid-cols-[auto_1fr] items-center" >
           <!-- Boutons -->
           <div class="w-48 pt-1">
             <span v-if="props.active" class="gap-2">
@@ -147,8 +147,8 @@ const statusColors: Record<string, BadgeColor> = {
       </div>
     </td>
 
-    <td class="align-top p-0" :class="[props.rightSide.bgClass, props.rightSide.textClass]">
-      <div class="grid grid-rows-[auto_1fr_auto] h-full">
+    <td class="p-0" :class="[props.rightSide.bgClass, props.rightSide.textClass]">
+      <div :class="props.active ? 'grid grid-rows-[auto_1fr_auto] h-full' : ''">
 
         <div class="grid grid-cols-[1fr_auto] items-center">
           <!-- Nom -->
@@ -173,13 +173,13 @@ const statusColors: Record<string, BadgeColor> = {
       </div>
     </td>
 
-    <td class="align-top">
+    <td class="">
       <Badge :color="statusColors[props.fight.status]" variant="outline">
         {{ props.fight.status }}
       </Badge>
     </td>
 
-    <td class="align-top">
+    <td class="">
       <div v-if="!props.active" class="flex justify-center">
         <RoundButton
             size="sm"
