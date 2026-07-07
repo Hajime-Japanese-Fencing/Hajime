@@ -3,28 +3,28 @@ import { BiSolidDownArrow } from "vue-icons-plus/bi";
 import { TiTick, TiCancel, TiFlag } from "vue-icons-plus/ti";
 import Badge from "./Badge.vue";
 
-type Action = "cancel" | "forfeit";
+type Action = "validate" | "cancel" | "forfeit";
 
 const props = defineProps<{
   id: number;
 }>();
 
 const emit = defineEmits<{
-  (e: "action", id: number, action: Action | "validate"): void;
+  action: [action: Action];
 }>();
 
 const popoverId = `action-menu-${props.id}`;
 
 function validate() {
-  emit("action", props.id, "validate");
+  emit("action", "validate");
 }
 
 function cancel() {
-  emit("action", props.id, "cancel");
+  emit("action", "cancel");
 }
 
 function forfeit() {
-  emit("action", props.id, "forfeit");
+  emit("action", "forfeit");
 }
 </script>
 
