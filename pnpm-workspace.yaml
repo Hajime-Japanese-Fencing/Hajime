@@ -20,7 +20,6 @@ catalog:
   vue-tsc: ^3.3.5
   vue-icons-plus: ^0.1.9
   '@tsdown/css': ^0.22.3
-  '@voidzero-dev/vite-plus-linux-x64-gnu': ^0.2.1
 overrides:
   vite: "catalog:"
   vitest: "catalog:"
