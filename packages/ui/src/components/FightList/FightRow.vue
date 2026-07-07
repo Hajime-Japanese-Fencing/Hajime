@@ -1,10 +1,12 @@
-<script setup lang="ts">
+r<script setup lang="ts">
 
 import { BiArchiveOut } from 'vue-icons-plus/bi'
 import { BsEye } from 'vue-icons-plus/bs'
 import IpponButtons from "./IpponButtons.vue";
 import DropdownComboButton from "./DropdownComboButton.vue";
 import Badge from "./Badge.vue";
+import RoundButton from "../Button/RoundButton.vue";
+import {CgArrowsExchange} from "vue-icons-plus/cg";
 
 interface Fight {
   id: number;
@@ -20,6 +22,8 @@ type BadgeColor = "primary" | "secondary" | "accent" | "neutral" | "success" | "
 defineProps<{
   fight: Fight;
   active: boolean;
+  leftSide: Side;
+  rightSide: Side;
 }>();
 
 const emit = defineEmits<{
@@ -57,19 +61,25 @@ const statusColors: Record<string, BadgeColor> = {
   "Finished": "success",
 };
 
+type Side = {
+  label: "Red" | "White"
+  bgClass: string
+  textClass: string
+}
+
 </script>
 
 <template>
-  <tr :class="[active ? 'bg-base-200 outline-2 outline-base-300' : 'hover:bg-base-200']">
+  <tr :class="[active ? 'bg-base-200  ' : 'hover:bg-base-200']">
 
-    <td class="align-top">
+    <td class="align-top p-0" :class="[leftSide.bgClass, leftSide.textClass]">
       <div class="grid grid-rows-[auto_1fr_auto] h-full">
 
         <div class="grid grid-cols-[auto_1fr] items-center">
           <!-- Boutons -->
-          <div class="w-48">
+          <div class="w-48 pt-1">
             <span v-if="active" class="gap-2">
-              <IpponButtons @addIppon="addLeftIppon"/>
+              <IpponButtons @addIppon="addLeftIppon" :textColor="leftSide.textClass"/>
             </span>
           </div>
           <!-- Nom -->
@@ -80,7 +90,7 @@ const statusColors: Record<string, BadgeColor> = {
 
         <!-- Hansoku -->
         <div class="flex justify-start gap-2 mt-4" v-if="active">
-          <span class="btn btn-circle btn-sm btn-ghost">
+          <span class="btn btn-circle btn-sm btn-ghost" :class="leftSide.textClass">
             Δ
           </span>
         </div>
@@ -88,27 +98,43 @@ const statusColors: Record<string, BadgeColor> = {
       </div>
     </td>
 
-    <td class="w-40 align-top">
-      <div class="grid grid-rows-[auto_1fr_auto]">
-        <div class="text-center font-semibold">
+    <td class="w-40 relative p-0">
+      <!-- Background -->
+      <div class="absolute inset-0 grid grid-cols-2 pointer-events-none">
+        <div :class="leftSide.bgClass"></div>
+        <div :class="rightSide.bgClass"></div>
+      </div>
+
+      <!-- Content -->
+      <div class="relative z-10 h-full">
+
+        <div v-if="active" class="flex flex-col items-center justify-center h-full py-2 gap-2">
+          <div class="font-semibold leading-none">
+            {{ fight.score ?? "VS" }}
+          </div>
+
+          <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
+            <div class="flex justify-end gap-2 mr-2">
+              <span class="btn btn-circle btn-sm btn-ghost">K</span>
+              <span class="btn btn-circle btn-sm btn-outline">M</span>
+            </div>
+
+            <div></div>
+
+            <div class="flex justify-start gap-2 ml-2">
+              <span class="btn btn-circle btn-sm btn-ghost">D</span>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="flex items-center justify-center h-full font-semibold">
           {{ fight.score ?? "VS" }}
         </div>
-        <div v-if="active" class="grid grid-cols-[1fr_auto_1fr] items-center mt-4">
-          <!-- Ippons left fighter -->
-          <div class="flex justify-end gap-2 mr-3">
-            <span class="btn btn-circle btn-md btn-ghost">K</span>
-            <span class="btn btn-circle btn-md btn-outline">M</span>
-          </div>
-          <div></div>
-          <!-- Ippons right fighter -->
-          <div class="flex justify-start gap-2 ml-3">
-            <span class="btn btn-circle btn-md btn-ghost">D</span>
-          </div>
-        </div>
+
       </div>
     </td>
 
-    <td class="align-top">
+    <td class="align-top p-0" :class="[rightSide.bgClass, rightSide.textClass]">
       <div class="grid grid-rows-[auto_1fr_auto] h-full">
 
         <div class="grid grid-cols-[1fr_auto] items-center">
@@ -117,9 +143,9 @@ const statusColors: Record<string, BadgeColor> = {
             {{ fight.fighter2 }}
           </span>
           <!-- Boutons -->
-          <div class="w-48">
+          <div class="w-48 pt-1">
             <span v-if="active" class="gap-2">
-              <IpponButtons @addIppon="addRightIppon"/>
+              <IpponButtons @addIppon="addRightIppon" :textColor="rightSide.textClass"/>
             </span>
           </div>
 
@@ -127,7 +153,7 @@ const statusColors: Record<string, BadgeColor> = {
 
         <!-- Hansoku -->
         <div class="flex justify-end gap-2 mt-4" v-if="active">
-          <div class="btn btn-circle btn-sm btn-ghost">
+          <div class="btn btn-circle btn-sm btn-ghost" :class="rightSide.textClass">
             Δ
           </div>
         </div>
@@ -135,11 +161,6 @@ const statusColors: Record<string, BadgeColor> = {
     </td>
 
     <td class="align-top">
-      <!-- Pour charger le composant DaisyUi ?
-      <span class="badge badge-outline badge-success">
-        TEST
-      </span>
-      -->
       <Badge :color="statusColors[fight.status]" variant="outline">
         {{ fight.status }}
       </Badge>
@@ -147,10 +168,10 @@ const statusColors: Record<string, BadgeColor> = {
 
     <td class="align-top">
       <div v-if="!active" class="flex justify-center">
-        <button class="btn btn-ghost btn-xs" @click="emit('toggleFight', fight.id)">
+        <RoundButton size="sm" variant="outline" @click="emit('toggleFight', fight.id)" class="bg-neutral text-neutral-content">
           <BsEye v-if="fight.status=='Finished'"/>
           <BiArchiveOut v-if="fight.status=='Waiting'"/>
-        </button>
+        </RoundButton>
       </div>
       <div v-else class="flex flex-col gap-3 items-center justify-center ">
         <DropdownComboButton :id="fight.id" @action="handleAction"/>
