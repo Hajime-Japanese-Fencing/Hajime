@@ -15,7 +15,6 @@ catalog:
   typescript: ^5
   vite: npm:@voidzero-dev/vite-plus-core@latest
   vitest: 4.1.9
-  vite-plus: latest
   unplugin-vue: ^7.2.0
   vue-tsc: ^3.3.5
   vue-icons-plus: ^0.1.9
