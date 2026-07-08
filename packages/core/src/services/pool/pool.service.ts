@@ -4,14 +4,15 @@ import {factorial} from "../statistics.service.ts";
 
 export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
 
+    // --- TESTING FOR INCORRECT INPUTS ---
     if (!Number.isInteger(nbFighters) || nbFighters < 0) {
         throw new Error("number of fighters must be a positive integer")
     }
-
     if (nbFighters < 4) {
         throw new Error("cannot create pools for less than 4 fighters")
     }
 
+    // --- CALCULATING SETUPS ---
     const possiblePoolSetups: PoolSetup[] = []
     const maxPoolSize = Math.ceil(nbFighters/2)
 
@@ -19,9 +20,7 @@ export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
 
         let poolGroups: PoolGroup[] = []
 
-        // REPARTITION PARFAITE
         if (nbFighters % poolSize == 0) {
-
             poolGroups = [{
                 poolSize: poolSize,
                 amount: Math.floor(nbFighters / poolSize)
@@ -38,6 +37,7 @@ export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
                     amount: 1
                 },
             ]
+
         } else {
             continue
         }
