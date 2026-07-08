@@ -8,7 +8,6 @@ import {
 import type { PoolSetup } from "./pool-setup.interface.ts";
 import type { PoolGroup } from "./pool-group.interface.ts";
 import type {Fighter} from "../fighter.interface.ts";
-import type {Pool} from "../pool.interface.ts";
 
 describe("calculatePossiblePoolSetups", () => {
   it("return all setups (4*3, 3*4, 2*6) for 12 fighters", () => {
@@ -435,6 +434,65 @@ describe("distributeFightersInPools", () => {
     expect(nbOfCInPool1).toBe(1)
     expect(nbOfAInPool2).toBe(1)
     expect(nbOfBInPool2).toBe(1)
+    expect(nbOfCInPool2).toBe(1)
+  })
+
+  it("spreads same club members if not enough pools to separate them", () => {
+    const fighters: Fighter[] = [
+      {
+        name: "fighter",
+        surname: "1",
+        globalRank: 1,
+        club: "club A"
+      },
+      {
+        name: "fighter",
+        surname: "2",
+        globalRank: 2,
+        club: "club A"
+      },
+      {
+        name: "fighter",
+        surname: "3",
+        globalRank: 3,
+        club: "club A"
+      },
+      {
+        name: "fighter",
+        surname: "4",
+        globalRank: 4,
+        club: "club A"
+      },
+      {
+        name: "fighter",
+        surname: "5",
+        globalRank: 5,
+        club: "club C"
+      },
+      {
+        name: "fighter",
+        surname: "6",
+        globalRank: 6,
+        club: "club C"
+      },
+    ]
+    const poolSetup: PoolSetup = {
+      nbFights: 6,
+      poolGroups: [{
+        poolSize: 3,
+        amount: 2
+      }]
+    }
+
+    const pools = distributeFightersInPools(fighters, poolSetup)
+    const nbOfAInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club A").length
+    const nbOfCInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club C").length
+    const nbOfAInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club A").length
+    const nbOfCInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club C").length
+
+    expect(nbOfAInPool1).toBe(2)
+    expect(nbOfCInPool1).toBe(1)
+    expect(nbOfAInPool2).toBe(2)
     expect(nbOfCInPool2).toBe(1)
   })
 })

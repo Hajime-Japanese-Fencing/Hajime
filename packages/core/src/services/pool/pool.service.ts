@@ -27,12 +27,13 @@ export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSe
         for (let pool of pools) {
 
             const poolIsFull = pool.fighters.length >= pool.size
-            const containsSameClubMember = pool.fighters.some(f => f.fighter.club == fighter.club)
-            const clubMemberInAllPools = pools.every(p =>
-                p.fighters.some(f =>
-                    f.fighter.club == fighter.club))
+            const nbSameClubMembersInPool = countClubMembers(pool, fighter.club)
+            const nbPoolsWithFewerSameClubMembers = pools.filter(p =>
+                countClubMembers(p, fighter.club) < nbSameClubMembersInPool
+            ).length
+            const containsFewestClubMembers = nbPoolsWithFewerSameClubMembers == 0
 
-            if (!poolIsFull && (!containsSameClubMember || clubMemberInAllPools)) {
+            if (!poolIsFull && containsFewestClubMembers) {
                 pool.fighters.push(poolFighter)
                 break
             }
@@ -40,6 +41,10 @@ export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSe
     }
 
     return pools
+}
+
+function countClubMembers(pool: Pool, clubName: string): number {
+    return pool.fighters.filter(poolFighter => poolFighter.fighter.club == clubName).length
 }
 
 export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
