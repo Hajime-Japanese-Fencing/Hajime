@@ -5,9 +5,19 @@ import type {Pool} from "../pool.interface.ts";
 import {toPoolFighter} from "./pool-fighter.interface.ts";
 
 export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSetup): Pool[] {
-    let pools: Pool[] = []
+
+    // --- CHECKING INPUT ---
+    let poolSetupCapacity = 0
+    for (let poolGroup of poolSetup.poolGroups) {
+        poolSetupCapacity += poolGroup.poolSize * poolGroup.amount
+    }
+
+    if (fighters.length != poolSetupCapacity) {
+        throw new Error("Fighter amount doesn't fit pool setup capacity")
+    }
 
     // --- POOL LIST INITIALIZATION ---
+    let pools: Pool[] = []
     for (let poolGroup of poolSetup.poolGroups) {
         for (let i= 1; i <= poolGroup.amount; i++)
         pools.push({

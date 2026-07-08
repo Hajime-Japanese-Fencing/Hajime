@@ -317,6 +317,56 @@ describe("poolSetupEquals", () => {
 })
 
 describe("distributeFightersInPools", () => {
+  it("throws error if number of fighters do not match total pool capacity", () => {
+    const fighters: Fighter[] = [
+      {
+        name: "fighter",
+        surname: "1",
+        globalRank: 1,
+        club: "club A"
+      },
+      {
+        name: "fighter",
+        surname: "2",
+        globalRank: 2,
+        club: "club A"
+      },
+      {
+        name: "fighter",
+        surname: "3",
+        globalRank: 3,
+        club: "club B"
+      },
+      {
+        name: "fighter",
+        surname: "4",
+        globalRank: 4,
+        club: "club B"
+      },
+      {
+        name: "fighter",
+        surname: "5",
+        globalRank: 5,
+        club: "club C"
+      },
+      {
+        name: "fighter",
+        surname: "6",
+        globalRank: 6,
+        club: "club C"
+      },
+    ]
+    const poolSetup: PoolSetup = {
+      nbFights: 21,
+      poolGroups: [{
+        poolSize: 3,
+        amount: 7
+      }]
+    }
+
+    expect(() => distributeFightersInPools(fighters, poolSetup)).toThrow("Fighter amount doesn't fit pool setup capacity")
+  })
+
   it("returns a pool list which length is the sum of all entry PoolGroups amounts", () => {
     const fighters: Fighter[] = [
       {
