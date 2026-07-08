@@ -2,19 +2,8 @@
 
 import { ref } from "vue";
 import FightList from "./FightList.vue";
+import type {Fight, FightStatus, NewResultEvent} from "./fight.interface.ts";
 
-
-type Fight = {
-  id: number;
-  fighter1: string;
-  fighter2: string;
-  score: string | null;
-  status: FightStatus;
-  scoreEvents: ScoreEvent[];
-  editable: boolean;
-};
-
-type FightStatus = "Waiting" | "In progress" | "Finished";
 
 const fights = ref<Fight[]>([
   {
@@ -51,17 +40,16 @@ const fights = ref<Fight[]>([
   },
 ]);
 
-export type ScoreEvent = {
-  id: number;
-  leftFighter: boolean;
-  type: "ippon" | "hansoku";
-  code: "K" | "M" | "D" | "T" | "Ht" | "Δ";
-  variant: "filled" | "outline";
-};
-
-export type NewScoreEvent = Omit<ScoreEvent, "id">;
-
 const openedFightId = ref<number | null>(null);
+
+const nextScoreEventId = ref(
+    Math.max(
+        0,
+        ...fights.value.flatMap(f =>
+            f.scoreEvents.map(e => e.id)
+        )
+    ) + 1
+);
 
 function getFight(id: number) {
   return fights.value.find(f => f.id === id);
@@ -111,7 +99,7 @@ function updateFightStatus(id: number, status: FightStatus) {
   fight.status = status;
 }
 
-function addScoreEvent(id: number, event: NewScoreEvent) {
+function addScoreEvent(id: number, event: NewResultEvent) {
   const fight = getFight(id);
   if (!fight) return;
 
@@ -121,14 +109,7 @@ function addScoreEvent(id: number, event: NewScoreEvent) {
   });
 }
 
-const nextScoreEventId = ref(
-    Math.max(
-        0,
-        ...fights.value.flatMap(f =>
-            f.scoreEvents.map(e => e.id)
-        )
-    ) + 1
-);
+
 </script>
 
 <template>

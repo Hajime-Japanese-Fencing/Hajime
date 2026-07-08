@@ -3,25 +3,7 @@ import { CgArrowsExchange } from "vue-icons-plus/cg";
 import FightRow from "./FightRow.vue";
 import { computed, ref } from "vue";
 import RoundButton from "../Button/RoundButton.vue";
-import type {NewScoreEvent, ScoreEvent} from "./FightScreen.vue";
-
-type Fight = {
-  id: number;
-  fighter1: string;
-  fighter2: string;
-  score: string | null;
-  status: FightStatus;
-  scoreEvents: ScoreEvent[];
-  editable: boolean;
-};
-
-export type FightStatus = "Waiting" | "In progress" | "Finished";
-
-type Side = {
-  label: "Red" | "White"
-  bgClass: string
-  textClass: string
-}
+import type {Fight, NewResultEvent, Side} from "./fight.interface.ts";
 
 const props = defineProps<{
   fights: Fight[];
@@ -34,9 +16,31 @@ const emit = defineEmits<{
   cancelFight: [id: number];
   validateFight: [id: number];
   forfeitFight: [id: number];
-  addScoreEvent: [fightId: number, event: NewScoreEvent];
+  addScoreEvent: [fightId: number, event: NewResultEvent];
 }>();
 
+
+const RED: Side = {
+  label: "Red",
+  bgClass: "bg-error",
+  textClass: "text-error-content",
+}
+
+const WHITE: Side = {
+  label: "White",
+  bgClass: "bg-base-100",
+  textClass: "text-base-content"
+}
+
+const leftSide = ref<Side>(RED)
+
+const rightSide = computed(() =>
+    leftSide.value.label === "Red" ? WHITE : RED
+)
+
+const activeFightId = computed(() =>
+    props.fights.find(fight => fight.status === "In progress")?.id ?? null
+);
 
 function onOpenFight(id: number) {
   emit("openFight", id);
@@ -58,9 +62,6 @@ function onForfeitFight(id: number) {
   emit("forfeitFight", id);
 }
 
-const activeFightId = computed(() =>
-  props.fights.find(fight => fight.status === "In progress")?.id ?? null
-);
 
 function isLocked(fight: Fight) {
   return (
@@ -75,23 +76,6 @@ function swapColors() {
     : RED
 }
 
-const RED: Side = {
-  label: "Red",
-  bgClass: "bg-error",
-  textClass: "text-error-content",
-}
-
-const WHITE: Side = {
-  label: "White",
-  bgClass: "bg-base-100",
-  textClass: "text-base-content"
-}
-
-const leftSide = ref<Side>(RED)
-
-const rightSide = computed(() =>
-  leftSide.value.label === "Red" ? WHITE : RED
-)
 
 </script>
 
@@ -122,7 +106,7 @@ const rightSide = computed(() =>
               {{ rightSide.label }}
             </div>
           </th>
-          <th class="">Status</th>
+          <th class="w-px whitespace-nowrap">Status</th>
           <th class=""></th>
         </tr>
       </thead>

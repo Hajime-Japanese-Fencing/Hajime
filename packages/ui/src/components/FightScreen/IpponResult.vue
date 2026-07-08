@@ -1,27 +1,26 @@
 <script setup lang="ts">
-
 import {computed} from "vue";
 
 const props = withDefaults(
     defineProps<{
       removable?: boolean
-      variant?: "filled" | "outline"
+      firstBlood?: boolean
     }>(),
     {
       removable: false,
-      variant: "filled",
+      firstBlood: false,
     }
-);
-
-const tokenClass = computed(() =>
-    props.variant === "filled"
-        ? "bg-base text-base-content border-transparent"
-        : "bg-base text-base-content border-base-content"
 );
 
 const emit = defineEmits<{
   remove: [];
 }>();
+
+const resultClass = computed(() =>
+    props.firstBlood
+        ? "bg-base text-base-content border-base-content"
+        : "bg-base text-base-content border-transparent"
+);
 
 function onRemove() {
   emit("remove");
@@ -32,7 +31,7 @@ function onRemove() {
 <template>
   <div class="relative group">
   <span class="inline-flex h-8 w-8 items-center justify-center rounded-full font-semibold border"
-        :class="tokenClass">
+        :class="resultClass">
     <slot />
   </span>
 

@@ -2,8 +2,8 @@
 import { BiSolidDownArrow } from "vue-icons-plus/bi";
 import { TiTick, TiCancel, TiFlag } from "vue-icons-plus/ti";
 import Badge from "./Badge.vue";
+import type {Action} from "./fight.interface.ts";
 
-type Action = "validate" | "cancel" | "forfeit";
 
 const props = defineProps<{
   id: number;

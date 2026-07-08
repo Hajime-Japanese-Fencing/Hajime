@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { ScoreEvent } from "./FightScreen.vue";
-import ScoreToken from "./ScoreToken.vue";
+import IpponResult from "./IpponResult.vue";
+import type {IpponResultData} from "./fight.interface.ts";
 
-type ScoreTokenData = Pick<ScoreEvent, "id" | "code" | "variant">;
+
 
 const props = defineProps<{
-  tokens: ScoreTokenData[];
+  tokens: IpponResultData[];
   removable?: boolean;
 }>();
 
@@ -16,7 +16,7 @@ const emit = defineEmits<{
 
 <template>
   <div class="flex gap-2">
-    <ScoreToken
+    <IpponResult
       v-for="token in props.tokens"
       :key="token.id"
       :variant="token.variant"
@@ -24,7 +24,7 @@ const emit = defineEmits<{
       @remove="emit('remove', token.id)"
     >
       {{ token.code }}
-    </ScoreToken>
+    </IpponResult>
   </div>
 </template>
 
