@@ -1,17 +1,8 @@
 {
   "name": "@hajime/ui",
   "version": "0.0.0",
+  "private": true,
   "description": "Hajime design system — dumb Vue components with DaisyUI theme.",
-  "homepage": "https://github.com/author/library#readme",
-  "bugs": {
-    "url": "https://github.com/author/library/issues"
-  },
-  "license": "MIT",
-  "author": "Author Name <author.name@mail.com>",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/author/library.git"
-  },
   "files": [
     "dist"
   ],
@@ -19,11 +10,8 @@
   "exports": {
     ".": "./dist/index.mjs",
     "./theme.css": "./src/theme.css",
-    "./dist/style.css": "./dist/style.css",
+    "./style.css": "./dist/style.css",
     "./package.json": "./package.json"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "scripts": {
     "build": "vp pack",
