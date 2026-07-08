@@ -18,7 +18,7 @@
     "@vue/tsconfig": "^0.9.1",
     "typescript": "~6.0.2",
     "vite": "catalog:",
-    "vite-plus": "latest",
+    "vite-plus": "catalog:",
     "vue-tsc": "^3.2.8"
   }
 }
