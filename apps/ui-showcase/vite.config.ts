@@ -10,7 +10,7 @@ export default defineConfig({
     tasks: {
       dev: {
         command: "vp dev",
-        dependsOn: ["@hajime/ui#build"],
+        dependsOn: ["@hajime/ui#build", "@hajime/core#build"],
       },
     },
   },
