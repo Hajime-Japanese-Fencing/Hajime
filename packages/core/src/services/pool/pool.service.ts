@@ -2,7 +2,7 @@ import type {PoolGroup} from "./pool-group.interface.ts";
 import type {PoolSetup} from "./pool-setup.interface.ts";
 import type {Fighter} from "../fighter.interface.ts";
 import type {Pool} from "../pool.interface.ts";
-import type {PoolFighter} from "./pool-fighter.interface.ts";
+import {toPoolFighter} from "./pool-fighter.interface.ts";
 
 export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSetup): Pool[] {
     let pools: Pool[] = []
@@ -20,20 +20,17 @@ export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSe
     // --- FIGHTERS DISTRIBUTION ---
     for (let fighter of fighters) {
 
-        const poolFighter: PoolFighter = {
-            fighter: fighter
-        }
+        const poolFighter = toPoolFighter(fighter)
 
         for (let pool of pools) {
 
-            const poolIsFull = pool.fighters.length >= pool.size
-            const nbSameClubMembersInPool = countClubMembers(pool, fighter.club)
+            const poolIsFull = pool.fighters.length == pool.size
+            const nbSameClubMembersInPool = countClubMembersInPool(pool, fighter.club)
             const nbPoolsWithFewerSameClubMembers = pools.filter(p =>
-                countClubMembers(p, fighter.club) < nbSameClubMembersInPool
+                countClubMembersInPool(p, fighter.club) < nbSameClubMembersInPool
             ).length
-            const containsFewestClubMembers = nbPoolsWithFewerSameClubMembers == 0
 
-            if (!poolIsFull && containsFewestClubMembers) {
+            if (!poolIsFull && nbPoolsWithFewerSameClubMembers == 0) {
                 pool.fighters.push(poolFighter)
                 break
             }
@@ -43,7 +40,7 @@ export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSe
     return pools
 }
 
-function countClubMembers(pool: Pool, clubName: string): number {
+function countClubMembersInPool(pool: Pool, clubName: string): number {
     return pool.fighters.filter(poolFighter => poolFighter.fighter.club == clubName).length
 }
 
