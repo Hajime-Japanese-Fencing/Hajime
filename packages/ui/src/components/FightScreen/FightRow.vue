@@ -1,26 +1,15 @@
 <script setup lang="ts">
 import { BiArchiveOut } from "vue-icons-plus/bi";
 import { BsEye, BsEyeSlash } from "vue-icons-plus/bs";
-import IpponButtons from "./IpponButtons.vue";
+import IpponAssignButtons from "./IpponAssignButtons.vue";
 import DropdownComboButton from "./DropdownComboButton.vue";
 import Badge from "./Badge.vue";
 import RoundButton from "../Button/RoundButton.vue";
 import { computed } from "vue";
-import ScoreTokenList from "./ScoreTokenList.vue";
-import type { FightStatus } from "./FightList.vue";
-import type { NewScoreEvent, ScoreEvent } from "./FightScreen.vue";
+import IpponResultList from "./IpponResultList.vue";
+import type {Fight, Side, IpponResultEvent, NewResultEvent, Action} from "./fight.interface.ts";
+import type {ASSIGNABLE_CODE} from "@hajime/core/src/index.ts";
 
-type Fight = {
-  id: number;
-  fighter1: string;
-  fighter2: string;
-  score: string | null;
-  status: FightStatus;
-  scoreEvents: ScoreEvent[];
-  editable: boolean;
-};
-
-type Action = "validate" | "cancel" | "forfeit";
 type BadgeColor =
   | "primary"
   | "secondary"
@@ -30,12 +19,6 @@ type BadgeColor =
   | "info"
   | "warning"
   | "error";
-
-type Side = {
-  label: "Red" | "White";
-  bgClass: string;
-  textClass: string;
-};
 
 const props = defineProps<{
   fight: Fight;
@@ -51,15 +34,52 @@ const emit = defineEmits<{
   cancelFight: [id: number];
   validateFight: [id: number];
   forfeitFight: [id: number];
-  addScoreEvent: [event: NewScoreEvent];
+  addScoreEvent: [event: NewResultEvent];
 }>();
 
-function addIppon(leftFighter: boolean, code: ScoreEvent["code"]) {
+const statusColors: Record<string, BadgeColor> = {
+  "Waiting": "info",
+  "In progress": "accent",
+  "Finished": "success",
+};
+
+const leftHansokus = computed(() =>
+  props.fight.scoreEvents
+    .filter(({ leftFighter, type }) => leftFighter && type === "hansoku")
+    .map(({ id, code, firstBlood }) => ({ id, code, firstBlood })),
+);
+
+const rightHansokus = computed(() =>
+  props.fight.scoreEvents
+    .filter(({ leftFighter, type }) => !leftFighter && type === "hansoku")
+    .map(({ id, code, firstBlood }) => ({ id, code, firstBlood })),
+);
+
+const leftIppons = computed(() =>
+  props.fight.scoreEvents
+    .filter(({ leftFighter, type }) => leftFighter && type === "ippon")
+    .map(({ id, code, firstBlood }) => ({ id, code, firstBlood })),
+);
+
+const rightIppons = computed(() =>
+  props.fight.scoreEvents
+    .filter(({ leftFighter, type }) => !leftFighter && type === "ippon")
+    .map(({ id, code, firstBlood }) => ({ id, code, firstBlood })),
+);
+
+function removeLeftHansoku(id: number) {}
+
+function removeRightHansoku(id: number) {}
+
+function removeLeftIppon(id: number) {}
+
+function removeRightIppon(id: number) {}
+
+function addIppon(leftFighter: boolean, code: IpponResultEvent["code"]) {
   emit("addScoreEvent", {
     leftFighter,
     type: code === "Δ" ? "hansoku" : "ippon",
     code,
-    variant: "filled",
   });
 }
 
@@ -86,44 +106,6 @@ function onOpenFight() {
 function onCloseFight() {
   emit("closeFight");
 }
-
-const statusColors: Record<string, BadgeColor> = {
-  Waiting: "info",
-  "In progress": "accent",
-  Finished: "success",
-};
-
-const leftHansokus = computed(() =>
-  props.fight.scoreEvents
-    .filter(({ leftFighter, type }) => leftFighter && type === "hansoku")
-    .map(({ id, code, variant }) => ({ id, code, variant })),
-);
-
-const rightHansokus = computed(() =>
-  props.fight.scoreEvents
-    .filter(({ leftFighter, type }) => !leftFighter && type === "hansoku")
-    .map(({ id, code, variant }) => ({ id, code, variant })),
-);
-
-const leftIppons = computed(() =>
-  props.fight.scoreEvents
-    .filter(({ leftFighter, type }) => leftFighter && type === "ippon")
-    .map(({ id, code, variant }) => ({ id, code, variant })),
-);
-
-const rightIppons = computed(() =>
-  props.fight.scoreEvents
-    .filter(({ leftFighter, type }) => !leftFighter && type === "ippon")
-    .map(({ id, code, variant }) => ({ id, code, variant })),
-);
-
-function removeLeftHansoku(id: number) {}
-
-function removeRightHansoku(id: number) {}
-
-function removeLeftIppon(id: number) {}
-
-function removeRightIppon(id: number) {}
 </script>
 
 <template>
@@ -134,7 +116,7 @@ function removeRightIppon(id: number) {}
           <!-- Boutons -->
           <div class="w-48 pt-1">
             <span v-if="props.active" class="gap-2">
-              <IpponButtons @addIppon="(code) => addIppon(true, code)" />
+              <IpponAssignButtons @addIppon="(code: ASSIGNABLE_CODE) => addIppon(true, code)" />
             </span>
           </div>
           <!-- Nom -->
@@ -145,7 +127,7 @@ function removeRightIppon(id: number) {}
 
         <!-- Hansoku -->
         <div class="flex justify-start gap-2 mt-4 h-8" v-if="props.active">
-          <ScoreTokenList
+          <IpponResultList
             :tokens="leftHansokus"
             :removable="props.fight.editable"
             @remove="removeLeftHansoku"
@@ -167,7 +149,7 @@ function removeRightIppon(id: number) {}
 
           <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
             <div class="flex justify-end gap-2 mr-2">
-              <ScoreTokenList
+              <IpponResultList
                 :tokens="leftIppons"
                 :removable="props.fight.editable"
                 @remove="removeLeftIppon"
@@ -177,7 +159,7 @@ function removeRightIppon(id: number) {}
             <div></div>
 
             <div class="flex justify-start gap-2 ml-2">
-              <ScoreTokenList
+              <IpponResultList
                 :tokens="rightIppons"
                 :removable="props.fight.editable"
                 @remove="removeRightIppon"
@@ -202,8 +184,8 @@ function removeRightIppon(id: number) {}
           <!-- Boutons -->
           <div class="w-48 pt-1">
             <span v-if="props.active" class="gap-2">
-              <IpponButtons
-                @addIppon="(code) => addIppon(false, code)"
+              <IpponAssignButtons
+                @addIppon="(code: ASSIGNABLE_CODE) => addIppon(false, code)"
                 :textColor="props.rightSide.textClass"
               />
             </span>
@@ -212,7 +194,7 @@ function removeRightIppon(id: number) {}
 
         <!-- Hansoku -->
         <div class="flex justify-end gap-2 mt-4 h-8" v-if="props.active">
-          <ScoreTokenList
+          <IpponResultList
             :tokens="rightHansokus"
             :removable="props.fight.editable"
             @remove="removeRightHansoku"
@@ -221,7 +203,7 @@ function removeRightIppon(id: number) {}
       </div>
     </td>
 
-    <td class="">
+    <td class="w-px whitespace-nowrap">
       <Badge :color="statusColors[props.fight.status]" variant="outline">
         {{ props.fight.status }}
       </Badge>

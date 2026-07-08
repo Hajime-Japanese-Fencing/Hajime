@@ -2,20 +2,8 @@
 
 import { ref } from "vue";
 import FightList from "./FightList.vue";
-import type {NewScoreEvent} from "./FightRow.vue";
+import type {Fight, FightStatus, NewResultEvent} from "./fight.interface.ts";
 
-
-type Fight = {
-  id: number;
-  fighter1: string;
-  fighter2: string;
-  score: string | null;
-  status: FightStatus;
-  scoreEvents: ScoreEvent[];
-  editable: boolean;
-};
-
-type FightStatus = "Waiting" | "In progress" | "Finished";
 
 const fights = ref<Fight[]>([
   {
@@ -52,20 +40,23 @@ const fights = ref<Fight[]>([
   },
 ]);
 
-export type ScoreEvent = {
-  id: number;
-  leftFighter: boolean;
-  type: "ippon" | "hansoku";
-  code: "K" | "M" | "D" | "T" | "Ht" | "Δ";
-  variant: "filled" | "outline";
-};
-
-export type NewScoreEvent = Omit<ScoreEvent, "id">;
-
 const openedFightId = ref<number | null>(null);
 
+const nextScoreEventId = ref(
+    Math.max(
+        0,
+        ...fights.value.flatMap(f =>
+            f.scoreEvents.map(e => e.id)
+        )
+    ) + 1
+);
+
+function getFight(id: number) {
+  return fights.value.find(f => f.id === id);
+}
+
 function onOpenFight(id: number) {
-  const fight = fights.value.find((f) => f.id === id);
+  const fight = getFight(id);
 
   if (!fight) {
     return;
@@ -98,7 +89,7 @@ function onForfeitFight(id: number) {
 }
 
 function updateFightStatus(id: number, status: FightStatus) {
-  const fight = fights.value.find((f) => f.id === id);
+  const fight = getFight(id);
 
   if (!fight) {
     return;
@@ -108,8 +99,8 @@ function updateFightStatus(id: number, status: FightStatus) {
   fight.status = status;
 }
 
-function addScoreEvent(fightId: number, event: NewScoreEvent) {
-  const fight = fights.value.find(f => f.id === fightId);
+function addScoreEvent(id: number, event: NewResultEvent) {
+  const fight = getFight(id);
   if (!fight) return;
 
   fight.scoreEvents.push({
@@ -118,14 +109,7 @@ function addScoreEvent(fightId: number, event: NewScoreEvent) {
   });
 }
 
-const nextScoreEventId = ref(
-    Math.max(
-        0,
-        ...fights.value.flatMap(f =>
-            f.scoreEvents.map(e => e.id)
-        )
-    ) + 1
-);
+
 </script>
 
 <template>

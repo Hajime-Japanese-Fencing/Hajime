@@ -17,3 +17,8 @@ export type { PoolDetails } from "./components/PoolCard/pool-details.interface.t
 export { default as FightRow } from "./components/FightScreen/FightRow.vue";
 export { default as FightList } from "./components/FightScreen/FightList.vue";
 export { default as FightScreen } from "./components/FightScreen/FightScreen.vue";
+export { default as Badge } from "./components/FightScreen/Badge.vue";
+export { default as DropdownComboButton } from "./components/FightScreen/DropdownComboButton.vue";
+export { default as IpponAssignButtons } from "./components/FightScreen/IpponAssignButtons.vue";
+export { default as IpponResult } from "./components/FightScreen/IpponResult.vue";
+export { default as IpponResultList } from "./components/FightScreen/IpponResultList.vue";
