@@ -8,6 +8,7 @@ import RoundButton from "../Button/RoundButton.vue";
 import { computed } from "vue";
 import ScoreTokenList from "./ScoreTokenList.vue";
 import type { FightStatus } from "./FightList.vue";
+import type {NewScoreEvent, ScoreEvent} from "./FightScreen.vue";
 
 type Fight = {
   id: number;
@@ -36,6 +37,8 @@ type Side = {
   textClass: string;
 };
 
+
+
 const props = defineProps<{
   fight: Fight;
   active: boolean;
@@ -45,19 +48,23 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "openFight", id: number): void;
-  (e: "closeFight"): void;
-  (e: "cancelFight", id: number): void;
-  (e: "validateFight", id: number): void;
-  (e: "forfeitFight", id: number): void;
+  openFight: [id: number];
+  closeFight: [];
+  cancelFight: [id: number];
+  validateFight: [id: number];
+  forfeitFight: [id: number];
+  addScoreEvent: [event: NewScoreEvent];
 }>();
 
-function addLeftIppon(code: string) {
-  console.log("left", code);
-}
 
-function addRightIppon(code: string) {
-  console.log("right", code);
+
+function addIppon(leftFighter: boolean, code: ScoreEvent["code"]) {
+  emit("addScoreEvent", {
+    leftFighter,
+    type: code === "Δ" ? "hansoku" : "ippon",
+    code,
+    variant: "filled",
+  });
 }
 
 function handleAction(action: Action) {
@@ -90,13 +97,6 @@ const statusColors: Record<string, BadgeColor> = {
   Finished: "success",
 };
 
-export type ScoreEvent = {
-  id: number;
-  leftFighter: boolean
-  type: "ippon" | "hansoku";
-  code: "K" | "M" | "D" | "T" | "Δ";
-  variant: "filled" | "outline";
-};
 
 const leftHansokus = computed(() =>
   props.fight.scoreEvents
@@ -145,7 +145,7 @@ function removeRightIppon(id: number) {
           <!-- Boutons -->
           <div class="w-48 pt-1">
             <span v-if="props.active" class="gap-2">
-              <IpponButtons @addIppon="addLeftIppon" :textColor="props.leftSide.textClass" />
+              <IpponButtons @addIppon="code => addIppon(true, code)" :textColor="props.leftSide.textClass" />
             </span>
           </div>
           <!-- Nom -->
@@ -204,7 +204,7 @@ function removeRightIppon(id: number) {
           <!-- Boutons -->
           <div class="w-48 pt-1">
             <span v-if="props.active" class="gap-2">
-              <IpponButtons @addIppon="addRightIppon" :textColor="props.rightSide.textClass" />
+              <IpponButtons @addIppon="code => addIppon(false, code)" :textColor="props.rightSide.textClass" />
             </span>
           </div>
         </div>

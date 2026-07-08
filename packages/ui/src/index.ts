@@ -16,3 +16,4 @@ export type { PoolDetails } from "./components/PoolCard/pool-details.interface.t
 
 export { default as FightRow } from "./components/FightScreen/FightRow.vue";
 export { default as FightList } from "./components/FightScreen/FightList.vue";
+export { default as FightScreen } from "./components/FightScreen/FightScreen.vue";

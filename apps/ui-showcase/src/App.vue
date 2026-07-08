@@ -9,7 +9,7 @@ import {
   RoundButton,
   SquareButton,
   PoolCard,
-  FightList,
+  FightScreen,
 } from "@hajime/ui";
 import { ref } from "vue";
 
@@ -63,106 +63,7 @@ const poolDetails = ref<PoolDetails>({
   fighters: fighters.value,
 });
 
-type Fight = {
-  id: number;
-  fighter1: string;
-  fighter2: string;
-  score: string | null;
-  status: FightStatus;
-  scoreEvents: ScoreEvent[];
-  editable: boolean;
-};
 
-type FightStatus = "Waiting" | "In progress" | "Finished";
-
-const fights = ref<Fight[]>([
-  {
-    id: 1,
-    fighter1: "Tanaka",
-    fighter2: "Suzuki",
-    score: null,
-    status: "Waiting",
-    scoreEvents: [],
-    editable: true,
-  },
-  {
-    id: 2,
-    fighter1: "Yamamoto",
-    fighter2: "Sato",
-    score: "2 - 1",
-    status: "Finished",
-    scoreEvents: [
-      { id: 1, leftFighter: true, type: "ippon", code: "M", variant: "outline" },
-      { id: 2, leftFighter: false, type: "hansoku", code: "Δ", variant: "filled" },
-      { id: 3, leftFighter: false, type: "ippon", code: "D", variant: "filled" },
-      { id: 4, leftFighter: true, type: "ippon", code: "K", variant: "filled" },
-    ],
-    editable: false,
-  },
-  {
-    id: 3,
-    fighter1: "Ito",
-    fighter2: "Kobayashi",
-    score: null,
-    status: "Waiting",
-    scoreEvents: [],
-    editable: true,
-  },
-]);
-
-type ScoreEvent = {
-  id: number;
-  leftFighter: boolean;
-  type: "ippon" | "hansoku";
-  code: "K" | "M" | "D" | "T" | "Δ";
-  variant: "filled" | "outline";
-};
-
-const openedFightId = ref<number | null>(null);
-
-function onOpenFight(id: number) {
-  const fight = fights.value.find((f) => f.id === id);
-
-  if (!fight) {
-    return;
-  }
-
-  openedFightId.value = id;
-
-  if (fight.status === "Waiting") {
-    updateFightStatus(id, "In progress");
-  }
-}
-
-function onCloseFight() {
-  openedFightId.value = null;
-}
-
-function onCancelFight(id: number) {
-  openedFightId.value = null;
-  updateFightStatus(id, "Waiting");
-}
-
-function onValidateFight(id: number) {
-  openedFightId.value = null;
-  updateFightStatus(id, "Finished");
-}
-
-function onForfeitFight(id: number) {
-  openedFightId.value = null;
-  updateFightStatus(id, "Finished");
-}
-
-function updateFightStatus(id: number, status: FightStatus) {
-  const fight = fights.value.find((f) => f.id === id);
-
-  if (!fight) {
-    return;
-  }
-
-  // TODO: remplacer par appel API
-  fight.status = status;
-}
 </script>
 
 <template>
@@ -171,15 +72,7 @@ function updateFightStatus(id: number, status: FightStatus) {
 
     <section>
       <h2 class="text-xl font-semibold">Fight list</h2>
-      <FightList
-        :fights="fights"
-        :opened-fight-id="openedFightId"
-        @open-fight="onOpenFight"
-        @close-fight="onCloseFight"
-        @cancel-fight="onCancelFight"
-        @validate-fight="onValidateFight"
-        @forfeit-fight="onForfeitFight"
-      />
+      <FightScreen/>
     </section>
 
     <section class="flex flex-col gap-4">

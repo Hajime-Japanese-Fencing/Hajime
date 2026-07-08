@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type {ScoreEvent} from "./FightRow.vue";
+
 interface IpponType {
-  code: string;
+  code: ScoreEvent["code"]
   label: string;
 }
 
@@ -18,7 +20,7 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "addIppon", code: string): void;
+  (e: "addIppon", code: ScoreEvent["code"]): void;
 }>();
 </script>
 
