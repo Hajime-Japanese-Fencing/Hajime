@@ -59,7 +59,7 @@ function isLocked(fight: Fight): boolean {
 }
 
 function swapColors() {
-  leftSide.value = leftSide.value.label === "Red" ? WhiteFightSide : RedFightSide;
+  leftSide.value = leftSide.value.side === "RED" ? WhiteFightSide : RedFightSide;
 }
 </script>
 
