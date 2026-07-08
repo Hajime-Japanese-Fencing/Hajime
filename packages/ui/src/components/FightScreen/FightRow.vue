@@ -66,8 +66,8 @@ const emit = defineEmits<{
  * Et se baser sur des statuts qui vienne de @hajime/core
  */
 const statusColors: Record<string, BadgeColor> = {
-  Waiting: "info",
-  "In progress": "accent",
+  Waiting: "primary",
+  "In progress": "warning",
   Finished: "success",
 };
 
@@ -239,7 +239,7 @@ function onCloseFight() {
     </td>
 
     <td class="w-px whitespace-nowrap">
-      <Badge :color="statusColors[props.fight.status]" variant="outline">
+      <Badge :color="statusColors[props.fight.status]" variant="soft">
         {{ props.fight.status }}
       </Badge>
     </td>
