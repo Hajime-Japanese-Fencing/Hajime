@@ -1,5 +1,51 @@
 import type {PoolGroup} from "./pool-group.interface.ts";
 import type {PoolSetup} from "./pool-setup.interface.ts";
+import type {Fighter} from "../fighter.interface.ts";
+import type {Pool} from "../pool.interface.ts";
+import type {PoolFighter} from "./pool-fighter.interface.ts";
+
+export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSetup): Pool[] {
+    let pools: Pool[] = []
+
+    // --- POOL LIST INITIALIZATION ---
+    for (let poolGroup of poolSetup.poolGroups) {
+        for (let i= 1; i <= poolGroup.amount; i++)
+        pools.push({
+            number: i,
+            size: poolGroup.poolSize,
+            fighters: []
+        })
+    }
+
+    // --- FIGHTERS DISTRIBUTION ---
+    for (let fighter of fighters) {
+
+        const poolFighter: PoolFighter = {
+            fighter: fighter
+        }
+
+        for (let pool of pools) {
+
+            const poolIsFull = pool.fighters.length >= pool.size
+            const nbSameClubMembersInPool = countClubMembers(pool, fighter.club)
+            const nbPoolsWithFewerSameClubMembers = pools.filter(p =>
+                countClubMembers(p, fighter.club) < nbSameClubMembersInPool
+            ).length
+            const containsFewestClubMembers = nbPoolsWithFewerSameClubMembers == 0
+
+            if (!poolIsFull && containsFewestClubMembers) {
+                pool.fighters.push(poolFighter)
+                break
+            }
+        }
+    }
+
+    return pools
+}
+
+function countClubMembers(pool: Pool, clubName: string): number {
+    return pool.fighters.filter(poolFighter => poolFighter.fighter.club == clubName).length
+}
 
 export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
 
