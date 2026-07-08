@@ -56,6 +56,7 @@ export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
                     }]
                 )
 
+                // --- CHECKING FOR SETUP DUPLICATE ---
                 if (!possiblePoolSetups.some(setup => poolSetupEquals(setup, newSetup))) {
                     possiblePoolSetups.push(newSetup)
                 }
@@ -88,15 +89,15 @@ export function calculateNbFightsInPool(poolGroups: PoolGroup[]): number {
     return nbFightsTotal
 }
 
-export function poolSetupEquals(a: PoolSetup, b: PoolSetup): boolean {
-    if (a.poolGroups.length !== b.poolGroups.length) return false;
+export function poolSetupEquals(setup1: PoolSetup, setup2: PoolSetup): boolean {
+    if (setup1.poolGroups.length !== setup2.poolGroups.length) return false;
 
     // Redondant car pas censé arriver ?
-    const sortedA = [...a.poolGroups].sort((x, y) => x.poolSize - y.poolSize);
-    const sortedB = [...b.poolGroups].sort((x, y) => x.poolSize - y.poolSize);
+    const sorted1 = [...setup1.poolGroups].sort((x, y) => x.poolSize - y.poolSize);
+    const sorted2 = [...setup2.poolGroups].sort((x, y) => x.poolSize - y.poolSize);
 
-    return sortedA.every(
-        (group, i) => group.poolSize === sortedB[i].poolSize
-            && group.amount === sortedB[i].amount
+    return sorted1.every(
+        (group, i) => group.poolSize === sorted2[i].poolSize
+            && group.amount === sorted2[i].amount
     );
 }
