@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { CgArrowsExchange } from "vue-icons-plus/cg";
-import FightRow, { type ScoreEvent } from "./FightRow.vue";
+import FightRow from "./FightRow.vue";
 import { computed, ref } from "vue";
 import RoundButton from "../Button/RoundButton.vue";
+import type {NewScoreEvent, ScoreEvent} from "./FightScreen.vue";
 
 type Fight = {
   id: number;
@@ -33,6 +34,7 @@ const emit = defineEmits<{
   cancelFight: [id: number];
   validateFight: [id: number];
   forfeitFight: [id: number];
+  addScoreEvent: [fightId: number, event: NewScoreEvent];
 }>();
 
 
@@ -90,6 +92,7 @@ const leftSide = ref<Side>(RED)
 const rightSide = computed(() =>
   leftSide.value.label === "Red" ? WHITE : RED
 )
+
 </script>
 
 <template>
@@ -127,7 +130,7 @@ const rightSide = computed(() =>
         <FightRow :fight="fight" :active="props.openedFightId === fight.id" :locked="isLocked(fight)"
           @openFight="onOpenFight" @closeFight="onCloseFight" @cancelFight="onCancelFight"
           @validateFight="onValidateFight" @forfeitFight="onForfeitFight" v-for="fight in props.fights" :key="fight.id"
-          :leftSide="leftSide" :rightSide="rightSide" />
+          :leftSide="leftSide" :rightSide="rightSide" @addScoreEvent="event => emit('addScoreEvent', fight.id, event)"/>
       </tbody>
     </table>
   </div>
