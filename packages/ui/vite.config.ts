@@ -7,6 +7,7 @@ import UnpluginVue from "unplugin-vue/rolldown";
 export default defineConfig({
   plugins: lazyPlugins(() => [vue(), tailwindcss()]),
   pack: {
+    clean: false,
     plugins: [UnpluginVue({ isProduction: true })],
     dts: { vue: true },
   },
