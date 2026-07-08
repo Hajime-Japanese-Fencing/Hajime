@@ -1,6 +1,6 @@
-import type {PoolGroup} from "./pool-group.interface.ts";
+import type { PoolGroup } from "./pool-group.interface.ts";
 
 export interface PoolSetup {
-    poolGroups: PoolGroup[]
-    nbFights: number
+  poolGroups: PoolGroup[];
+  nbFights: number;
 }

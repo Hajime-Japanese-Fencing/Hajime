@@ -1,18 +1,19 @@
 <script setup lang="ts" generic="T">
 import Button from "../Button/Button.vue";
-import {CgDetailsMore} from "vue-icons-plus/cg";
-import {EpCloseBold} from "vue-icons-plus/ep";
+import { CgDetailsMore } from "vue-icons-plus/cg";
+import { EpCloseBold } from "vue-icons-plus/ep";
 import GhostButton from "../Button/GhostButton.vue";
 
-defineProps<{ title: string }>()
+defineProps<{ title: string }>();
 </script>
 
 <template>
-  <GhostButton onclick="modal1.showModal()" class="w-max px-1"><CgDetailsMore></CgDetailsMore></GhostButton>
+  <GhostButton onclick="modal1.showModal();" class="w-max px-1"
+    ><CgDetailsMore></CgDetailsMore
+  ></GhostButton>
 
   <dialog id="modal1" class="modal">
     <div class="modal-box bg-black text-neutral-300 p-10 min-w-max">
-
       <form method="dialog" class="flex justify-end">
         <button class="bg-none"><EpCloseBold /></button>
       </form>
@@ -26,13 +27,8 @@ defineProps<{ title: string }>()
       <form method="dialog" class="flex justify-end">
         <Button>Close</Button>
       </form>
-
-
     </div>
   </dialog>
-
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

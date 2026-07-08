@@ -1,8 +1,8 @@
 export interface FighterPointsRanked {
-    fighterName: String,
-    points: number,
-    nbVictories: number,
-    nbGivenIppons: number,
-    nbReceivedIppons: number,
-    poolRank: number,
+  fighterName: string;
+  points: number;
+  nbVictories: number;
+  nbGivenIppons: number;
+  nbReceivedIppons: number;
+  poolRank: number;
 }

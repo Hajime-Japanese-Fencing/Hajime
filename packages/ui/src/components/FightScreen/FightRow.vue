@@ -1,28 +1,40 @@
-r<script setup lang="ts">
-
-import { BiArchiveOut } from 'vue-icons-plus/bi'
-import { BsEye, BsEyeSlash } from 'vue-icons-plus/bs'
+<script setup lang="ts">
+import { BiArchiveOut } from "vue-icons-plus/bi";
+import { BsEye, BsEyeSlash } from "vue-icons-plus/bs";
 import IpponButtons from "./IpponButtons.vue";
 import DropdownComboButton from "./DropdownComboButton.vue";
 import Badge from "./Badge.vue";
 import RoundButton from "../Button/RoundButton.vue";
+import { computed } from "vue";
+import ScoreTokenList from "./ScoreTokenList.vue";
+import type { FightStatus } from "./FightList.vue";
 
-interface Fight {
+type Fight = {
   id: number;
   fighter1: string;
   fighter2: string;
   score: string | null;
-  status: string;
-}
+  status: FightStatus;
+  scoreEvents: ScoreEvent[];
+  editable: boolean;
+};
 
 type Action = "validate" | "cancel" | "forfeit";
-type BadgeColor = "primary" | "secondary" | "accent" | "neutral" | "success" | "info" | "warning" | "error";
+type BadgeColor =
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "neutral"
+  | "success"
+  | "info"
+  | "warning"
+  | "error";
 
 type Side = {
-  label: "Red" | "White"
-  bgClass: string
-  textClass: string
-}
+  label: "Red" | "White";
+  bgClass: string;
+  textClass: string;
+};
 
 const props = defineProps<{
   fight: Fight;
@@ -39,7 +51,6 @@ const emit = defineEmits<{
   (e: "validateFight", id: number): void;
   (e: "forfeitFight", id: number): void;
 }>();
-
 
 function addLeftIppon(code: string) {
   console.log("left", code);
@@ -74,25 +85,67 @@ function onCloseFight() {
 }
 
 const statusColors: Record<string, BadgeColor> = {
-  "Waiting": "info",
+  Waiting: "info",
   "In progress": "accent",
-  "Finished": "success",
+  Finished: "success",
 };
 
+export type ScoreEvent = {
+  id: number;
+  leftFighter: boolean
+  type: "ippon" | "hansoku";
+  code: "K" | "M" | "D" | "T" | "Δ";
+  variant: "filled" | "outline";
+};
+
+const leftHansokus = computed(() =>
+  props.fight.scoreEvents
+    .filter(({ leftFighter, type }) => leftFighter && type === "hansoku")
+    .map(({ id, code, variant }) => ({ id, code, variant }))
+)
+
+const rightHansokus = computed(() =>
+  props.fight.scoreEvents
+    .filter(({ leftFighter, type }) => !leftFighter && type === "hansoku")
+    .map(({ id, code, variant }) => ({ id, code, variant }))
+)
+
+const leftIppons = computed(() =>
+  props.fight.scoreEvents
+    .filter(({ leftFighter, type }) => leftFighter && type === "ippon")
+    .map(({ id, code, variant }) => ({ id, code, variant }))
+)
+
+const rightIppons = computed(() =>
+  props.fight.scoreEvents
+    .filter(({ leftFighter, type }) => !leftFighter && type === "ippon")
+    .map(({ id, code, variant }) => ({ id, code, variant }))
+)
+
+function removeLeftHansoku(id: number) {
+}
+
+function removeRightHansoku(id: number) {
+}
+
+function removeLeftIppon(id: number) {
+}
+
+function removeRightIppon(id: number) {
+}
 
 </script>
 
 <template>
-  <tr :class="[props.active ? 'bg-base-200  ' : 'hover:bg-base-200']">
+  <tr :class="[props.active ? 'bg-base-200' : 'hover:bg-base-200']">
 
     <td class="p-0" :class="[props.leftSide.bgClass, props.leftSide.textClass]">
       <div :class="props.active ? 'grid grid-rows-[auto_1fr_auto] h-full' : ''">
-
-        <div class="grid grid-cols-[auto_1fr] items-center" >
+        <div class="grid grid-cols-[auto_1fr] items-center">
           <!-- Boutons -->
           <div class="w-48 pt-1">
             <span v-if="props.active" class="gap-2">
-              <IpponButtons @addIppon="addLeftIppon" :textColor="props.leftSide.textClass"/>
+              <IpponButtons @addIppon="addLeftIppon" :textColor="props.leftSide.textClass" />
             </span>
           </div>
           <!-- Nom -->
@@ -102,12 +155,9 @@ const statusColors: Record<string, BadgeColor> = {
         </div>
 
         <!-- Hansoku -->
-        <div class="flex justify-start gap-2 mt-4" v-if="props.active">
-          <span class="btn btn-circle btn-sm btn-ghost" :class="props.leftSide.textClass">
-            Δ
-          </span>
+        <div class="flex justify-start gap-2 mt-4 h-8" v-if="props.active">
+          <ScoreTokenList :tokens="leftHansokus" :removable="props.fight.editable" @remove="removeLeftHansoku" />
         </div>
-
       </div>
     </td>
 
@@ -120,7 +170,6 @@ const statusColors: Record<string, BadgeColor> = {
 
       <!-- Content -->
       <div class="relative z-10 h-full">
-
         <div v-if="props.active" class="flex flex-col items-center justify-center h-full py-2 gap-2">
           <div class="font-semibold leading-none">
             {{ props.fight.score ?? "VS" }}
@@ -128,14 +177,13 @@ const statusColors: Record<string, BadgeColor> = {
 
           <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
             <div class="flex justify-end gap-2 mr-2">
-              <span class="btn btn-circle btn-sm btn-ghost">K</span>
-              <span class="btn btn-circle btn-sm btn-outline">M</span>
+              <ScoreTokenList :tokens="leftIppons" :removable="props.fight.editable" @remove="removeLeftIppon" />
             </div>
 
             <div></div>
 
             <div class="flex justify-start gap-2 ml-2">
-              <span class="btn btn-circle btn-sm btn-ghost">D</span>
+              <ScoreTokenList :tokens="rightIppons" :removable="props.fight.editable" @remove="removeRightIppon" />
             </div>
           </div>
         </div>
@@ -143,13 +191,11 @@ const statusColors: Record<string, BadgeColor> = {
         <div v-else class="flex items-center justify-center h-full font-semibold">
           {{ props.fight.score ?? "VS" }}
         </div>
-
       </div>
     </td>
 
     <td class="p-0" :class="[props.rightSide.bgClass, props.rightSide.textClass]">
       <div :class="props.active ? 'grid grid-rows-[auto_1fr_auto] h-full' : ''">
-
         <div class="grid grid-cols-[1fr_auto] items-center">
           <!-- Nom -->
           <span class="text-left font-medium justify-self-start">
@@ -158,17 +204,14 @@ const statusColors: Record<string, BadgeColor> = {
           <!-- Boutons -->
           <div class="w-48 pt-1">
             <span v-if="props.active" class="gap-2">
-              <IpponButtons @addIppon="addRightIppon" :textColor="props.rightSide.textClass"/>
+              <IpponButtons @addIppon="addRightIppon" :textColor="props.rightSide.textClass" />
             </span>
           </div>
-
         </div>
 
         <!-- Hansoku -->
-        <div class="flex justify-end gap-2 mt-4" v-if="props.active">
-          <div class="btn btn-circle btn-sm btn-ghost" :class="props.rightSide.textClass">
-            Δ
-          </div>
+        <div class="flex justify-end gap-2 mt-4 h-8" v-if="props.active">
+          <ScoreTokenList :tokens="rightHansokus" :removable="props.fight.editable" @remove="removeRightHansoku" />
         </div>
       </div>
     </td>
@@ -181,40 +224,25 @@ const statusColors: Record<string, BadgeColor> = {
 
     <td class="">
       <div v-if="!props.active" class="flex justify-center">
-        <RoundButton
-            size="sm"
-            variant="outline"
-            @click="onOpenFight"
-            :disabled="props.locked"
-            :class="props.locked ? '' : 'bg-neutral text-neutral-content'"
-        >
+        <RoundButton size="sm" variant="outline" @click="onOpenFight" :disabled="props.locked"
+          :class="props.locked ? '' : 'bg-neutral text-neutral-content'">
           <BsEye v-if="props.fight.status === 'Finished'" />
           <BiArchiveOut v-else />
         </RoundButton>
       </div>
 
       <div v-else class="flex flex-col gap-3 items-center justify-center">
-        <DropdownComboButton
-            v-if="props.fight.status === 'In progress'"
-            :id="props.fight.id"
-            @action="handleAction"
-        />
-        <RoundButton
-            v-else
-            size="sm"
-            variant="outline"
-            class="bg-neutral text-neutral-content"
-            @click="onCloseFight"
-        >
+        <DropdownComboButton v-if="props.fight.status === 'In progress'" :id="props.fight.id" @action="handleAction" />
+        <RoundButton v-else size="sm" variant="outline" class="bg-neutral text-neutral-content" @click="onCloseFight">
           <BsEyeSlash />
         </RoundButton>
       </div>
-
     </td>
-
   </tr>
 </template>
 
 <style scoped>
-
+.table td {
+  border-color: #33333340;
+}
 </style>

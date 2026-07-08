@@ -1,4 +1,4 @@
 export interface ModalContent<T = unknown> {
-    title: string,
-    content: T,
+  title: string;
+  content: T;
 }

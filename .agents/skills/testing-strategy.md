@@ -187,26 +187,20 @@ describe("CreateOrderUseCase", () => {
   });
 
   it("should throw error when items array is empty", async () => {
-    await expect(useCase.execute([])).rejects.toThrow(
-      "Order must contain at least one item",
-    );
+    await expect(useCase.execute([])).rejects.toThrow("Order must contain at least one item");
   });
 
   it("should throw error when product does not exist", async () => {
     mockProductRepo.getById = vi.fn().mockResolvedValue(null);
     const items = [{ productId: "999", quantity: 2 }];
 
-    await expect(useCase.execute(items)).rejects.toThrow(
-      "Product 999 not found",
-    );
+    await expect(useCase.execute(items)).rejects.toThrow("Product 999 not found");
   });
 
   it("should throw error when quantity is invalid", async () => {
     const items = [{ productId: "1", quantity: 0 }];
 
-    await expect(useCase.execute(items)).rejects.toThrow(
-      "Quantity must be greater than 0",
-    );
+    await expect(useCase.execute(items)).rejects.toThrow("Quantity must be greater than 0");
   });
 
   it("should throw error when insufficient stock", async () => {
@@ -216,9 +210,7 @@ describe("CreateOrderUseCase", () => {
     });
     const items = [{ productId: "1", quantity: 5 }];
 
-    await expect(useCase.execute(items)).rejects.toThrow(
-      "Insufficient stock for product 1",
-    );
+    await expect(useCase.execute(items)).rejects.toThrow("Insufficient stock for product 1");
   });
 });
 ```
@@ -328,9 +320,7 @@ describe("OrderStore", () => {
   });
 
   it("should handle error during order creation", async () => {
-    mockCreateOrderUseCase.execute = vi
-      .fn()
-      .mockRejectedValue(new Error("Insufficient stock"));
+    mockCreateOrderUseCase.execute = vi.fn().mockRejectedValue(new Error("Insufficient stock"));
 
     await store.createOrder([{ productId: "1", quantity: 2 }]);
 
@@ -464,17 +454,13 @@ import { validateOrderItems, calculateOrderTotal } from "../orderValidation";
 describe("orderValidation", () => {
   describe("validateOrderItems", () => {
     it("should throw error for empty items", () => {
-      expect(() => validateOrderItems([])).toThrow(
-        "Order must contain at least one item",
-      );
+      expect(() => validateOrderItems([])).toThrow("Order must contain at least one item");
     });
 
     it("should throw error for invalid quantity", () => {
       const items = [{ productId: "1", quantity: 0 }];
 
-      expect(() => validateOrderItems(items)).toThrow(
-        "Quantity must be greater than 0",
-      );
+      expect(() => validateOrderItems(items)).toThrow("Quantity must be greater than 0");
     });
 
     it("should pass for valid items", () => {
@@ -706,9 +692,7 @@ it("should transition through loading states", async () => {
 ```typescript
 describe("error handling", () => {
   it("should handle repository error", async () => {
-    mockRepository.getAll = vi
-      .fn()
-      .mockRejectedValue(new Error("Network error"));
+    mockRepository.getAll = vi.fn().mockRejectedValue(new Error("Network error"));
 
     await store.loadProducts();
 
@@ -719,9 +703,7 @@ describe("error handling", () => {
   it("should handle validation error", async () => {
     const invalidItems = [{ productId: "1", quantity: -1 }];
 
-    await expect(useCase.execute(invalidItems)).rejects.toThrow(
-      "Quantity must be greater than 0",
-    );
+    await expect(useCase.execute(invalidItems)).rejects.toThrow("Quantity must be greater than 0");
   });
 });
 ```

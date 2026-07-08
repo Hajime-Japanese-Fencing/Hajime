@@ -1,7 +1,8 @@
 {
+  "include": ["src/**/*.ts", "src/**/*.vue"],
   "compilerOptions": {
     "target": "esnext",
-    "lib": ["es2023"],
+    "lib": ["es2023", "dom", "dom.iterable"],
     "moduleDetection": "force",
     "module": "nodenext",
     "moduleResolution": "nodenext",

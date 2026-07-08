@@ -58,9 +58,7 @@ defineEmits<Emits>();
         >
           Add to Cart
         </button>
-        <button class="btn btn-ghost btn-sm" @click="$emit('view-details')">
-          Details
-        </button>
+        <button class="btn btn-ghost btn-sm" @click="$emit('view-details')">Details</button>
       </div>
     </div>
   </div>
@@ -107,9 +105,7 @@ interface Props {
 const props = defineProps<Props>();
 
 // Extract UI logic to composable
-const { addToCart, viewDetails, isAvailable } = useProductActions(
-  props.product,
-);
+const { addToCart, viewDetails, isAvailable } = useProductActions(props.product);
 
 const formattedPrice = computed(() => {
   return new Intl.NumberFormat("fr-FR", {
@@ -217,11 +213,7 @@ const { products, isLoading, error } = useProducts();
       </div>
 
       <div v-else class="page__grid grid grid-cols-1 md:grid-cols-3 gap-4">
-        <ProductCardWithCart
-          v-for="product in products"
-          :key="product.id"
-          :product="product"
-        />
+        <ProductCardWithCart v-for="product in products" :key="product.id" :product="product" />
       </div>
     </div>
   </div>
@@ -316,14 +308,8 @@ const filteredProducts = computed(() => {
 import { useProductList } from "./useProductList";
 import ProductCard from "../ui/ProductCard.vue";
 
-const {
-  products,
-  isLoading,
-  selectedCategory,
-  filteredProducts,
-  addToCart,
-  selectCategory,
-} = useProductList();
+const { products, isLoading, selectedCategory, filteredProducts, addToCart, selectCategory } =
+  useProductList();
 </script>
 
 <template>

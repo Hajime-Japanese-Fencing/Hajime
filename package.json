@@ -5,23 +5,34 @@
   "type": "module",
   "scripts": {
     "ready": "vp check && vp run -r test && vp run -r build",
+    "build:packages": "vp run --filter @hajime/ui --filter @hajime/core build",
     "dev:main": "vp run --parallel -F @hajime/main -F @hajime/ui -F @hajime/core dev",
     "dev:ui": "vp run --parallel -F @hajime/ui -F @hajime/ui-showcase dev"
   },
+  "dependencies": {
+    "vue-icons-plus": "catalog:"
+  },
   "devDependencies": {
-    "vite-plus": "catalog:"
+    "@commitlint/cli": "^21.2.0",
+    "@commitlint/config-conventional": "^21.2.0",
+    "vite-plus": "latest"
+  },
+  "optionalDependencies": {
+    "@voidzero-dev/vite-plus-linux-x64-gnu": "^0.2.1"
   },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
       "version": "11.8.0",
       "onFail": "download"
+    },
+    "runtime": {
+      "name": "node",
+      "version": "22.23.1",
+      "onFail": "download"
     }
   },
   "engines": {
-    "node": ">=22.18.0"
-  },
-  "dependencies": {
-    "vue-icons-plus": "catalog:"
+    "node": ">=22.23.1"
   }
 }

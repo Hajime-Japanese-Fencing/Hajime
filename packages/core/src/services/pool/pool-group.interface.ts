@@ -1,4 +1,4 @@
 export interface PoolGroup {
-    poolSize: number,
-    amount: number,
+  poolSize: number;
+  amount: number;
 }

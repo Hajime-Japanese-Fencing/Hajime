@@ -2,11 +2,3 @@
 @source "./components";
 @source inline("btn btn-primary btn-secondary btn-accent btn-ghost btn-outline btn-xs btn-sm btn-lg btn-square btn-circle badge badge-primary badge-secondary badge-info badge-neutral badge-success badge-error badge-accent badge-warning badge-outline badge-soft badge-dash badge-xs badge-lg badge-sm badge-md");
 @plugin "daisyui";
-
-
-.table td,
-.table th,
-.tb-border {
-    border-color: #33333340;
-}
-
