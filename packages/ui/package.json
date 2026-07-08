@@ -21,6 +21,7 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
+    "@hajime/core": "workspace:*",
     "daisyui": "catalog:",
     "tailwindcss": "catalog:"
   },

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type {ScoreEvent} from "./FightRow.vue";
+import type { ScoreEvent } from "./FightScreen.vue";
 
 interface IpponType {
-  code: ScoreEvent["code"]
+  code: ScoreEvent["code"];
   label: string;
 }
 
@@ -15,10 +15,6 @@ const ippons: IpponType[] = [
   { code: "Δ", label: "Hansoku" },
 ];
 
-defineProps<{
-  textColor: string;
-}>();
-
 const emit = defineEmits<{
   (e: "addIppon", code: ScoreEvent["code"]): void;
 }>();
@@ -30,7 +26,6 @@ const emit = defineEmits<{
       v-for="ippon in ippons"
       :key="ippon.code"
       class="btn btn-xs btn-outline btn-circle tooltip"
-      :class="textColor"
       :data-tip="ippon.label"
       @click="emit('addIppon', ippon.code)"
     >
