@@ -7,7 +7,7 @@
     "ready": "vp check && vp run -r test && vp run -r build",
     "build:packages": "vp run --filter @hajime/ui --filter @hajime/core build",
     "dev:main": "vp run --parallel -F @hajime/main -F @hajime/ui -F @hajime/core dev",
-    "dev:ui": "vp run --parallel -F @hajime/ui -F @hajime/ui-showcase dev"
+    "dev:ui": "vp run --parallel -F @hajime/ui-showcase -F @hajime/ui  -F @hajime/core dev"
   },
   "dependencies": {
     "vue-icons-plus": "catalog:"
