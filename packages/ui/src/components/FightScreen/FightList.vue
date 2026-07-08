@@ -5,6 +5,7 @@ import { computed, ref } from "vue";
 import RoundButton from "../Button/RoundButton.vue";
 import type { Fight, FightSide, AssignIpponEvent } from "./fight.interface.ts";
 import { Side, SideLabel } from "@hajime/core";
+import SwapButton from "./SwapButton.vue";
 
 const props = defineProps<{
   fights: Fight[];
@@ -67,7 +68,7 @@ function swapColors() {
 </script>
 
 <template>
-  <div class="overflow-x-auto rounded-box border bg-base-200 tb-border">
+  <div class="rounded-box border bg-base-200 tb-border">
     <table class="table">
       <thead>
         <tr>
@@ -83,14 +84,9 @@ function swapColors() {
             </div>
 
             <div class="relative z-10 flex items-center justify-center h-12">
-              <RoundButton
-                @click="swapColors"
-                variant="outline"
-                size="sm"
-                class="bg-neutral text-neutral-content"
-              >
-                <CgArrowsExchange />
-              </RoundButton>
+              <span>
+                <SwapButton @click="swapColors" />
+              </span>
             </div>
           </th>
           <th class="text-left p-0" :class="[rightSide.bgClass, rightSide.textClass]">
