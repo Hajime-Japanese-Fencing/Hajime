@@ -7,6 +7,7 @@ import type {PoolFighter} from "./pool-fighter.interface.ts";
 export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSetup): Pool[] {
     let pools: Pool[] = []
 
+    // --- POOL LIST INITIALIZATION ---
     for (let poolGroup of poolSetup.poolGroups) {
         for (let i= 1; i <= poolGroup.amount; i++)
         pools.push({
@@ -16,6 +17,7 @@ export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSe
         })
     }
 
+    // --- FIGHTERS DISTRIBUTION ---
     for (let fighter of fighters) {
 
         const poolFighter: PoolFighter = {
@@ -29,12 +31,6 @@ export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSe
             const clubMemberInAllPools = pools.every(p =>
                 p.fighters.some(f =>
                     f.fighter.club == fighter.club))
-
-            console.log()
-            console.log(fighter)
-            console.log("pool is full : ", poolIsFull)
-            console.log("contains same club member : ", containsSameClubMember)
-            console.log("club members in all pools : ", clubMemberInAllPools)
 
             if (!poolIsFull && (!containsSameClubMember || clubMemberInAllPools)) {
                 pool.fighters.push(poolFighter)
