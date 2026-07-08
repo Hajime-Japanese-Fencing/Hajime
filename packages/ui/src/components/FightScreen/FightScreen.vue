@@ -2,7 +2,6 @@
 
 import { ref } from "vue";
 import FightList from "./FightList.vue";
-import type {NewScoreEvent} from "./FightRow.vue";
 
 
 type Fight = {
@@ -64,8 +63,12 @@ export type NewScoreEvent = Omit<ScoreEvent, "id">;
 
 const openedFightId = ref<number | null>(null);
 
+function getFight(id: number) {
+  return fights.value.find(f => f.id === id);
+}
+
 function onOpenFight(id: number) {
-  const fight = fights.value.find((f) => f.id === id);
+  const fight = getFight(id);
 
   if (!fight) {
     return;
@@ -98,7 +101,7 @@ function onForfeitFight(id: number) {
 }
 
 function updateFightStatus(id: number, status: FightStatus) {
-  const fight = fights.value.find((f) => f.id === id);
+  const fight = getFight(id);
 
   if (!fight) {
     return;
@@ -108,8 +111,8 @@ function updateFightStatus(id: number, status: FightStatus) {
   fight.status = status;
 }
 
-function addScoreEvent(fightId: number, event: NewScoreEvent) {
-  const fight = fights.value.find(f => f.id === fightId);
+function addScoreEvent(id: number, event: NewScoreEvent) {
+  const fight = getFight(id);
   if (!fight) return;
 
   fight.scoreEvents.push({
