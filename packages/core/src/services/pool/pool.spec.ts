@@ -1,7 +1,14 @@
 import { describe, it, expect } from "vite-plus/test";
-import {calculateNbFightsInPool, calculatePossiblePoolSetups, poolSetupEquals} from "./pool.service.ts";
+import {
+  calculateNbFightsInPool,
+  calculatePossiblePoolSetups,
+  distributeFightersInPools,
+  poolSetupEquals
+} from "./pool.service.ts";
 import type { PoolSetup } from "./pool-setup.interface.ts";
 import type { PoolGroup } from "./pool-group.interface.ts";
+import type {Fighter} from "../fighter.interface.ts";
+import type {Pool} from "../pool.interface.ts";
 
 describe("calculatePossiblePoolSetups", () => {
   it("return all setups (4*3, 3*4, 2*6) for 12 fighters", () => {
@@ -307,5 +314,127 @@ describe("poolSetupEquals", () => {
     }
 
     expect(poolSetupEquals(setup1, setup2)).toBe(true)
+  })
+})
+
+describe("distributeFightersInPools", () => {
+  it("returns a pool list which length is the sum of all entry PoolGroups amounts", () => {
+    const fighters: Fighter[] = [
+      {
+        name: "fighter",
+        surname: "1",
+        globalRank: 1,
+        club: "club A"
+      },
+      {
+        name: "fighter",
+        surname: "2",
+        globalRank: 2,
+        club: "club A"
+      },
+      {
+        name: "fighter",
+        surname: "3",
+        globalRank: 3,
+        club: "club B"
+      },
+      {
+        name: "fighter",
+        surname: "4",
+        globalRank: 4,
+        club: "club B"
+      },
+      {
+        name: "fighter",
+        surname: "5",
+        globalRank: 5,
+        club: "club C"
+      },
+      {
+        name: "fighter",
+        surname: "6",
+        globalRank: 6,
+        club: "club C"
+      },
+    ]
+    const poolSetup: PoolSetup = {
+      nbFights: 6,
+      poolGroups: [{
+        poolSize: 3,
+        amount: 2
+      }]
+    }
+
+    let expectedNbPools = 0
+    for (let poolGroup of poolSetup.poolGroups) {
+      expectedNbPools += poolGroup.amount
+    }
+
+    const pools = distributeFightersInPools(fighters, poolSetup)
+
+    expect(pools.length).toBe(expectedNbPools)
+  })
+
+  it("separates all fighters of the same club if there are enough pools", () => {
+    const fighters: Fighter[] = [
+      {
+        name: "fighter",
+        surname: "1",
+        globalRank: 1,
+        club: "club A"
+      },
+      {
+        name: "fighter",
+        surname: "2",
+        globalRank: 2,
+        club: "club A"
+      },
+      {
+        name: "fighter",
+        surname: "3",
+        globalRank: 3,
+        club: "club B"
+      },
+      {
+        name: "fighter",
+        surname: "4",
+        globalRank: 4,
+        club: "club B"
+      },
+      {
+        name: "fighter",
+        surname: "5",
+        globalRank: 5,
+        club: "club C"
+      },
+      {
+        name: "fighter",
+        surname: "6",
+        globalRank: 6,
+        club: "club C"
+      },
+    ]
+    const poolSetup: PoolSetup = {
+      nbFights: 6,
+      poolGroups: [{
+          poolSize: 3,
+          amount: 2
+      }]
+    }
+
+    const pools = distributeFightersInPools(fighters, poolSetup)
+    const nbOfAInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club A").length
+    const nbOfBInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club B").length
+    const nbOfCInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club C").length
+    const nbOfAInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club A").length
+    const nbOfBInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club B").length
+    const nbOfCInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club C").length
+
+    expect(nbOfAInPool1).toBe(1)
+    expect(nbOfBInPool1).toBe(1)
+    expect(nbOfCInPool1).toBe(1)
+    expect(nbOfAInPool2).toBe(1)
+    expect(nbOfBInPool2).toBe(1)
+    expect(nbOfCInPool2).toBe(1)
   })
 })
