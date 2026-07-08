@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { CgArrowsExchange } from "vue-icons-plus/cg";
 import FightRow from "./FightRow.vue";
 import { computed, ref } from "vue";
-import RoundButton from "../Button/RoundButton.vue";
 import type { Fight, FightSide, AssignIpponEvent } from "./fight.interface.ts";
 import { Side, SideLabel } from "@hajime/core";
 import SwapButton from "./SwapButton.vue";
@@ -24,19 +22,17 @@ const emit = defineEmits<{
 const RedFightSide: FightSide = {
   side: Side.Red,
   label: SideLabel.RED,
-  bgClass: "bg-error",
-  textClass: "text-error-content",
+  class: "border-b-8 border-b-red-400",
 };
 
 const WhiteFightSide: FightSide = {
   side: Side.White,
   label: SideLabel.WHITE,
-  bgClass: "bg-base-100",
-  textClass: "text-base-content",
+  class: "border-b-8 border-white",
 };
 
 const leftSide = ref<FightSide>(RedFightSide);
-const rightSide = computed(() => (leftSide.value.label === "Red" ? WhiteFightSide : RedFightSide));
+const rightSide = computed(() => (leftSide.value.side === "RED" ? WhiteFightSide : RedFightSide));
 
 function onOpenFight(id: number) {
   emit("openFight", id);
@@ -68,28 +64,21 @@ function swapColors() {
 </script>
 
 <template>
-  <div class="rounded-box border bg-base-200 tb-border">
-    <table class="table">
+  <div class="bg-base-300">
+    <table class="table table-zebra">
       <thead>
         <tr>
-          <th class="text-right p-0" :class="[leftSide.bgClass, leftSide.textClass]">
-            <div>
-              {{ leftSide.label }}
-            </div>
+          <th class="text-right p-0" :class="leftSide.class">
+            {{ leftSide.label }}
           </th>
           <th class="text-center w-40 relative p-0">
-            <div class="grid grid-cols-2 absolute inset-0">
-              <div :class="leftSide.bgClass"></div>
-              <div :class="rightSide.bgClass"></div>
-            </div>
-
             <div class="relative z-10 flex items-center justify-center h-12">
               <span>
                 <SwapButton @click="swapColors" />
               </span>
             </div>
           </th>
-          <th class="text-left p-0" :class="[rightSide.bgClass, rightSide.textClass]">
+          <th class="text-left p-0" :class="rightSide.class">
             <div>
               {{ rightSide.label }}
             </div>
@@ -118,10 +107,3 @@ function swapColors() {
     </table>
   </div>
 </template>
-
-<style scoped>
-.table th,
-.tb-border {
-  border-color: #33333340;
-}
-</style>

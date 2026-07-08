@@ -35,8 +35,7 @@ export type Action = "validate" | "cancel" | "forfeit";
 export interface FightSide {
   side: Side;
   label: string;
-  bgClass: string;
-  textClass: string;
+  class: string;
 }
 
 export type AssignIpponEvent = {
