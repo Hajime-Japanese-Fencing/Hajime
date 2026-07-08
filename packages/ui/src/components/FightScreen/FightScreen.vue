@@ -1,9 +1,7 @@
 <script setup lang="ts">
-
 import { ref } from "vue";
 import FightList from "./FightList.vue";
-import type {Fight, FightStatus, NewResultEvent} from "./fight.interface.ts";
-
+import type { AssignIpponEvent, Fight, FightStatus } from "./fight.interface.ts";
 
 const fights = ref<Fight[]>([
   {
@@ -22,10 +20,10 @@ const fights = ref<Fight[]>([
     score: "2 - 1",
     status: "Finished",
     scoreEvents: [
-      { id: 1, leftFighter: true, type: "ippon", code: "M", variant: "outline" },
-      { id: 2, leftFighter: false, type: "hansoku", code: "Δ", variant: "filled" },
-      { id: 3, leftFighter: false, type: "ippon", code: "D", variant: "filled" },
-      { id: 4, leftFighter: true, type: "ippon", code: "K", variant: "filled" },
+      { id: 1, leftSide: true, type: "ippon", code: "M", firstBlood: true },
+      { id: 2, leftSide: false, type: "hansoku", code: "Δ", firstBlood: false },
+      { id: 3, leftSide: false, type: "ippon", code: "D", firstBlood: false },
+      { id: 4, leftSide: true, type: "ippon", code: "K", firstBlood: false },
     ],
     editable: false,
   },
@@ -40,19 +38,14 @@ const fights = ref<Fight[]>([
   },
 ]);
 
-const openedFightId = ref<number | null>(null);
+const activeFightId = ref<number | null>(null);
 
 const nextScoreEventId = ref(
-    Math.max(
-        0,
-        ...fights.value.flatMap(f =>
-            f.scoreEvents.map(e => e.id)
-        )
-    ) + 1
+  Math.max(0, ...fights.value.flatMap((f) => f.scoreEvents.map((e) => e.id))) + 1,
 );
 
 function getFight(id: number) {
-  return fights.value.find(f => f.id === id);
+  return fights.value.find((f) => f.id === id);
 }
 
 function onOpenFight(id: number) {
@@ -62,7 +55,7 @@ function onOpenFight(id: number) {
     return;
   }
 
-  openedFightId.value = id;
+  activeFightId.value = id;
 
   if (fight.status === "Waiting") {
     updateFightStatus(id, "In progress");
@@ -70,21 +63,21 @@ function onOpenFight(id: number) {
 }
 
 function onCloseFight() {
-  openedFightId.value = null;
+  activeFightId.value = null;
 }
 
 function onCancelFight(id: number) {
-  openedFightId.value = null;
+  activeFightId.value = null;
   updateFightStatus(id, "Waiting");
 }
 
 function onValidateFight(id: number) {
-  openedFightId.value = null;
+  activeFightId.value = null;
   updateFightStatus(id, "Finished");
 }
 
 function onForfeitFight(id: number) {
-  openedFightId.value = null;
+  activeFightId.value = null;
   updateFightStatus(id, "Finished");
 }
 
@@ -99,32 +92,31 @@ function updateFightStatus(id: number, status: FightStatus) {
   fight.status = status;
 }
 
-function addScoreEvent(id: number, event: NewResultEvent) {
+function onAssignIppon(id: number, event: AssignIpponEvent) {
   const fight = getFight(id);
   if (!fight) return;
 
   fight.scoreEvents.push({
     id: nextScoreEventId.value++,
-    ...event,
+    firstBlood: false,
+    leftSide: true, // en attente de refactoring
+    type: "ippon",
+    code: event.code,
   });
 }
-
-
 </script>
 
 <template>
   <FightList
-      :fights="fights"
-      :opened-fight-id="openedFightId"
-      @open-fight="onOpenFight"
-      @close-fight="onCloseFight"
-      @cancel-fight="onCancelFight"
-      @validate-fight="onValidateFight"
-      @forfeit-fight="onForfeitFight"
-      @add-score-event="addScoreEvent"
+    :fights="fights"
+    :activeFightId="activeFightId"
+    @open-fight="onOpenFight"
+    @close-fight="onCloseFight"
+    @cancel-fight="onCancelFight"
+    @validate-fight="onValidateFight"
+    @forfeit-fight="onForfeitFight"
+    @assign-ippon="onAssignIppon"
   />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

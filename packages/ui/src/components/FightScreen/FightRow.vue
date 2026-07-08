@@ -7,9 +7,13 @@ import Badge from "./Badge.vue";
 import RoundButton from "../Button/RoundButton.vue";
 import { computed } from "vue";
 import IpponResultList from "./IpponResultList.vue";
-import type {Fight, Side, IpponResultEvent, NewResultEvent, Action} from "./fight.interface.ts";
-import type {ASSIGNABLE_CODE} from "@hajime/core/src/index.ts";
+import type { Fight, Action, AssignIpponEvent, FightStatus } from "./fight.interface.ts";
+import type { AssignableIpponCode, IpponCode } from "@hajime/core";
+import { Side } from "@hajime/core";
 
+/**
+ * @todo Migrer dans le dossier correspondant au Badge
+ */
 type BadgeColor =
   | "primary"
   | "secondary"
@@ -20,6 +24,9 @@ type BadgeColor =
   | "warning"
   | "error";
 
+/**
+ * @todo Simplifier en faveur de FightRowProps
+ */
 const props = defineProps<{
   fight: Fight;
   active: boolean;
@@ -28,42 +35,67 @@ const props = defineProps<{
   rightSide: Side;
 }>();
 
+interface FightRowProps {
+  fightStatus: FightStatus;
+  active: boolean;
+  leftFighter: SideFighter; // Juste le nom si utilisation de slots
+  rightFighter: SideFighter; // Juste le nom si utilisation de slots
+}
+
+interface SideFighter {
+  fighterId: string; // Obsolète si utilisation de slots
+  fighterName: string;
+  ipponsGiven: IpponCode[]; // Obsolète si utilisation de slots
+  numberOfHansoku: number; // Obsolète si utilisation de slots
+}
+
+/**
+ * @todo Supprimer en faveur d'un slot "actions" pour laisser FightList décider des boutons d'actions
+ */
 const emit = defineEmits<{
   openFight: [id: number];
   closeFight: [];
   cancelFight: [id: number];
   validateFight: [id: number];
   forfeitFight: [id: number];
-  addScoreEvent: [event: NewResultEvent];
+  assignIppon: [event: AssignIpponEvent];
 }>();
 
+/**
+ * @todo Migrer ça dans fight.interface.ts
+ * Et se baser sur des statuts qui vienne de @hajime/core
+ */
 const statusColors: Record<string, BadgeColor> = {
-  "Waiting": "info",
+  Waiting: "info",
   "In progress": "accent",
-  "Finished": "success",
+  Finished: "success",
 };
 
+/**
+ * @todo Séparer Ippons des Hansokus, les Hansokus sont des pénalités
+ * A terme ces 4 computed dégageront
+ */
 const leftHansokus = computed(() =>
   props.fight.scoreEvents
-    .filter(({ leftFighter, type }) => leftFighter && type === "hansoku")
+    .filter(({ leftSide: leftFighter, type }) => leftFighter && type === "hansoku")
     .map(({ id, code, firstBlood }) => ({ id, code, firstBlood })),
 );
 
 const rightHansokus = computed(() =>
   props.fight.scoreEvents
-    .filter(({ leftFighter, type }) => !leftFighter && type === "hansoku")
+    .filter(({ leftSide: leftFighter, type }) => !leftFighter && type === "hansoku")
     .map(({ id, code, firstBlood }) => ({ id, code, firstBlood })),
 );
 
 const leftIppons = computed(() =>
   props.fight.scoreEvents
-    .filter(({ leftFighter, type }) => leftFighter && type === "ippon")
+    .filter(({ leftSide: leftFighter, type }) => leftFighter && type === "ippon")
     .map(({ id, code, firstBlood }) => ({ id, code, firstBlood })),
 );
 
 const rightIppons = computed(() =>
   props.fight.scoreEvents
-    .filter(({ leftFighter, type }) => !leftFighter && type === "ippon")
+    .filter(({ leftSide: leftFighter, type }) => !leftFighter && type === "ippon")
     .map(({ id, code, firstBlood }) => ({ id, code, firstBlood })),
 );
 
@@ -75,10 +107,16 @@ function removeLeftIppon(id: number) {}
 
 function removeRightIppon(id: number) {}
 
-function addIppon(leftFighter: boolean, code: IpponResultEvent["code"]) {
-  emit("addScoreEvent", {
-    leftFighter,
-    type: code === "Δ" ? "hansoku" : "ippon",
+/**
+ * @todo réfléchir si des slots pour affichage scoring/liste ippons avec les boutons d'annulation seraient pas plus pertinent
+ * Pareil avec la IpponAssignButtons utilisé dans un slot du parent
+ * Je pense qu'on gagnerait en clarté en faisant comme cela
+ * @todo en séparant ippons de hansoku il y aura un assignHansoku et un removeHansoku
+ * @todo removeIppon également
+ */
+function onIpponClicked(side: Side, code: AssignableIpponCode) {
+  emit("assignIppon", {
+    side,
     code,
   });
 }
@@ -116,7 +154,7 @@ function onCloseFight() {
           <!-- Boutons -->
           <div class="w-48 pt-1">
             <span v-if="props.active" class="gap-2">
-              <IpponAssignButtons @addIppon="(code: ASSIGNABLE_CODE) => addIppon(true, code)" />
+              <IpponAssignButtons @click="(code) => onIpponClicked(props.leftSide, code)" />
             </span>
           </div>
           <!-- Nom -->
@@ -184,10 +222,7 @@ function onCloseFight() {
           <!-- Boutons -->
           <div class="w-48 pt-1">
             <span v-if="props.active" class="gap-2">
-              <IpponAssignButtons
-                @addIppon="(code: ASSIGNABLE_CODE) => addIppon(false, code)"
-                :textColor="props.rightSide.textClass"
-              />
+              <IpponAssignButtons @click="(code) => onIpponClicked(props.rightSide, code)" />
             </span>
           </div>
         </div>

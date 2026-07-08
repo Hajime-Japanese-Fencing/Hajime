@@ -3,11 +3,12 @@ import { CgArrowsExchange } from "vue-icons-plus/cg";
 import FightRow from "./FightRow.vue";
 import { computed, ref } from "vue";
 import RoundButton from "../Button/RoundButton.vue";
-import type {Fight, NewResultEvent, Side} from "./fight.interface.ts";
+import type { Fight, FightSide, AssignIpponEvent } from "./fight.interface.ts";
+import { Side, SideLabel } from "@hajime/core";
 
 const props = defineProps<{
   fights: Fight[];
-  openedFightId: number | null;
+  activeFightId: number | null;
 }>();
 
 const emit = defineEmits<{
@@ -16,31 +17,25 @@ const emit = defineEmits<{
   cancelFight: [id: number];
   validateFight: [id: number];
   forfeitFight: [id: number];
-  addScoreEvent: [fightId: number, event: NewResultEvent];
+  assignIppon: [fightId: number, event: AssignIpponEvent];
 }>();
 
-
-const RED: Side = {
-  label: "Red",
+const RedFightSide: FightSide = {
+  side: Side.Red,
+  label: SideLabel.RED,
   bgClass: "bg-error",
   textClass: "text-error-content",
-}
+};
 
-const WHITE: Side = {
-  label: "White",
+const WhiteFightSide: FightSide = {
+  side: Side.White,
+  label: SideLabel.WHITE,
   bgClass: "bg-base-100",
-  textClass: "text-base-content"
-}
+  textClass: "text-base-content",
+};
 
-const leftSide = ref<Side>(RED)
-
-const rightSide = computed(() =>
-    leftSide.value.label === "Red" ? WHITE : RED
-)
-
-const activeFightId = computed(() =>
-    props.fights.find(fight => fight.status === "In progress")?.id ?? null
-);
+const leftSide = ref<FightSide>(RedFightSide);
+const rightSide = computed(() => (leftSide.value.label === "Red" ? WhiteFightSide : RedFightSide));
 
 function onOpenFight(id: number) {
   emit("openFight", id);
@@ -62,21 +57,13 @@ function onForfeitFight(id: number) {
   emit("forfeitFight", id);
 }
 
-
-function isLocked(fight: Fight) {
-  return (
-    activeFightId.value !== null
-    && activeFightId.value !== fight.id
-  );
+function isLocked(fight: Fight): boolean {
+  return !!props.activeFightId && props.activeFightId !== fight.id;
 }
 
 function swapColors() {
-  leftSide.value = leftSide.value.label === "Red"
-    ? WHITE
-    : RED
+  leftSide.value = leftSide.value.label === "Red" ? WhiteFightSide : RedFightSide;
 }
-
-
 </script>
 
 <template>
@@ -96,7 +83,12 @@ function swapColors() {
             </div>
 
             <div class="relative z-10 flex items-center justify-center h-12">
-              <RoundButton @click="swapColors" variant="outline" size="sm" class="bg-neutral text-neutral-content">
+              <RoundButton
+                @click="swapColors"
+                variant="outline"
+                size="sm"
+                class="bg-neutral text-neutral-content"
+              >
                 <CgArrowsExchange />
               </RoundButton>
             </div>
@@ -111,10 +103,21 @@ function swapColors() {
         </tr>
       </thead>
       <tbody>
-        <FightRow :fight="fight" :active="props.openedFightId === fight.id" :locked="isLocked(fight)"
-          @openFight="onOpenFight" @closeFight="onCloseFight" @cancelFight="onCancelFight"
-          @validateFight="onValidateFight" @forfeitFight="onForfeitFight" v-for="fight in props.fights" :key="fight.id"
-          :leftSide="leftSide" :rightSide="rightSide" @addScoreEvent="event => emit('addScoreEvent', fight.id, event)"/>
+        <FightRow
+          :fight="fight"
+          :active="props.activeFightId === fight.id"
+          :locked="isLocked(fight)"
+          @openFight="onOpenFight"
+          @closeFight="onCloseFight"
+          @cancelFight="onCancelFight"
+          @validateFight="onValidateFight"
+          @forfeitFight="onForfeitFight"
+          v-for="fight in props.fights"
+          :key="fight.id"
+          :leftSide="leftSide.side"
+          :rightSide="rightSide.side"
+          @assignIppon="(event) => emit('assignIppon', fight.id, event)"
+        />
       </tbody>
     </table>
   </div>
