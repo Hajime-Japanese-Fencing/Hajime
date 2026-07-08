@@ -1,13 +1,11 @@
 import { describe, it, expect } from "vite-plus/test";
-import { calculateNbFightsInPool, calculatePossiblePoolSetups } from "./pool.service.ts";
+import {calculateNbFightsInPool, calculatePossiblePoolSetups, poolSetupEquals} from "./pool.service.ts";
 import type { PoolSetup } from "./pool-setup.interface.ts";
 import type { PoolGroup } from "./pool-group.interface.ts";
 
 describe("calculatePossiblePoolSetups", () => {
   it("return all setups (4*3, 3*4, 2*6) for 12 fighters", () => {
     const possiblePoolSetups = calculatePossiblePoolSetups(12);
-
-    console.log(possiblePoolSetups);
 
     const poolSetupsForSixFighters: PoolSetup[] = [
       {
@@ -45,8 +43,6 @@ describe("calculatePossiblePoolSetups", () => {
   it("return all possible setups (3*3, 4*1+5*1) for 9 fighters", () => {
     const possiblePoolSetups = calculatePossiblePoolSetups(9);
 
-    console.log(possiblePoolSetups);
-
     const poolSetupsForNineFighters: PoolSetup[] = [
       {
         nbFights: 9,
@@ -73,6 +69,93 @@ describe("calculatePossiblePoolSetups", () => {
     ];
 
     expect(possiblePoolSetups).toStrictEqual(poolSetupsForNineFighters);
+  });
+
+  it("return all possible setups for 23 fighters", () => {
+    const possiblePoolSetups = calculatePossiblePoolSetups(23);
+
+    const poolSetupsExpected: PoolSetup[] = [
+      {
+        nbFights: 27,
+        poolGroups: [
+          {
+            poolSize: 3,
+            amount: 5,
+          },
+          {
+            poolSize: 4,
+            amount: 2,
+          },
+        ],
+      },
+      {
+        nbFights: 33,
+        poolGroups: [
+          {
+            poolSize: 3,
+            amount: 1,
+          },
+          {
+            poolSize: 4,
+            amount: 5,
+          },
+        ],
+      },
+      {
+        nbFights: 42,
+        poolGroups: [
+          {
+            poolSize: 4,
+            amount: 2,
+          },
+          {
+            poolSize: 5,
+            amount: 3,
+          },
+        ],
+      },
+      {
+        nbFights: 55,
+        poolGroups: [
+          {
+            poolSize: 5,
+            amount: 1,
+          },
+          {
+            poolSize: 6,
+            amount: 3,
+          },
+        ],
+      },
+      {
+        nbFights: 77,
+        poolGroups: [
+          {
+            poolSize: 7,
+            amount: 1,
+          },
+          {
+            poolSize: 8,
+            amount: 2,
+          },
+        ],
+      },
+      {
+        nbFights: 121,
+        poolGroups: [
+          {
+            poolSize: 11,
+            amount: 1,
+          },
+          {
+            poolSize: 12,
+            amount: 1,
+          },
+        ],
+      },
+    ];
+
+    expect(possiblePoolSetups).toStrictEqual(poolSetupsExpected);
   });
 
   it("throws error if number of fighters is not an integer", () => {
@@ -131,3 +214,98 @@ describe("calculateNbFightsInPool", () => {
     expect(calculateNbFightsInPool(poolGroups)).toStrictEqual(16);
   });
 });
+
+describe("poolSetupEquals", () => {
+  it("returns true for 2 setups containing identical groups in same order", () => {
+    const setup1: PoolSetup = {
+      nbFights: 1,
+      poolGroups: [
+        {
+          poolSize: 1,
+          amount: 1
+        },
+        {
+          poolSize: 2,
+          amount: 1
+        },
+      ]
+    }
+    const setup2: PoolSetup = {
+      nbFights: 1,
+      poolGroups: [
+        {
+          poolSize: 1,
+          amount: 1
+        },
+        {
+          poolSize: 2,
+          amount: 1
+        },
+      ]
+    }
+
+    expect(poolSetupEquals(setup1, setup2)).toBe(true)
+  })
+
+  it("returns false for 2 setups containing different groups", () => {
+    const setup1: PoolSetup = {
+      nbFights: 1,
+      poolGroups: [
+        {
+          poolSize: 1,
+          amount: 1
+        },
+        {
+          poolSize: 2,
+          amount: 1
+        },
+      ]
+    }
+    const setup2: PoolSetup = {
+      nbFights: 1,
+      poolGroups: [
+        {
+          poolSize: 3,
+          amount: 1
+        },
+        {
+          poolSize: 2,
+          amount: 1
+        },
+      ]
+    }
+
+    expect(poolSetupEquals(setup1, setup2)).toBe(false)
+  })
+
+  it("returns true for 2 setups containing identical groups in different order", () => {
+    const setup1: PoolSetup = {
+      nbFights: 1,
+      poolGroups: [
+        {
+          poolSize: 1,
+          amount: 1
+        },
+        {
+          poolSize: 2,
+          amount: 1
+        },
+      ]
+    }
+    const setup2: PoolSetup = {
+      nbFights: 1,
+      poolGroups: [
+        {
+          poolSize: 2,
+          amount: 1
+        },
+        {
+          poolSize: 1,
+          amount: 1
+        },
+      ]
+    }
+
+    expect(poolSetupEquals(setup1, setup2)).toBe(true)
+  })
+})
