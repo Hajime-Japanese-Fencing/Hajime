@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import IpponResult from "./IpponResult.vue";
-import type {IpponResultData} from "./fight.interface.ts";
+import type {IpponResultData} from "./types.ts";
 
 
 
@@ -19,7 +19,7 @@ const emit = defineEmits<{
     <IpponResult
       v-for="token in props.tokens"
       :key="token.id"
-      :variant="token.variant"
+      :firstBlood="token.firstBlood"
       :removable="props.removable"
       @remove="emit('remove', token.id)"
     >

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import FightList from "./FightList.vue";
-import type { AssignIpponEvent, Fight, FightStatus } from "./fight.interface.ts";
+import { FightList } from "@hajime/ui";
+import type { AssignIpponEvent, Fight } from "@hajime/ui";
+import { FightStatus } from "@hajime/core";
 
 const fights = ref<Fight[]>([
   {
@@ -9,7 +10,7 @@ const fights = ref<Fight[]>([
     fighter1: "Tanaka",
     fighter2: "Suzuki",
     score: null,
-    status: "Waiting",
+    status: FightStatus.Waiting,
     scoreEvents: [],
     editable: true,
   },
@@ -18,7 +19,7 @@ const fights = ref<Fight[]>([
     fighter1: "Yamamoto",
     fighter2: "Sato",
     score: "2 - 1",
-    status: "Finished",
+    status: FightStatus.Finished,
     scoreEvents: [
       { id: 1, leftSide: true, type: "ippon", code: "M", firstBlood: true },
       { id: 2, leftSide: false, type: "hansoku", code: "Δ", firstBlood: false },
@@ -32,7 +33,7 @@ const fights = ref<Fight[]>([
     fighter1: "Ito",
     fighter2: "Kobayashi",
     score: null,
-    status: "Waiting",
+    status: FightStatus.Waiting,
     scoreEvents: [],
     editable: true,
   },
@@ -57,8 +58,8 @@ function onOpenFight(id: number) {
 
   activeFightId.value = id;
 
-  if (fight.status === "Waiting") {
-    updateFightStatus(id, "In progress");
+  if (fight.status === FightStatus.Waiting) {
+    updateFightStatus(id, FightStatus.InProgress);
   }
 }
 
@@ -68,17 +69,17 @@ function onCloseFight() {
 
 function onCancelFight(id: number) {
   activeFightId.value = null;
-  updateFightStatus(id, "Waiting");
+  updateFightStatus(id, FightStatus.Waiting);
 }
 
 function onValidateFight(id: number) {
   activeFightId.value = null;
-  updateFightStatus(id, "Finished");
+  updateFightStatus(id, FightStatus.Finished);
 }
 
 function onForfeitFight(id: number) {
   activeFightId.value = null;
-  updateFightStatus(id, "Finished");
+  updateFightStatus(id, FightStatus.Finished);
 }
 
 function updateFightStatus(id: number, status: FightStatus) {

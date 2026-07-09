@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import FightRow from "./FightRow.vue";
 import { computed, ref } from "vue";
-import type { Fight, FightSide, AssignIpponEvent } from "./fight.interface.ts";
+import type { Fight, FightSide, AssignIpponEvent } from "./types.ts";
 import { Side, SideLabel } from "@hajime/core";
 import SwapButton from "./SwapButton.vue";
 
@@ -59,6 +59,7 @@ function isLocked(fight: Fight): boolean {
 }
 
 function swapColors() {
+  console.log(leftSide.value);
   leftSide.value = leftSide.value.side === "RED" ? WhiteFightSide : RedFightSide;
 }
 </script>

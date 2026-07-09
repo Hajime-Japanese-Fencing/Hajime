@@ -1,8 +1,8 @@
 <script setup lang="ts" generic="T">
-import Button from "../Button/Button.vue";
+import Button from "../Actions/Button/Button.vue";
 import { CgDetailsMore } from "vue-icons-plus/cg";
 import { EpCloseBold } from "vue-icons-plus/ep";
-import GhostButton from "../Button/GhostButton.vue";
+import GhostButton from "../Actions/Button/GhostButton.vue";
 
 defineProps<{ title: string }>();
 </script>

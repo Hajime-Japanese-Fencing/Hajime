@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { BiSolidDownArrow } from "vue-icons-plus/bi";
 import { TiTick, TiCancel, TiFlag } from "vue-icons-plus/ti";
-import Badge from "./Badge.vue";
-import type {Action} from "./fight.interface.ts";
+import Badge from "../DataDisplay/Badge.vue";
+import type {Action} from "./types.ts";
 
 
 const props = defineProps<{

@@ -8,8 +8,7 @@ import {
   AccentButton,
   RoundButton,
   SquareButton,
-  PoolCard,
-  FightScreen,
+  PoolCard
 } from "@hajime/ui";
 import { ref } from "vue";
 
@@ -72,7 +71,9 @@ const poolDetails = ref<PoolDetails>({
 
     <section>
       <h2 class="text-xl font-semibold">Fight list</h2>
+      <!--
       <FightScreen/>
+      -->
     </section>
 
     <section class="flex flex-col gap-4">
