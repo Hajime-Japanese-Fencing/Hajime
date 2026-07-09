@@ -1,18 +1,18 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import Modal from "../Modal/Modal.vue";
 import type { PoolDetails } from "./pool-details.interface.ts";
 import RankingDetails from "../RankingDetails/RankingDetails.vue";
-import { computed } from "vue";
 import { getRankBadgeClass } from "../../services/badgeClass.service.ts";
-import type { FighterPointsRanked } from "../RankingDetails/fighter-points-ranked.interface.ts";
+import type { RankingDetail } from "../RankingDetails/ranking-detail.interface.ts";
 
 const props = defineProps<{
   poolDetails: PoolDetails;
-  rankingDetails: FighterPointsRanked[];
+  rankingDetails: RankingDetail[];
 }>();
 
 const sortedFighters = computed(() => {
-  if (!props.poolDetails) throw new Error("Aucune donnée de pool");
+  if (!props.poolDetails) throw new Error("No pool data");
   return [...props.poolDetails.fighters].sort((a, b) => a.number - b.number);
 });
 
@@ -49,9 +49,9 @@ const sortedFighters = computed(() => {
       <div v-for="fighter in sortedFighters" class="flex justify-between">
         <span>{{ props.poolDetails.poolId }}.{{ fighter.number }}</span>
         <span>{{ fighter.fighterName }}</span>
-        <span class="badge" :class="getRankBadgeClass(fighter.poolRank)"
-          >#{{ fighter.poolRank }}</span
-        >
+        <span class="badge" :class="getRankBadgeClass(fighter.poolRank)">
+          #{{ fighter.poolRank }}
+        </span>
       </div>
     </div>
   </div>

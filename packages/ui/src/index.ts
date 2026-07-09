@@ -8,7 +8,7 @@ export { default as SquareButton } from "./components/Button/SquareButton.vue";
 
 export { default as Modal } from "./components/Modal/Modal.vue";
 export { default as RankingDetails } from "./components/RankingDetails/RankingDetails.vue";
-export type { FighterPointsRanked } from "./components/RankingDetails/fighter-points-ranked.interface.ts";
+export type { RankingDetail } from "./components/RankingDetails/ranking-detail.interface.ts";
 
 export { default as PoolCard } from "./components/PoolCard/PoolCard.vue";
 export type { FighterDetails } from "./components/PoolCard/fighter-details.interface.ts";
