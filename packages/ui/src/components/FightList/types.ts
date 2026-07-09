@@ -1,16 +1,24 @@
-import type { AssignableIpponCode, Side, FightStatus } from "@hajime/core";
+import type { IpponCode, AssignableIpponCode, Side, FightStatus } from "@hajime/core";
 import {BadgeColor} from "../DataDisplay/types.ts";
 
 // Metier
+interface SideFighter {
+  fighterId: number; // Obsolète si utilisation de slots
+  fighterName: string;
+  ipponsGiven: IpponCode[]; // Obsolète si utilisation de slots
+  numberOfHansoku: number; // Obsolète si utilisation de slots
+}
+
 export interface Fight {
   id: number;
-  fighter1: string;
-  fighter2: string;
+  fighter1: SideFighter;
+  fighter2: SideFighter;
   score: string | null;
   status: FightStatus;
   scoreEvents: IpponResultEvent[];
   editable: boolean;
 }
+
 
 export type IpponResultData = Pick<IpponResultEvent, "id" | "code" | "firstBlood">;
 
