@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FighterDetails, FighterPointsRanked, PoolDetails } from "@hajime/ui";
+import type { FighterDetails, RankingDetail, PoolDetails } from "@hajime/ui";
 import {
   Button,
   SecondaryButton,
@@ -12,7 +12,7 @@ import {
 } from "@hajime/ui";
 import { ref } from "vue";
 
-const fighterPoints = ref<FighterPointsRanked[]>([
+const rankingDetails = ref<RankingDetail[]>([
   {
     fighterName: "john",
     points: 2,
@@ -117,7 +117,7 @@ const poolDetails = ref<PoolDetails>({
     <section class="flex flex-col gap-4">
       <h2 class="text-xl font-semibold">Mon composant</h2>
       <a></a>
-      <PoolCard :pool-details="poolDetails" :rankingDetails="fighterPoints"></PoolCard>
+      <PoolCard :pool-details="poolDetails" :rankingDetails="rankingDetails"></PoolCard>
     </section>
   </main>
 </template>

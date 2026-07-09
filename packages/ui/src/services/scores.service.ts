@@ -1,7 +1,7 @@
 import type { FighterPoints } from "./fighter-points.interface.ts";
-import type { FighterPointsRanked } from "../components/RankingDetails/fighter-points-ranked.interface.ts";
+import type { RankingDetail } from "../components/RankingDetails/ranking-detail.interface.ts";
 
-export function calculateFighterRanks(fighters: FighterPoints[]): FighterPointsRanked[] {
+export function calculateFighterRanks(fighters: FighterPoints[]): RankingDetail[] {
   const sortedFighters = [...fighters].sort((fighter1, fighter2) => {
     if (fighter2.points !== fighter1.points) return fighter2.points - fighter1.points;
     if (fighter2.nbVictories !== fighter1.nbVictories)
@@ -11,7 +11,7 @@ export function calculateFighterRanks(fighters: FighterPoints[]): FighterPointsR
     return fighter1.nbReceivedIppons - fighter2.nbReceivedIppons;
   });
 
-  let sortedFightersRanked: FighterPointsRanked[] = [];
+  let sortedFightersRanked: RankingDetail[] = [];
 
   sortedFighters.forEach((value, index) => {
     sortedFightersRanked[index] = {
