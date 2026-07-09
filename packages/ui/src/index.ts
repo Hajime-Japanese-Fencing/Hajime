@@ -9,7 +9,7 @@ export { default as SquareButton } from "./components/Actions/Button/SquareButto
 export { default as Badge } from "./components/DataDisplay/Badge.vue";
 export * from "./components/DataDisplay/types.ts";
 
-export { default as Modal } from "./components/Modal/Modal.vue";
+export { default as Modal } from "./components/Actions/Modal/Modal.vue";
 export { default as RankingDetails } from "./components/RankingDetails/RankingDetails.vue";
 export type { RankingDetail } from "./components/RankingDetails/ranking-detail.interface.ts";
 

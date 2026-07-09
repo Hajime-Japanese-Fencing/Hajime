@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import Modal from "../Modal/Modal.vue";
+import Modal from "../Actions/Modal/Modal.vue";
 import type { PoolDetails } from "./pool-details.interface.ts";
 import RankingDetails from "../RankingDetails/RankingDetails.vue";
 import { getRankBadgeClass } from "../../services/badgeClass.service.ts";
