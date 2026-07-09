@@ -6,6 +6,11 @@ export interface PoolSetup {
 }
 
 export function toPoolSetup(poolGroups: PoolGroup[]): PoolSetup {
+
+  if (poolGroups.length == 0) {
+    throw new Error("Input cannot be empty")
+  }
+
   return {
     poolGroups: poolGroups,
     nbFights: calculateNbFightsInPool(poolGroups),
