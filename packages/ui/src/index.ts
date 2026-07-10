@@ -7,7 +7,9 @@ export { default as RoundButton } from "./components/Actions/Button/RoundButton.
 export { default as SquareButton } from "./components/Actions/Button/SquareButton.vue";
 export { default as AssignButton } from "./components/Actions/Button/AssignButton.vue";
 
+export { default as AlertError } from "./components/DataDisplay/AlertError.vue";
 export { default as Badge } from "./components/DataDisplay/Badge.vue";
+export { default as TablePlaceholder } from "./components/DataDisplay/TablePlaceholder.vue";
 export * from "./components/DataDisplay/types.ts";
 
 export { default as Modal } from "./components/Actions/Modal/Modal.vue";

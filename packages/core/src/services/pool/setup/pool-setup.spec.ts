@@ -1,7 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import {
-  calculatePossiblePoolSetups,
-} from "./pool-setup.service.ts";
+import { calculatePossiblePoolSetups } from "./pool-setup.service.ts";
 import type { PoolSetup } from "./pool-setup.interface.ts";
 
 describe("Pool Setup - Determine possible pool setups", () => {
