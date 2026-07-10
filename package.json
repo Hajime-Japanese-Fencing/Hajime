@@ -7,12 +7,9 @@
     "ready": "vp check && vp run -r test && vp run -r build",
     "build:packages": "vp run --filter @hajime/ui --filter @hajime/core build",
     "dev:main": "vp run --parallel -F @hajime/main -F @hajime/ui -F @hajime/core dev",
-    "dev:ui": "vp run --parallel -F @hajime/ui -F @hajime/core storybook:dev"
+    "dev:ui": "vp run --parallel -F @hajime/ui -F @hajime/core storybook:dev",
     "test:core": "vp run --filter @hajime/core test:watch",
     "test:core:ui": "vp run --filter @hajime/core test:ui"
-  },
-  "dependencies": {
-    "vue-icons-plus": "catalog:"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.0",

@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vite-plus/test";
 import {
   distributeFightersInPools,
-} from "./pool.service.ts";
-import type { PoolSetup } from "./pool-setup.interface.ts";
-import {createFighter, type Fighter} from "../fighter.interface.ts";
+} from "./pool-distribution.service.ts";
+import type { PoolSetup } from "../setup/pool-setup.interface.ts";
+import {createFighter, type Fighter} from "../../fighter.interface.ts";
 
 describe("Pool Distribution - Distributes a list of fighters into pools", () => {
   it("should throws error if number of fighters do not match total pool capacity", () => {

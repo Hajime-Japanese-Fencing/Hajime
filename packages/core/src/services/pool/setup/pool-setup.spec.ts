@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vite-plus/test";
 import {
   calculatePossiblePoolSetups,
-} from "./pool.service.ts";
+} from "./pool-setup.service.ts";
 import type { PoolSetup } from "./pool-setup.interface.ts";
 
 describe("Pool Setup - Determine possible pool setups", () => {
@@ -171,9 +171,9 @@ describe("Pool Setup - Determine possible pool setups", () => {
     );
   });
 
-  it("throws error if number of fighters is less than 4", () => {
-    expect(() => calculatePossiblePoolSetups(3)).toThrow(
-      "cannot create pools for less than 4 fighters",
+  it("throws error if number of fighters is less than 6", () => {
+    expect(() => calculatePossiblePoolSetups(5)).toThrow(
+      "cannot create pools for less than 6 fighters",
     );
   });
 });
