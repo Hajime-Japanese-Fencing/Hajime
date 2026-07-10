@@ -41,7 +41,7 @@ describe("Pool Setup - Determine possible pool setups", () => {
     expect(possiblePoolSetups).toStrictEqual(poolSetupsForSixFighters);
   });
 
-  it("should return all possible setups (3*3, 4*1+5*1) for 9 fighters", () => {
+  it("return all possible setups (3*3, 4*1+5*1) for 9 fighters", () => {
     const possiblePoolSetups = calculatePossiblePoolSetups(9);
 
     const poolSetupsForNineFighters: PoolSetup[] = [
@@ -72,7 +72,7 @@ describe("Pool Setup - Determine possible pool setups", () => {
     expect(possiblePoolSetups).toStrictEqual(poolSetupsForNineFighters);
   });
 
-  it("should return all possible setups for 23 fighters (multiple combinations of same pool sizes)", () => {
+  it("return all possible setups for 23 fighters", () => {
     const possiblePoolSetups = calculatePossiblePoolSetups(23);
 
     const poolSetupsExpected: PoolSetup[] = [
@@ -159,21 +159,21 @@ describe("Pool Setup - Determine possible pool setups", () => {
     expect(possiblePoolSetups).toStrictEqual(poolSetupsExpected);
   });
 
-  it("should throws error if number of fighters is not an integer", () => {
+  it("throws error if number of fighters is not an integer", () => {
     expect(() => calculatePossiblePoolSetups(6.5)).toThrow(
       "number of fighters must be a positive integer",
     );
   });
 
-  it("should throws error if number of fighters is not positive", () => {
+  it("throws error if number of fighters is not positive", () => {
     expect(() => calculatePossiblePoolSetups(-6)).toThrow(
       "number of fighters must be a positive integer",
     );
   });
 
-  it("should throws error if number of fighters is less than 6", () => {
-    expect(() => calculatePossiblePoolSetups(5)).toThrow(
-      "cannot create pools for less than 6 fighters",
+  it("throws error if number of fighters is less than 4", () => {
+    expect(() => calculatePossiblePoolSetups(3)).toThrow(
+      "cannot create pools for less than 4 fighters",
     );
   });
 });

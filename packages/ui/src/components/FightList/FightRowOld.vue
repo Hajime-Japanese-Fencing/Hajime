@@ -1,28 +1,15 @@
 <script setup lang="ts">
-import { BiArchiveOut } from "vue-icons-plus/bi";
-import { BsEye, BsEyeSlash } from "vue-icons-plus/bs";
+import { ArchiveRestore, Eye, EyeOff } from "lucide-vue-next";
 import IpponAssignButtons from "./IpponAssignButtons.vue";
 import DropdownComboButton from "./DropdownComboButton.vue";
-import Badge from "./Badge.vue";
-import RoundButton from "../Button/RoundButton.vue";
+import Badge from "../DataDisplay/Badge.vue";
+import RoundButton from "../Actions/Button/RoundButton.vue";
 import { computed } from "vue";
 import IpponResultList from "./IpponResultList.vue";
-import type { Fight, Action, AssignIpponEvent, FightStatus } from "./fight.interface.ts";
+import type { Fight, Action, AssignIpponEvent } from "./types.ts";
+import { StatusColor } from "./types.ts";
 import type { AssignableIpponCode, IpponCode } from "@hajime/core";
-import { Side } from "@hajime/core";
-
-/**
- * @todo Migrer dans le dossier correspondant au Badge
- */
-type BadgeColor =
-  | "primary"
-  | "secondary"
-  | "accent"
-  | "neutral"
-  | "success"
-  | "info"
-  | "warning"
-  | "error";
+import { FightStatus, FightStatusLabel, Side } from "@hajime/core";
 
 /**
  * @todo Simplifier en faveur de FightRowProps
@@ -50,7 +37,7 @@ interface SideFighter {
 }
 
 /**
- * @todo Supprimer en faveur d'un slot "actions" pour laisser FightList décider des boutons d'actions
+ * @todo Supprimer en faveur d'un slot "Actions" pour laisser FightList décider des boutons d'Actions
  */
 const emit = defineEmits<{
   openFight: [id: number];
@@ -60,16 +47,6 @@ const emit = defineEmits<{
   forfeitFight: [id: number];
   assignIppon: [event: AssignIpponEvent];
 }>();
-
-/**
- * @todo Migrer ça dans fight.interface.ts
- * Et se baser sur des statuts qui vienne de @hajime/core
- */
-const statusColors: Record<string, BadgeColor> = {
-  Waiting: "primary",
-  "In progress": "warning",
-  Finished: "success",
-};
 
 /**
  * @todo Séparer Ippons des Hansokus, les Hansokus sont des pénalités
@@ -239,8 +216,8 @@ function onCloseFight() {
     </td>
 
     <td class="w-px whitespace-nowrap">
-      <Badge :color="statusColors[props.fight.status]" variant="soft">
-        {{ props.fight.status }}
+      <Badge :color="StatusColor[props.fight.status]" variant="soft">
+        {{ FightStatusLabel[props.fight.status] }}
       </Badge>
     </td>
 
@@ -253,14 +230,14 @@ function onCloseFight() {
           :disabled="props.locked"
           :class="props.locked ? '' : 'bg-neutral text-neutral-content'"
         >
-          <BsEye v-if="props.fight.status === 'Finished'" />
-          <BiArchiveOut v-else />
+          <Eye v-if="props.fight.status === FightStatus.Finished" />
+          <ArchiveRestore v-else />
         </RoundButton>
       </div>
 
       <div v-else class="flex flex-col gap-3 items-center justify-center">
         <DropdownComboButton
-          v-if="props.fight.status === 'In progress'"
+          v-if="props.fight.status === FightStatus.InProgress"
           :id="props.fight.id"
           @action="handleAction"
         />
@@ -271,7 +248,7 @@ function onCloseFight() {
           class="bg-neutral text-neutral-content"
           @click="onCloseFight"
         >
-          <BsEyeSlash />
+          <EyeOff />
         </RoundButton>
       </div>
     </td>

@@ -1,24 +1,49 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import FightList from "./FightList.vue";
-import type { AssignIpponEvent, Fight, FightStatus } from "./fight.interface.ts";
+import { FightList } from "@hajime/ui";
+import type { AssignIpponEvent, Fight } from "@hajime/ui";
+import { FightStatus, IpponCode } from "@hajime/core";
+
+/*
+ * @TODO ne plus bloquer les boutons pour ouvrir l'interface de combat lorsque l'on ouvre un combat Finished
+ */
 
 const fights = ref<Fight[]>([
   {
     id: 1,
-    fighter1: "Tanaka",
-    fighter2: "Suzuki",
+    fighter1: {
+      fighterId: 3,
+      fighterName: "Tanaka",
+      ipponsGiven: [],
+      numberOfHansoku: 0,
+    },
+    fighter2: {
+      fighterId: 9,
+      fighterName: "Suzuki",
+      ipponsGiven: [],
+      numberOfHansoku: 0,
+    },
+    status: FightStatus.Waiting,
     score: null,
-    status: "Waiting",
     scoreEvents: [],
     editable: true,
   },
   {
     id: 2,
-    fighter1: "Yamamoto",
-    fighter2: "Sato",
+    fighter1: {
+      fighterId: 3,
+      fighterName: "Yamamoto",
+      ipponsGiven: [IpponCode.Men, IpponCode.Kote],
+      numberOfHansoku: 0,
+    },
+    fighter2: {
+      fighterId: 9,
+      fighterName: "Sato",
+      ipponsGiven: [IpponCode.Do],
+      numberOfHansoku: 0,
+    },
+    status: FightStatus.Finished,
     score: "2 - 1",
-    status: "Finished",
     scoreEvents: [
       { id: 1, leftSide: true, type: "ippon", code: "M", firstBlood: true },
       { id: 2, leftSide: false, type: "hansoku", code: "Δ", firstBlood: false },
@@ -29,10 +54,20 @@ const fights = ref<Fight[]>([
   },
   {
     id: 3,
-    fighter1: "Ito",
-    fighter2: "Kobayashi",
+    fighter1: {
+      fighterId: 3,
+      fighterName: "Ito",
+      ipponsGiven: [],
+      numberOfHansoku: 0,
+    },
+    fighter2: {
+      fighterId: 9,
+      fighterName: "Kobayashi",
+      ipponsGiven: [],
+      numberOfHansoku: 0,
+    },
+    status: FightStatus.Waiting,
     score: null,
-    status: "Waiting",
     scoreEvents: [],
     editable: true,
   },
@@ -57,8 +92,8 @@ function onOpenFight(id: number) {
 
   activeFightId.value = id;
 
-  if (fight.status === "Waiting") {
-    updateFightStatus(id, "In progress");
+  if (fight.status === FightStatus.Waiting) {
+    updateFightStatus(id, FightStatus.InProgress);
   }
 }
 
@@ -68,17 +103,17 @@ function onCloseFight() {
 
 function onCancelFight(id: number) {
   activeFightId.value = null;
-  updateFightStatus(id, "Waiting");
+  updateFightStatus(id, FightStatus.Waiting);
 }
 
 function onValidateFight(id: number) {
   activeFightId.value = null;
-  updateFightStatus(id, "Finished");
+  updateFightStatus(id, FightStatus.Finished);
 }
 
 function onForfeitFight(id: number) {
   activeFightId.value = null;
-  updateFightStatus(id, "Finished");
+  updateFightStatus(id, FightStatus.Finished);
 }
 
 function updateFightStatus(id: number, status: FightStatus) {
@@ -103,6 +138,17 @@ function onAssignIppon(id: number, event: AssignIpponEvent) {
     type: "ippon",
     code: event.code,
   });
+}
+
+function getFightScore(fight: Fight): string | null {
+  const left = fight.fighter1.ipponsGiven.length;
+  const right = fight.fighter2.ipponsGiven.length;
+
+  if (left === 0 && right === 0) {
+    return null;
+  }
+
+  return `${left} - ${right}`;
 }
 </script>
 

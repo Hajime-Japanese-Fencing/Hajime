@@ -17,9 +17,9 @@ catalog:
   vitest: 4.1.9
   unplugin-vue: ^7.2.0
   vue-tsc: ^3.3.5
-  vue-icons-plus: ^0.1.9
   vite-plus: latest
   "@tsdown/css": ^0.22.3
+  lucide-vue-next: ^1.0.0
 overrides:
   vite: "catalog:"
   vitest: "catalog:"
@@ -30,3 +30,5 @@ peerDependencyRules:
   allowedVersions:
     vite: "*"
     vitest: "*"
+allowBuilds:
+  esbuild: true

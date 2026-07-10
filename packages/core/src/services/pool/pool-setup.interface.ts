@@ -6,15 +6,14 @@ export interface PoolSetup {
 }
 
 export function toPoolSetup(poolGroups: PoolGroup[]): PoolSetup {
-
   if (poolGroups.length == 0) {
-    throw new Error("Input cannot be empty")
+    throw new Error("Input cannot be empty");
   }
 
   return {
     poolGroups: poolGroups,
     nbFights: calculateNbFightsInPool(poolGroups),
-  }
+  };
 }
 
 export function poolSetupEquals(setup1: PoolSetup, setup2: PoolSetup): boolean {
@@ -25,22 +24,18 @@ export function poolSetupEquals(setup1: PoolSetup, setup2: PoolSetup): boolean {
   const sorted2 = [...setup2.poolGroups].sort((x, y) => x.poolSize - y.poolSize);
 
   return sorted1.every(
-      (group, i) => group.poolSize === sorted2[i].poolSize
-          && group.amount === sorted2[i].amount
+    (group, i) => group.poolSize === sorted2[i].poolSize && group.amount === sorted2[i].amount,
   );
 }
 
 export function calculateNbFightsInPool(poolGroups: PoolGroup[]): number {
-  let nbFightsTotal = 0
+  let nbFightsTotal = 0;
 
   for (let group of poolGroups) {
-
-    const nbFightsInPool = group.poolSize * (group.poolSize - 1) / 2
+    const nbFightsInPool = (group.poolSize * (group.poolSize - 1)) / 2;
     // const nbFightsInPool = factorial(group.poolSize) / (2*(factorial(group.poolSize - 2)))
 
-    nbFightsTotal += group.amount * nbFightsInPool
+    nbFightsTotal += group.amount * nbFightsInPool;
   }
-  return nbFightsTotal
+  return nbFightsTotal;
 }
-
-

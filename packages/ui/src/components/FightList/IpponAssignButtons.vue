@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type AssignableIpponCode, assignableCodes } from "@hajime/core";
-import OutlineButton from "../Button/OutlineButton.vue";
+import OutlineButton from "../Actions/Button/OutlineButton.vue";
 
 const emit = defineEmits<{
   (e: "click", code: AssignableIpponCode): void;

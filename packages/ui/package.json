@@ -18,20 +18,25 @@
     "dev": "vp pack --watch",
     "test": "vp test",
     "check": "vp check",
-    "prepublishOnly": "vp run build"
+    "prepublishOnly": "vp run build",
+    "storybook:dev": "storybook dev",
+    "storybook:build": "storybook build"
   },
   "dependencies": {
     "@hajime/core": "workspace:*",
     "daisyui": "catalog:",
+    "lucide-vue-next": "catalog:",
     "tailwindcss": "catalog:"
   },
   "devDependencies": {
+    "@storybook/vue3-vite": "^10.4.6",
     "@tailwindcss/vite": "catalog:",
     "@tsdown/css": "catalog:",
     "@types/node": "^25.6.2",
     "@typescript/native-preview": "7.0.0-dev.20260509.2",
     "@vitejs/plugin-vue": "catalog:",
     "bumpp": "^11.1.0",
+    "storybook": "^10.4.6",
     "typescript": "^6.0.3",
     "unplugin-vue": "catalog:",
     "vite-plus": "catalog:",

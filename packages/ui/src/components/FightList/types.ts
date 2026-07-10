@@ -1,10 +1,18 @@
-import type { AssignableIpponCode, Side } from "@hajime/core";
+import type { IpponCode, AssignableIpponCode, Side, FightStatus } from "@hajime/core";
+import { BadgeColor } from "../DataDisplay/types.ts";
 
 // Metier
+interface SideFighter {
+  fighterId: number; // Obsolète si utilisation de slots
+  fighterName: string;
+  ipponsGiven: IpponCode[]; // Obsolète si utilisation de slots
+  numberOfHansoku: number; // Obsolète si utilisation de slots
+}
+
 export interface Fight {
   id: number;
-  fighter1: string;
-  fighter2: string;
+  fighter1: SideFighter;
+  fighter2: SideFighter;
   score: string | null;
   status: FightStatus;
   scoreEvents: IpponResultEvent[];
@@ -22,12 +30,6 @@ export interface IpponResultEvent {
   firstBlood: boolean;
 }
 
-/**
- * @todo Migrer dans @hajime/core
- */
-// Metier
-export type FightStatus = "Waiting" | "In progress" | "Finished";
-
 // CE QU ON GARDE EN DESSOUS
 
 export type Action = "validate" | "cancel" | "forfeit";
@@ -42,3 +44,9 @@ export type AssignIpponEvent = {
   side: Side;
   code: AssignableIpponCode;
 };
+
+export const StatusColor = {
+  waiting: BadgeColor.warning,
+  in_progress: BadgeColor.info,
+  finished: BadgeColor.success,
+} as const satisfies Record<FightStatus, BadgeColor>;
