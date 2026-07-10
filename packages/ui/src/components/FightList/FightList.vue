@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import type { Fight, FightSide, AssignIpponEvent, Action } from "./types.ts";
-import { FightStatus, Side, SideLabel, AssignableIpponCode } from "@hajime/core";
+import { FightStatus, Side, SideLabel, AssignableIpponCode, hansoku } from "@hajime/core";
 import SwapButton from "./SwapButton.vue";
 import FightRow from "./FightRow.vue";
 import IpponAssignButtons from "./IpponAssignButtons.vue";
@@ -10,6 +10,7 @@ import RoundButton from "../Actions/Button/RoundButton.vue";
 import { ArchiveRestore, Eye, EyeOff } from "lucide-vue-next";
 import DropdownComboButton from "./DropdownComboButton.vue";
 import IpponResult from "./IpponResult.vue";
+import AssignButton from "../Actions/Button/AssignButton.vue";
 
 const props = defineProps<{
   fights: Fight[];
@@ -17,13 +18,15 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  openFight: [id: number];
-  closeFight: [id: number];
-  cancelFight: [id: number];
-  validateFight: [id: number];
-  forfeitFight: [id: number];
+  openFight: [fightId: number];
+  closeFight: [fightId: number];
+  cancelFight: [fightId: number];
+  validateFight: [fightId: number];
+  forfeitFight: [fightId: number];
   assignIppon: [fightId: number, event: AssignIpponEvent];
-  removeIppon: [id: number];
+  removeIppon: [fightId: number, ipponId: number];
+  assignHansoku: [fightId: number, side: Side];
+  removeHansoku: [fightId: number, side: Side];
 }>();
 
 const RedFightSide: FightSide = {
@@ -65,34 +68,70 @@ function handleAction(action: Action, id: number) {
       break;
   }
 }
+
+function openFight(fightId: number) {
+  emit("openFight", fightId);
+}
+
+function closeFight(fightId: number) {
+  emit("closeFight", fightId);
+}
+
+function assignIppon(
+    fightId: number,
+    side: Side,
+    code: AssignableIpponCode,
+) {
+  emit("assignIppon", fightId, {
+    side,
+    code,
+  });
+}
+
+
+function removeIppon(fightId: number, ipponId: number) {
+  emit("removeIppon", fightId, ipponId);
+}
+
+function assignHansoku(fightId: number, side: Side) {
+  emit("assignHansoku", fightId, side);
+}
+
+function removeHansoku(fightId: number, side: Side) {
+  emit("removeHansoku", fightId, side);
+}
+
+function isDisabled(fight: Fight) {
+  return fight.status === FightStatus.Finished;
+}
 </script>
 
 <template>
   <div class="bg-base-300">
     <table class="table table-zebra">
       <thead>
-        <tr>
-          <th class="text-right p-0" :class="leftSide.class">
-            {{ leftSide.label }}
-          </th>
-          <th class="text-center w-40 relative p-0">
-            <div class="relative z-10 flex items-center justify-center h-12">
+      <tr>
+        <th class="text-right p-0" :class="leftSide.class">
+          {{ leftSide.label }}
+        </th>
+        <th class="text-center w-40 relative p-0">
+          <div class="relative z-10 flex items-center justify-center h-12">
               <span>
                 <SwapButton @click="swapColors" />
               </span>
-            </div>
-          </th>
-          <th class="text-left p-0" :class="rightSide.class">
-            <div>
-              {{ rightSide.label }}
-            </div>
-          </th>
-          <th class="w-px whitespace-nowrap">Status</th>
-          <th class=""></th>
-        </tr>
+          </div>
+        </th>
+        <th class="text-left p-0" :class="rightSide.class">
+          <div>
+            {{ rightSide.label }}
+          </div>
+        </th>
+        <th class="w-px whitespace-nowrap">Status</th>
+        <th class=""></th>
+      </tr>
       </thead>
       <tbody>
-        <FightRow
+      <FightRow
           v-for="fight in props.fights"
           :key="fight.id"
           :fight-status="fight.status"
@@ -100,76 +139,86 @@ function handleAction(action: Action, id: number) {
           :left-fighter="fight.fighter1.fighterName"
           :right-fighter="fight.fighter2.fighterName"
           :score="fight.score"
-        >
-          <template #left-assign>
-            <IpponAssignButtons @click="" />
-          </template>
-          <template #left-hansoku>
-            <IpponResult
+      >
+        <template #left-assign>
+          <div class="flex gap-2">
+            <IpponAssignButtons @assign="code => assignIppon(fight.id, leftSide.side, code)" :disabled="isDisabled(fight)"/>
+            <AssignButton :tooltip="hansoku.label" @assign="assignHansoku(fight.id, leftSide.side)" :disabled="isDisabled(fight)">
+              {{ hansoku.code }}
+            </AssignButton>
+          </div>
+        </template>
+        <template #left-hansoku>
+          <IpponResult
               v-for="_ in fight.fighter1.numberOfHansoku"
               :removable="fight.editable"
-              @remove=""
-            >
-              {{ AssignableIpponCode.Hansoku }}
-            </IpponResult>
-          </template>
-          <template #left-score>
-            <IpponResultList
+              @remove="removeHansoku(fight.id, leftSide.side)"
+          >
+            {{ AssignableIpponCode.Hansoku }}
+          </IpponResult>
+        </template>
+        <template #left-score>
+          <IpponResultList
               :ippons="fight.fighter1.ipponsGiven"
               :removable="fight.editable"
-              @remove=""
-            />
-          </template>
+              @remove="id => removeIppon(fight.id, id)"
+          />
+        </template>
 
-          <template #right-assign>
-            <IpponAssignButtons @click="" />
-          </template>
-          <template #right-hansoku>
-            <IpponResult
+        <template #right-assign>
+          <div class="flex gap-2">
+            <IpponAssignButtons  @assign="code => assignIppon(fight.id, rightSide.side, code)" :disabled="isDisabled(fight)"/>
+            <AssignButton :tooltip="hansoku.label" @assign="assignHansoku(fight.id, rightSide.side)" :disabled="isDisabled(fight)">
+              {{ hansoku.code }}
+            </AssignButton>
+          </div>
+        </template>
+        <template #right-hansoku>
+          <IpponResult
               v-for="_ in fight.fighter2.numberOfHansoku"
               :removable="fight.editable"
-              @remove=""
-            >
-              {{ AssignableIpponCode.Hansoku }}
-            </IpponResult>
-          </template>
-          <template #right-score>
-            <IpponResultList
+              @remove="removeHansoku(fight.id, rightSide.side)"
+          >
+            {{ AssignableIpponCode.Hansoku }}
+          </IpponResult>
+        </template>
+        <template #right-score>
+          <IpponResultList
               :ippons="fight.fighter2.ipponsGiven"
               :removable="fight.editable"
-              @remove=""
-            />
-          </template>
+              @remove="id => removeIppon(fight.id, id)"
+          />
+        </template>
 
-          <template #actions-inactive>
-            <RoundButton
+        <template #actions-inactive>
+          <RoundButton
               size="sm"
               variant="outline"
-              @click="emit('openFight', fight.id)"
+              @click="openFight(fight.id)"
               :disabled="isLocked(fight)"
               :class="isLocked(fight) ? '' : 'bg-neutral text-neutral-content'"
-            >
-              <Eye v-if="fight.status === FightStatus.Finished" />
-              <ArchiveRestore v-else />
-            </RoundButton>
-          </template>
-          <template #actions-active>
-            <DropdownComboButton
+          >
+            <Eye v-if="fight.status === FightStatus.Finished" />
+            <ArchiveRestore v-else />
+          </RoundButton>
+        </template>
+        <template #actions-active>
+          <DropdownComboButton
               v-if="fight.status === FightStatus.InProgress"
               :id="fight.id"
               @action="(e) => handleAction(e, fight.id)"
-            />
-            <RoundButton
+          />
+          <RoundButton
               v-else
               size="sm"
               variant="outline"
               class="bg-neutral text-neutral-content"
-              @click="emit('closeFight', fight.id)"
-            >
-              <EyeOff />
-            </RoundButton>
-          </template>
-        </FightRow>
+              @click="closeFight(fight.id)"
+          >
+            <EyeOff />
+          </RoundButton>
+        </template>
+      </FightRow>
       </tbody>
     </table>
   </div>
