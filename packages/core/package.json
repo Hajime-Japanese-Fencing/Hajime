@@ -14,6 +14,7 @@
   "scripts": {
     "build": "vp pack",
     "dev": "vp pack --watch",
+    "storybook:dev": "vp run dev",
     "test": "vp test",
     "check": "vp check",
     "prepublishOnly": "vp run build"
