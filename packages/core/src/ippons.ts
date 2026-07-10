@@ -31,3 +31,18 @@ export const assignableCodes: AssignableIpponList = [
   { code: AssignableIpponCode.Tsuki, label: "Tsuki" },
   { code: AssignableIpponCode.Hansoku, label: "Hansoku" },
 ];
+
+/*
+ * Ajout de variants de assignableCodes pour illustrer la séparation des Ippons et des Hansokus
+ */
+
+export const assignableIppons = [
+  { code: AssignableIpponCode.Men, label: "Men" },
+  { code: AssignableIpponCode.Kote, label: "Kote" },
+  { code: AssignableIpponCode.Do, label: "Do" },
+  { code: AssignableIpponCode.Tsuki, label: "Tsuki" },
+] as const;
+
+export const hansoku = {
+  code: AssignableIpponCode.Hansoku, label: "Hansoku",
+};

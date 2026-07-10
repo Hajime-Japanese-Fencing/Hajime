@@ -6,6 +6,9 @@ import { FightStatus, IpponCode } from "@hajime/core";
 
 /*
  * @TODO ne plus bloquer les boutons pour ouvrir l'interface de combat lorsque l'on ouvre un combat Finished
+ *   C'est le activeFightId qui 'active' un combat lorsque l'on ouvre l'interface d'un combat, qu'il soit fini ou non
+ * @TODO décider de la source de verité pour la liste des ippons d'un combat, et harmoniser la logique en fonction
+ *   (ipponsGiven est un bon candidat mais en l'etat on ne peut pas savoir quel Ippon est le firstBlood dans un combat donné)
  */
 
 const fights = ref<Fight[]>([
@@ -127,6 +130,7 @@ function updateFightStatus(id: number, status: FightStatus) {
   fight.status = status;
 }
 
+// A refactor
 function onAssignIppon(id: number, event: AssignIpponEvent) {
   const fight = getFight(id);
   if (!fight) return;
@@ -139,6 +143,19 @@ function onAssignIppon(id: number, event: AssignIpponEvent) {
     code: event.code,
   });
 }
+
+function onRemoveIppon(id: number) {}
+
+function onAssignHansoku(id: number) {
+  const fight = getFight(id);
+  if (!fight) return;
+
+  // Ajouter un moyen de designer a quel combattant attribuer le Hansoku en paramtre de la methode
+  // par side?, fighter1 / fighter2, autre ?
+}
+
+function onRemoveHansoku(id: number) {}
+
 
 function getFightScore(fight: Fight): string | null {
   const left = fight.fighter1.ipponsGiven.length;
