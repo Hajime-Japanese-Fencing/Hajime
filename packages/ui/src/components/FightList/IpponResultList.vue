@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import IpponResult from "./IpponResult.vue";
-import type {IpponCode} from "@hajime/core";
-
-
+import type { IpponCode } from "@hajime/core";
 
 const props = defineProps<{
   ippons: IpponCode[];
@@ -16,7 +14,6 @@ const emit = defineEmits<{
 /*
  * REvoir le firstBlood pour qu'il soit seulement attribué au premier ippon du combat, pas au premier de chaque combattant
  */
-
 </script>
 
 <template>

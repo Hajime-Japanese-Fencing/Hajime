@@ -4,5 +4,5 @@ import FightScreen from "./FightScreen.vue";
 
 <template>
   <p>main</p>
-  <FightScreen/>
+  <FightScreen />
 </template>

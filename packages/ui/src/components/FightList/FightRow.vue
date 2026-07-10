@@ -12,7 +12,6 @@ interface FightRowProps {
   rightFighter: string;
   score: string | null; // Ajout afin de pouvoir laisser l'affichage du score numérique dans FightRow
 }
-
 </script>
 
 <template>

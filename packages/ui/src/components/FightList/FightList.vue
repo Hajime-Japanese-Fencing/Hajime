@@ -106,11 +106,11 @@ function handleAction(action: Action, id: number) {
           </template>
           <template #left-hansoku>
             <IpponResult
-              v-for="n in fight.fighter1.numberOfHansoku"
+              v-for="_ in fight.fighter1.numberOfHansoku"
               :removable="fight.editable"
               @remove=""
             >
-              AssignableIpponCode.Hansoku
+              {{ AssignableIpponCode.Hansoku }}
             </IpponResult>
           </template>
           <template #left-score>
@@ -126,11 +126,11 @@ function handleAction(action: Action, id: number) {
           </template>
           <template #right-hansoku>
             <IpponResult
-              v-for="n in fight.fighter2.numberOfHansoku"
+              v-for="_ in fight.fighter2.numberOfHansoku"
               :removable="fight.editable"
               @remove=""
             >
-              AssignableIpponCode.Hansoku
+              {{ AssignableIpponCode.Hansoku }}
             </IpponResult>
           </template>
           <template #right-score>

@@ -15,13 +15,13 @@ const fights = ref<Fight[]>([
       fighterId: 3,
       fighterName: "Tanaka",
       ipponsGiven: [],
-      numberOfHansoku: 0
+      numberOfHansoku: 0,
     },
     fighter2: {
       fighterId: 9,
       fighterName: "Suzuki",
       ipponsGiven: [],
-      numberOfHansoku: 0
+      numberOfHansoku: 0,
     },
     status: FightStatus.Waiting,
     score: null,
@@ -34,13 +34,13 @@ const fights = ref<Fight[]>([
       fighterId: 3,
       fighterName: "Yamamoto",
       ipponsGiven: [IpponCode.Men, IpponCode.Kote],
-      numberOfHansoku: 0
+      numberOfHansoku: 0,
     },
     fighter2: {
       fighterId: 9,
       fighterName: "Sato",
       ipponsGiven: [IpponCode.Do],
-      numberOfHansoku: 0
+      numberOfHansoku: 0,
     },
     status: FightStatus.Finished,
     score: "2 - 1",
@@ -58,13 +58,13 @@ const fights = ref<Fight[]>([
       fighterId: 3,
       fighterName: "Ito",
       ipponsGiven: [],
-      numberOfHansoku: 0
+      numberOfHansoku: 0,
     },
     fighter2: {
       fighterId: 9,
       fighterName: "Kobayashi",
       ipponsGiven: [],
-      numberOfHansoku: 0
+      numberOfHansoku: 0,
     },
     status: FightStatus.Waiting,
     score: null,
