@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { CgArrowsExchange, CgArrowsExchangeAlt } from "vue-icons-plus/cg";
+import { ArrowLeftRight } from "lucide-vue-next";
 //import RoundButton from "../Actions/Button/RoundButton.vue";
 
-  /*
-  * Le swap de DaisyUi ne semble fonctionner qu'a l'interieur d'une balise 'label'
-  */
-
+/*
+ * Le swap de DaisyUi ne semble fonctionner qu'a l'interieur d'une balise 'label'
+ */
 </script>
 
 <template>
+  <label
+    class="btn btn-circle btn-outline btn-sm swap swap-rotate bg-neutral text-neutral-content tooltip"
+    data-tip="Swap side colors"
+  >
+    <input type="checkbox" @click.stop />
 
-  <label class="btn btn-circle btn-outline btn-sm swap swap-rotate bg-neutral text-neutral-content tooltip"
-         data-tip="Swap side colors">
-    <input type="checkbox" @click.stop/>
-
-    <CgArrowsExchange class="swap-on"/>
-    <CgArrowsExchangeAlt class="swap-off"/>
+    <ArrowLeftRight class="swap-on" />
+    <ArrowLeftRight class="swap-off" />
   </label>
 
   <!--

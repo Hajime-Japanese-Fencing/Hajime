@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { BiArchiveOut } from "vue-icons-plus/bi";
-import { BsEye, BsEyeSlash } from "vue-icons-plus/bs";
+import { ArchiveRestore, Eye, EyeOff } from "lucide-vue-next";
 import IpponAssignButtons from "./IpponAssignButtons.vue";
 import DropdownComboButton from "./DropdownComboButton.vue";
 import Badge from "../DataDisplay/Badge.vue";
@@ -11,8 +10,6 @@ import type { Fight, Action, AssignIpponEvent } from "./types.ts";
 import { StatusColor } from "./types.ts";
 import type { AssignableIpponCode, IpponCode } from "@hajime/core";
 import { FightStatus, FightStatusLabel, Side } from "@hajime/core";
-
-
 
 /**
  * @todo Simplifier en faveur de FightRowProps
@@ -50,8 +47,6 @@ const emit = defineEmits<{
   forfeitFight: [id: number];
   assignIppon: [event: AssignIpponEvent];
 }>();
-
-
 
 /**
  * @todo Séparer Ippons des Hansokus, les Hansokus sont des pénalités
@@ -235,8 +230,8 @@ function onCloseFight() {
           :disabled="props.locked"
           :class="props.locked ? '' : 'bg-neutral text-neutral-content'"
         >
-          <BsEye v-if="props.fight.status === FightStatus.Finished" />
-          <BiArchiveOut v-else />
+          <Eye v-if="props.fight.status === FightStatus.Finished" />
+          <ArchiveRestore v-else />
         </RoundButton>
       </div>
 
@@ -253,7 +248,7 @@ function onCloseFight() {
           class="bg-neutral text-neutral-content"
           @click="onCloseFight"
         >
-          <BsEyeSlash />
+          <EyeOff />
         </RoundButton>
       </div>
     </td>

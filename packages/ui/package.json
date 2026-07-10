@@ -23,6 +23,7 @@
   "dependencies": {
     "@hajime/core": "workspace:*",
     "daisyui": "catalog:",
+    "lucide-vue-next": "catalog:",
     "tailwindcss": "catalog:"
   },
   "devDependencies": {

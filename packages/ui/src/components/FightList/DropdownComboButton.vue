@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { BiSolidDownArrow } from "vue-icons-plus/bi";
-import { TiTick, TiCancel, TiFlag } from "vue-icons-plus/ti";
+import { Ban, Check, ChevronDown, Flag } from "lucide-vue-next";
 import Badge from "../DataDisplay/Badge.vue";
-import type {Action} from "./types.ts";
-
+import type { Action } from "./types.ts";
 
 const props = defineProps<{
   id: number;
@@ -31,7 +29,7 @@ function forfeit() {
 <template>
   <div class="join">
     <button class="btn btn-outline btn-sm join-item btn-success" @click="validate">
-      <TiTick />
+      <Check />
       Validate
     </button>
     <button
@@ -39,7 +37,7 @@ function forfeit() {
       :popovertarget="popoverId"
       :style="{ anchorName: `--${popoverId}` }"
     >
-      <BiSolidDownArrow size="16" />
+      <ChevronDown :size="16" />
     </button>
   </div>
 
@@ -52,7 +50,7 @@ function forfeit() {
     <li class="items-center">
       <a @click="cancel">
         <Badge color="error">
-          <TiCancel />
+          <Ban />
           Cancel
         </Badge>
       </a>
@@ -60,7 +58,7 @@ function forfeit() {
     <li class="items-center">
       <a @click="forfeit">
         <Badge color="warning">
-          <TiFlag />
+          <Flag />
           Forfeit
         </Badge>
       </a>

@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import type {Fight, FightSide, AssignIpponEvent, Action} from "./types.ts";
+import type { Fight, FightSide, AssignIpponEvent, Action } from "./types.ts";
 import { FightStatus, Side, SideLabel, AssignableIpponCode } from "@hajime/core";
 import SwapButton from "./SwapButton.vue";
 import FightRow from "./FightRow.vue";
 import IpponAssignButtons from "./IpponAssignButtons.vue";
 import IpponResultList from "./IpponResultList.vue";
 import RoundButton from "../Actions/Button/RoundButton.vue";
-import {BsEye, BsEyeSlash} from "vue-icons-plus/bs";
-import {BiArchiveOut} from "vue-icons-plus/bi";
+import { ArchiveRestore, Eye, EyeOff } from "lucide-vue-next";
 import DropdownComboButton from "./DropdownComboButton.vue";
 import IpponResult from "./IpponResult.vue";
 
@@ -42,7 +41,6 @@ const WhiteFightSide: FightSide = {
 const leftSide = ref<FightSide>(RedFightSide);
 const rightSide = computed(() => (leftSide.value.side === "RED" ? WhiteFightSide : RedFightSide));
 
-
 function isLocked(fight: Fight): boolean {
   return !!props.activeFightId && props.activeFightId !== fight.id;
 }
@@ -67,8 +65,6 @@ function handleAction(action: Action, id: number) {
       break;
   }
 }
-
-
 </script>
 
 <template>
@@ -96,77 +92,84 @@ function handleAction(action: Action, id: number) {
         </tr>
       </thead>
       <tbody>
-      <FightRow v-for="fight in props.fights"
-                :key="fight.id"
-                :fight-status="fight.status"
-                :active="props.activeFightId === fight.id"
-                :left-fighter="fight.fighter1.fighterName"
-                :right-fighter="fight.fighter2.fighterName"
-                :score="fight.score">
-
-        <template #left-assign>
-          <IpponAssignButtons @click=""/>
-        </template>
-        <template #left-hansoku>
-          <IpponResult v-for="n in fight.fighter1.numberOfHansoku" :removable="fight.editable" @remove="">
-            AssignableIpponCode.Hansoku
-          </IpponResult>
-        </template>
-        <template #left-score>
-          <IpponResultList
+        <FightRow
+          v-for="fight in props.fights"
+          :key="fight.id"
+          :fight-status="fight.status"
+          :active="props.activeFightId === fight.id"
+          :left-fighter="fight.fighter1.fighterName"
+          :right-fighter="fight.fighter2.fighterName"
+          :score="fight.score"
+        >
+          <template #left-assign>
+            <IpponAssignButtons @click="" />
+          </template>
+          <template #left-hansoku>
+            <IpponResult
+              v-for="n in fight.fighter1.numberOfHansoku"
+              :removable="fight.editable"
+              @remove=""
+            >
+              AssignableIpponCode.Hansoku
+            </IpponResult>
+          </template>
+          <template #left-score>
+            <IpponResultList
               :ippons="fight.fighter1.ipponsGiven"
               :removable="fight.editable"
               @remove=""
-          />
-        </template>
+            />
+          </template>
 
-        <template #right-assign>
-          <IpponAssignButtons @click=""/>
-        </template>
-        <template #right-hansoku>
-          <IpponResult v-for="n in fight.fighter2.numberOfHansoku" :removable="fight.editable" @remove="">
-            AssignableIpponCode.Hansoku
-          </IpponResult>
-        </template>
-        <template #right-score>
-          <IpponResultList
+          <template #right-assign>
+            <IpponAssignButtons @click="" />
+          </template>
+          <template #right-hansoku>
+            <IpponResult
+              v-for="n in fight.fighter2.numberOfHansoku"
+              :removable="fight.editable"
+              @remove=""
+            >
+              AssignableIpponCode.Hansoku
+            </IpponResult>
+          </template>
+          <template #right-score>
+            <IpponResultList
               :ippons="fight.fighter2.ipponsGiven"
               :removable="fight.editable"
               @remove=""
-          />
-        </template>
+            />
+          </template>
 
-        <template #actions-inactive>
-          <RoundButton
+          <template #actions-inactive>
+            <RoundButton
               size="sm"
               variant="outline"
               @click="emit('openFight', fight.id)"
               :disabled="isLocked(fight)"
               :class="isLocked(fight) ? '' : 'bg-neutral text-neutral-content'"
-          >
-            <BsEye v-if="fight.status === FightStatus.Finished" />
-            <BiArchiveOut v-else />
-          </RoundButton>
-        </template>
-        <template #actions-active>
-          <DropdownComboButton
+            >
+              <Eye v-if="fight.status === FightStatus.Finished" />
+              <ArchiveRestore v-else />
+            </RoundButton>
+          </template>
+          <template #actions-active>
+            <DropdownComboButton
               v-if="fight.status === FightStatus.InProgress"
               :id="fight.id"
               @action="(e) => handleAction(e, fight.id)"
-          />
-          <RoundButton
+            />
+            <RoundButton
               v-else
               size="sm"
               variant="outline"
               class="bg-neutral text-neutral-content"
               @click="emit('closeFight', fight.id)"
-          >
-            <BsEyeSlash />
-          </RoundButton>
-        </template>
-
-      </FightRow>
-
+            >
+              <EyeOff />
+            </RoundButton>
+          </template>
+        </FightRow>
       </tbody>
     </table>
   </div>
