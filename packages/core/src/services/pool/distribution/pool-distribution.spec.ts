@@ -53,7 +53,7 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     expect(pools.length).toBe(expectedNbPools)
   })
 
-  it("should repulse all fighters of the same club if there are enough pools", () => {
+  it("should repulse all fighters of the same club if there are enough pools and the option is selected", () => {
     const fighters: Fighter[] = [
       createFighter("1", false, "club A"),
       createFighter("2", false, "club A"),
@@ -70,7 +70,7 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
       }]
     }
 
-    const pools = distributeFightersInPools(fighters, poolSetup)
+    const pools = distributeFightersInPools(fighters, poolSetup, true)
     const nbOfAInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club A").length
     const nbOfBInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club B").length
     const nbOfCInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club C").length
@@ -86,7 +86,7 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     expect(nbOfCInPool2).toBe(1)
   })
 
-  it("should spread the maximum of same club members if not enough pools to separate them", () => {
+  it("should spread the maximum of same club members if not enough pools to separate them and the option is selected", () => {
     const fighters: Fighter[] = [
       createFighter("1", false, "club A"),
       createFighter("2", false, "club A"),
@@ -103,7 +103,7 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
       }]
     }
 
-    const pools = distributeFightersInPools(fighters, poolSetup)
+    const pools = distributeFightersInPools(fighters, poolSetup, true)
     const nbOfAInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club A").length
     const nbOfCInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club C").length
     const nbOfAInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club A").length
@@ -113,5 +113,113 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     expect(nbOfCInPool1).toBe(1)
     expect(nbOfAInPool2).toBe(2)
     expect(nbOfCInPool2).toBe(1)
+  })
+
+  it("should not repulse fighters of the same club if the option is not selected", () => {
+    const fighters: Fighter[] = [
+      createFighter("1", false, "club A"),
+      createFighter("2", false, "club A"),
+      createFighter("3", false, "club B"),
+      createFighter("4", false, "club B"),
+      createFighter("5", false, "club C"),
+      createFighter("6", false, "club C")]
+
+    const poolSetup: PoolSetup = {
+      nbFights: 6,
+      poolGroups: [{
+        poolSize: 3,
+        amount: 2
+      }]
+    }
+
+    const pools = distributeFightersInPools(fighters, poolSetup)
+    const nbOfAInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club A").length
+    const nbOfBInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club B").length
+    const nbOfCInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club C").length
+    const nbOfAInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club A").length
+    const nbOfBInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club B").length
+    const nbOfCInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club C").length
+
+    expect(nbOfAInPool1).toBe(2)
+    expect(nbOfBInPool1).toBe(1)
+    expect(nbOfCInPool1).toBe(0)
+    expect(nbOfAInPool2).toBe(0)
+    expect(nbOfBInPool2).toBe(1)
+    expect(nbOfCInPool2).toBe(2)
+  })
+
+  it("should repulse series heads if there are enough pools and the option is selected", () => {
+    const fighters: Fighter[] = [
+      createFighter("1", true, "club A"),
+      createFighter("2", false, "club A"),
+      createFighter("3", true, "club B"),
+      createFighter("4", false, "club B"),
+      createFighter("5", false, "club C"),
+      createFighter("6", false, "club C")]
+
+    const poolSetup: PoolSetup = {
+      nbFights: 6,
+      poolGroups: [{
+        poolSize: 3,
+        amount: 2
+      }]
+    }
+
+    const pools = distributeFightersInPools(fighters, poolSetup, false, true)
+    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter(f => f.fighter.isSeriesHead).length
+    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter(f => f.fighter.isSeriesHead).length
+
+    expect(nbOfSeriesHeadsInPool1).toBe(1)
+    expect(nbOfSeriesHeadsInPool2).toBe(1)
+  })
+
+  it("should spread the maximum of series heads if there are not enough pools to separate them and the option is selected", () => {
+    const fighters: Fighter[] = [
+      createFighter("1", true, "club A"),
+      createFighter("2", true, "club A"),
+      createFighter("3", true, "club B"),
+      createFighter("4", true, "club B"),
+      createFighter("5", false, "club C"),
+      createFighter("6", false, "club C")]
+
+    const poolSetup: PoolSetup = {
+      nbFights: 6,
+      poolGroups: [{
+        poolSize: 3,
+        amount: 2
+      }]
+    }
+
+    const pools = distributeFightersInPools(fighters, poolSetup, false, true)
+    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter(f => f.fighter.isSeriesHead).length
+    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter(f => f.fighter.isSeriesHead).length
+
+    expect(nbOfSeriesHeadsInPool1).toBe(2)
+    expect(nbOfSeriesHeadsInPool2).toBe(2)
+  })
+
+  it("should not repulse series heads if the option is not selected", () => {
+    const fighters: Fighter[] = [
+      createFighter("1", true, "club A"),
+      createFighter("2", true, "club A"),
+      createFighter("3", true, "club B"),
+      createFighter("4", false, "club B"),
+      createFighter("5", false, "club C"),
+      createFighter("6", false, "club C")]
+
+    const poolSetup: PoolSetup = {
+      nbFights: 6,
+      poolGroups: [{
+        poolSize: 3,
+        amount: 2
+      }]
+    }
+
+    const pools = distributeFightersInPools(fighters, poolSetup)
+    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter(f => f.fighter.isSeriesHead).length
+    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter(f => f.fighter.isSeriesHead).length
+
+    expect(nbOfSeriesHeadsInPool1).toBe(3)
+    expect(nbOfSeriesHeadsInPool2).toBe(0)
   })
 })

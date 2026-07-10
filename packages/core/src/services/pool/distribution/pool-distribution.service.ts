@@ -3,7 +3,7 @@ import type {PoolSetup} from "../setup/pool-setup.interface.ts";
 import type {Pool} from "../pool.interface.ts";
 import {toPoolFighter} from "./pool-fighter.interface.ts";
 
-export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSetup): Pool[] {
+export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSetup, repulseSameClubMembers: boolean = false, repulseSeriesHead: boolean = false): Pool[] {
 
     // --- CHECKING INPUT ---
     let poolSetupCapacity = 0
@@ -34,12 +34,21 @@ export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSe
         for (let pool of pools) {
 
             const poolIsFull = pool.fighters.length == pool.size
+
             const nbSameClubMembersInPool = countClubMembersInPool(pool, fighter.club)
             const nbPoolsWithFewerSameClubMembers = pools.filter(p =>
                 countClubMembersInPool(p, fighter.club) < nbSameClubMembersInPool
             ).length
 
-            if (!poolIsFull && nbPoolsWithFewerSameClubMembers == 0) {
+            const nbSeriesHeadsInPool = countSeriesHeadsInPool(pool)
+            const nbPoolsWithFewerSeriesHeads = pools.filter(p =>
+                countSeriesHeadsInPool(p) < nbSeriesHeadsInPool
+            ).length
+
+            if (!poolIsFull &&
+                (nbPoolsWithFewerSameClubMembers == 0 || !repulseSameClubMembers) &&
+                (nbPoolsWithFewerSeriesHeads == 0 || !repulseSeriesHead)
+            ) {
                 pool.fighters.push(poolFighter)
                 break
             }
@@ -51,4 +60,8 @@ export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSe
 
 function countClubMembersInPool(pool: Pool, clubName: string): number {
     return pool.fighters.filter(poolFighter => poolFighter.fighter.club == clubName).length
+}
+
+function countSeriesHeadsInPool(pool: Pool): number {
+    return pool.fighters.filter(poolFighter => poolFighter.fighter.isSeriesHead).length
 }
