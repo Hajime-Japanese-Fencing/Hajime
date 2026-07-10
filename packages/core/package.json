@@ -15,6 +15,8 @@
     "build": "vp pack",
     "dev": "vp pack --watch",
     "test": "vp test",
+    "test:watch": "vp test --watch",
+    "test:ui": "vp test --watch --ui",
     "check": "vp check",
     "prepublishOnly": "vp run build"
   },

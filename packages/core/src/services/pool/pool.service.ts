@@ -1,6 +1,6 @@
 import {type PoolSetup, poolSetupEquals, toPoolSetup} from "./pool-setup.interface.ts";
 import type {Fighter} from "../fighter.interface.ts";
-import type {Pool} from "../pool.interface.ts";
+import type {Pool} from "./pool.interface.ts";
 import {toPoolFighter} from "./pool-fighter.interface.ts";
 
 export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
@@ -9,8 +9,8 @@ export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
     if (!Number.isInteger(nbFighters) || nbFighters < 0) {
         throw new Error("number of fighters must be a positive integer")
     }
-    if (nbFighters < 4) {
-        throw new Error("cannot create pools for less than 4 fighters")
+    if (nbFighters < 6) {
+        throw new Error("cannot create pools for less than 6 fighters")
     }
 
     // --- CALCULATING SETUPS ---
@@ -30,7 +30,7 @@ export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
                     }]
             ))
 
-        // --- CASES WITH nbPlayers = a * poolSize + b ---
+        // --- CASES WITH nbPlayers = a * poolSize +/- b ---
         } else {
             if (nbExcessFighters > 0 && nbExcessFighters < totalPoolNb) {
                 possiblePoolSetups.push(toPoolSetup(
