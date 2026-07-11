@@ -1,18 +1,20 @@
 <script setup lang="ts" generic="T">
 import Button from "../Button/Button.vue";
-import { Ellipsis, X } from "lucide-vue-next";
-import GhostButton from "../Button/GhostButton.vue";
+import CloseButton from "../Overlay/CloseButton.vue";
+import { Ellipsis } from "lucide-vue-next";
 
 defineProps<{ title: string }>();
 </script>
 
 <template>
-  <GhostButton onclick="modal1.showModal();" class="w-max px-1"><Ellipsis></Ellipsis></GhostButton>
+  <Button color="neutral" variant="ghost" onclick="modal1.showModal();" class="w-max px-1">
+    <Ellipsis />
+  </Button>
 
   <dialog id="modal1" class="modal">
     <div class="modal-box bg-black text-neutral-300 p-10 min-w-max">
       <form method="dialog" class="flex justify-end">
-        <button class="bg-none"><X /></button>
+        <CloseButton />
       </form>
 
       <h2 class="card-title mb-2">{{ title }}</h2>

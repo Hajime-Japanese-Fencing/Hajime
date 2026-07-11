@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AssignableIpponCode, assignableIppons } from "@hajime/core";
 
-import AssignButton from "../Actions/Button/AssignButton.vue";
+import AssignButton from "./AssignButton.vue";
 import type { ButtonProps } from "../Actions/Button/button-props.type.ts";
 
 const props = withDefaults(

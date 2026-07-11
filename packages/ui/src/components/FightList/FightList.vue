@@ -6,11 +6,11 @@ import SwapButton from "./SwapButton.vue";
 import FightRow from "./FightRow.vue";
 import IpponAssignButtons from "./IpponAssignButtons.vue";
 import IpponResultList from "./IpponResultList.vue";
-import RoundButton from "../Actions/Button/RoundButton.vue";
+import IconButton from "../Actions/Button/IconButton.vue";
 import { ArchiveRestore, Eye, EyeOff } from "lucide-vue-next";
 import DropdownComboButton from "./DropdownComboButton.vue";
 import IpponResult from "./IpponResult.vue";
-import AssignButton from "../Actions/Button/AssignButton.vue";
+import AssignButton from "./AssignButton.vue";
 
 const props = defineProps<{
   fights: Fight[];
@@ -200,16 +200,10 @@ function isDisabled(fight: Fight) {
           </template>
 
           <template #actions-inactive>
-            <RoundButton
-              size="sm"
-              variant="outline"
-              @click="openFight(fight.id)"
-              :disabled="isLocked(fight)"
-              :class="isLocked(fight) ? '' : 'bg-neutral text-neutral-content'"
-            >
+            <IconButton variant="outline" @click="openFight(fight.id)" :disabled="isLocked(fight)">
               <Eye v-if="fight.status === FightStatus.Finished" />
               <ArchiveRestore v-else />
-            </RoundButton>
+            </IconButton>
           </template>
           <template #actions-active>
             <DropdownComboButton
@@ -217,15 +211,9 @@ function isDisabled(fight: Fight) {
               :id="fight.id"
               @action="(e) => handleAction(e, fight.id)"
             />
-            <RoundButton
-              v-else
-              size="sm"
-              variant="outline"
-              class="bg-neutral text-neutral-content"
-              @click="closeFight(fight.id)"
-            >
+            <IconButton v-else variant="outline" @click="closeFight(fight.id)">
               <EyeOff />
-            </RoundButton>
+            </IconButton>
           </template>
         </FightRow>
       </tbody>

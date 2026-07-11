@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Ban, Check, ChevronDown, Flag } from "lucide-vue-next";
 import Badge from "../DataDisplay/Badge.vue";
+import Button from "../Actions/Button/Button.vue";
 import type { Action } from "./types.ts";
 
 const props = defineProps<{
@@ -28,17 +29,20 @@ function forfeit() {
 
 <template>
   <div class="join">
-    <button class="btn btn-outline btn-sm join-item btn-success" @click="validate">
+    <Button color="success" variant="outline" size="sm" class="join-item" @click="validate">
       <Check />
       Validate
-    </button>
-    <button
-      class="btn btn-outline btn-sm join-item btn-success"
+    </Button>
+    <Button
+      color="success"
+      variant="outline"
+      size="sm"
+      class="join-item"
       :popovertarget="popoverId"
       :style="{ anchorName: `--${popoverId}` }"
     >
       <ChevronDown :size="16" />
-    </button>
+    </Button>
   </div>
 
   <ul

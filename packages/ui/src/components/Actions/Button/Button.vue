@@ -2,10 +2,14 @@
 import type { ButtonProps } from "./button-props.type.ts";
 
 withDefaults(defineProps<ButtonProps>(), {
-  variant: "primary",
+  color: "neutral",
+  variant: "soft",
   size: "md",
-  disabled: false,
   shape: undefined,
+  block: false,
+  wide: false,
+  disabled: false,
+  loading: false,
 });
 
 defineEmits<{
@@ -17,13 +21,17 @@ defineEmits<{
   <button
     :class="[
       'btn',
-      `btn-${variant}`,
-      size !== 'md' ? `btn-${size}` : '',
+      color ? `btn-${color}` : '',
+      variant ? `btn-${variant}` : '',
+      size && size !== 'md' ? `btn-${size}` : '',
       shape ? `btn-${shape}` : '',
+      block ? 'btn-block' : '',
+      wide ? 'btn-wide' : '',
     ]"
-    :disabled="disabled"
+    :disabled="disabled || loading"
     @click="$emit('click', $event)"
   >
+    <span v-if="loading" class="loading loading-spinner loading-sm" />
     <slot />
   </button>
 </template>

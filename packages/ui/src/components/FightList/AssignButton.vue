@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import OutlineButton from "./OutlineButton.vue";
-import type { ButtonProps } from "./button-props.type.ts";
+import Button from "../Actions/Button/Button.vue";
+import type { ButtonProps } from "../Actions/Button/button-props.type.ts";
 
 const props = withDefaults(
   defineProps<{
@@ -21,14 +21,16 @@ const emit = defineEmits<{
 
 <template>
   <label class="tooltip" :data-tip="props.tooltip">
-    <OutlineButton
+    <Button
+      color="neutral"
+      variant="outline"
       :size="props.size"
       shape="circle"
-      @assign="emit('assign')"
       :disabled="props.disabled"
+      @click="emit('assign')"
     >
       <slot />
-    </OutlineButton>
+    </Button>
   </label>
 </template>
 

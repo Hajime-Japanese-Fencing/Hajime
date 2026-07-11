@@ -10,7 +10,7 @@ const meta = {
     disabled: { control: "boolean" },
     size: {
       control: "select",
-      options: ["xs", "sm", "md", "lg"],
+      options: ["xs", "sm", "md", "lg", "xl"],
     },
     default: { control: "text" },
   },
