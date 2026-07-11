@@ -139,28 +139,30 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
 
     const poolSetup: PoolSetup = {
       nbFights: 6,
-      poolGroups: [{
-        poolSize: 3,
-        amount: 2
-      }]
-    }
+      poolGroups: [
+        {
+          poolSize: 3,
+          amount: 2,
+        },
+      ],
+    };
 
-    const pools = distributeFightersInPools(fighters, poolSetup)
+    const pools = distributeFightersInPools(fighters, poolSetup);
 
-    const nbOfAInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club A").length
-    const nbOfBInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club B").length
-    const nbOfCInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club C").length
-    const nbOfAInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club A").length
-    const nbOfBInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club B").length
-    const nbOfCInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club C").length
+    const nbOfAInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club A").length;
+    const nbOfBInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club B").length;
+    const nbOfCInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club C").length;
+    const nbOfAInPool2 = pools[1].fighters.filter((f) => f.fighter.club == "club A").length;
+    const nbOfBInPool2 = pools[1].fighters.filter((f) => f.fighter.club == "club B").length;
+    const nbOfCInPool2 = pools[1].fighters.filter((f) => f.fighter.club == "club C").length;
 
-    expect(nbOfAInPool1).toBe(2)
-    expect(nbOfBInPool1).toBe(1)
-    expect(nbOfCInPool1).toBe(0)
-    expect(nbOfAInPool2).toBe(0)
-    expect(nbOfBInPool2).toBe(1)
-    expect(nbOfCInPool2).toBe(2)
-  })
+    expect(nbOfAInPool1).toBe(2);
+    expect(nbOfBInPool1).toBe(1);
+    expect(nbOfCInPool1).toBe(0);
+    expect(nbOfAInPool2).toBe(0);
+    expect(nbOfBInPool2).toBe(1);
+    expect(nbOfCInPool2).toBe(2);
+  });
 
   it("should repulse series heads if there are enough pools and the option is selected", () => {
     const fighters: Fighter[] = [
@@ -230,19 +232,21 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
 
     const poolSetup: PoolSetup = {
       nbFights: 6,
-      poolGroups: [{
-        poolSize: 3,
-        amount: 2
-      }]
-    }
+      poolGroups: [
+        {
+          poolSize: 3,
+          amount: 2,
+        },
+      ],
+    };
 
-    const pools = distributeFightersInPools(fighters, poolSetup)
-    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter(f => f.fighter.isSeriesHead).length
-    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter(f => f.fighter.isSeriesHead).length
+    const pools = distributeFightersInPools(fighters, poolSetup);
+    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeriesHead).length;
+    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeriesHead).length;
 
-    expect(nbOfSeriesHeadsInPool1).toBe(3)
-    expect(nbOfSeriesHeadsInPool2).toBe(0)
-  })
+    expect(nbOfSeriesHeadsInPool1).toBe(3);
+    expect(nbOfSeriesHeadsInPool2).toBe(0);
+  });
 
   it("should repulse along both criterias when possible", () => {
     const fighters: Fighter[] = [
@@ -251,35 +255,38 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
       createFighter("3", false, "club B"),
       createFighter("4", true, "club B"),
       createFighter("5", false, "club C"),
-      createFighter("6", false, "club C")]
+      createFighter("6", false, "club C"),
+    ];
 
     const poolSetup: PoolSetup = {
       nbFights: 6,
-      poolGroups: [{
-        poolSize: 3,
-        amount: 2
-      }]
-    }
+      poolGroups: [
+        {
+          poolSize: 3,
+          amount: 2,
+        },
+      ],
+    };
 
-    const pools = distributeFightersInPools(fighters, poolSetup, true, true)
+    const pools = distributeFightersInPools(fighters, poolSetup, true, true);
 
-    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter(f => f.fighter.isSeriesHead).length
-    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter(f => f.fighter.isSeriesHead).length
+    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeriesHead).length;
+    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeriesHead).length;
 
-    const nbOfAInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club A").length
-    const nbOfBInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club B").length
-    const nbOfCInPool1 = pools[0].fighters.filter(f => f.fighter.club == "club C").length
-    const nbOfAInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club A").length
-    const nbOfBInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club B").length
-    const nbOfCInPool2 = pools[1].fighters.filter(f => f.fighter.club == "club C").length
+    const nbOfAInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club A").length;
+    const nbOfBInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club B").length;
+    const nbOfCInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club C").length;
+    const nbOfAInPool2 = pools[1].fighters.filter((f) => f.fighter.club == "club A").length;
+    const nbOfBInPool2 = pools[1].fighters.filter((f) => f.fighter.club == "club B").length;
+    const nbOfCInPool2 = pools[1].fighters.filter((f) => f.fighter.club == "club C").length;
 
-    expect(nbOfSeriesHeadsInPool1).toBe(1)
-    expect(nbOfSeriesHeadsInPool2).toBe(1)
-    expect(nbOfAInPool1).toBe(1)
-    expect(nbOfBInPool1).toBe(1)
-    expect(nbOfCInPool1).toBe(1)
-    expect(nbOfAInPool2).toBe(1)
-    expect(nbOfBInPool2).toBe(1)
-    expect(nbOfCInPool2).toBe(1)
-  })
-})
+    expect(nbOfSeriesHeadsInPool1).toBe(1);
+    expect(nbOfSeriesHeadsInPool2).toBe(1);
+    expect(nbOfAInPool1).toBe(1);
+    expect(nbOfBInPool1).toBe(1);
+    expect(nbOfCInPool1).toBe(1);
+    expect(nbOfAInPool2).toBe(1);
+    expect(nbOfBInPool2).toBe(1);
+    expect(nbOfCInPool2).toBe(1);
+  });
+});

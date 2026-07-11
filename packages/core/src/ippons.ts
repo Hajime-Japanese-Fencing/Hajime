@@ -44,5 +44,6 @@ export const assignableIppons = [
 ] as const;
 
 export const hansoku = {
-  code: AssignableIpponCode.Hansoku, label: "Hansoku",
+  code: AssignableIpponCode.Hansoku,
+  label: "Hansoku",
 };

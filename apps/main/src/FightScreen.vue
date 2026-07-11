@@ -156,7 +156,6 @@ function onAssignHansoku(id: number) {
 
 function onRemoveHansoku(id: number) {}
 
-
 function getFightScore(fight: Fight): string | null {
   const left = fight.fighter1.ipponsGiven.length;
   const right = fight.fighter2.ipponsGiven.length;
