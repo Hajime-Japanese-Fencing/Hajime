@@ -1,32 +1,63 @@
 import type {Pool} from "../pool.interface.ts";
 import type {PoolTurn} from "./pool-turn.interface.ts";
+import type {PoolFight} from "./pool-fight.interface.ts";
 
 export function organizePoolFights(pool: Pool): PoolTurn[] {
     let poolTurns: PoolTurn[] = []
 
-    if (pool.fighters.length % 2 == 0) {
-        for (let i = 0; i < (pool.fighters.length - 1); i++) {
+    const poolSize = pool.fighters.length
+
+    if (poolSize % 2 == 0) {
+
+        for (let turn = 1; turn <= (poolSize - 1); turn++) {
+
+            let turnfights: PoolFight[] = []
+
+            // --- MATCHUP DISTRIBUTION ---
+            // First Matchup
+            turnfights.push({
+                fighter1: pool.fighters[poolSize],
+                fighter2: pool.fighters[poolSize / 2],
+                turn: turn
+            })
+
+            // Bulk matchup distribution
+            for (let j = 1; j < (poolSize)/2; j++) {
+                turnfights.push({
+                    fighter1: pool.fighters[j],
+                    fighter2: pool.fighters[poolSize - j],
+                    turn: turn
+                })
+            }
+
             poolTurns.push(
                 {
-                    order: 1,
-                    fights: [{
-                        fighter1: {fighter: {id: "1", isSeriesHead: false, club: "club A"}},
-                        fighter2: {fighter: {id: "2", isSeriesHead: false, club: "club A"}},
-                        turn: 1
-                    },]
+                    order: turn,
+                    fights: turnfights
                 }
             )
+
         }
+
     } else {
-        for (let fighter of pool.fighters) {
+
+        for (let turn = 1; turn <= (poolSize); turn++) {
+
+            let turnfights: PoolFight[] = []
+
+            // --- MATCHUP DISTRIBUTION ---
+            for (let j = 1; j < (poolSize) / 2; j++) {
+                turnfights.push({
+                    fighter1: pool.fighters[j],
+                    fighter2: pool.fighters[poolSize - j],
+                    turn: turn
+                })
+            }
+
             poolTurns.push(
                 {
-                    order: 1,
-                    fights: [{
-                        fighter1: {fighter: {id: "1", isSeriesHead: false, club: "club A"}},
-                        fighter2: {fighter: {id: "2", isSeriesHead: false, club: "club A"}},
-                        turn: 1
-                    },]
+                    order: turn,
+                    fights: turnfights
                 }
             )
         }
