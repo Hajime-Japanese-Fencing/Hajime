@@ -17,7 +17,6 @@ interface FightRowProps {
 <template>
   <!-- Inactive row -->
   <tr v-if="!props.active" class="hover:bg-base-200">
-
     <td class="text-right font-medium align-middle">
       {{ props.leftFighter }}
     </td>
@@ -41,16 +40,13 @@ interface FightRowProps {
         <slot name="actions-inactive" />
       </div>
     </td>
-
   </tr>
 
   <!-- Active row -->
   <tr v-else class="bg-base-200 h-full">
-
     <!-- Left Fighter -->
     <td class="p-2 align-top">
       <div class="grid grid-cols-[12rem_1fr] grid-rows-[auto_auto] gap-y-4 items-start">
-
         <!-- Assign -->
         <div>
           <slot name="left-assign" />
@@ -74,7 +70,6 @@ interface FightRowProps {
     <!-- Score -->
     <td class="w-48 p-2 align-top">
       <div class="grid grid-rows-[auto_auto] gap-y-4">
-
         <!-- Score -->
         <div class="text-center font-semibold">
           {{ props.score ?? "VS" }}
@@ -82,7 +77,6 @@ interface FightRowProps {
 
         <!-- Ippons -->
         <div class="grid grid-cols-[1fr_auto_1fr] items-start">
-
           <div class="flex justify-end gap-1 pr-2 min-h-8">
             <slot name="left-score" />
           </div>
@@ -92,7 +86,6 @@ interface FightRowProps {
           <div class="flex justify-start gap-1 pl-2 min-h-8">
             <slot name="right-score" />
           </div>
-
         </div>
       </div>
     </td>
@@ -100,7 +93,6 @@ interface FightRowProps {
     <!-- Right Fighter -->
     <td class="p-2 align-top">
       <div class="grid grid-cols-[1fr_12rem] grid-rows-[auto_auto] gap-y-4 items-start">
-
         <!-- Nom -->
         <div class="text-left font-medium self-center">
           {{ props.rightFighter }}
@@ -118,7 +110,6 @@ interface FightRowProps {
         <div class="flex justify-end gap-2 min-h-8">
           <slot name="right-hansoku" />
         </div>
-
       </div>
     </td>
 

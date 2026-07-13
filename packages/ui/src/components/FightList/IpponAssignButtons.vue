@@ -3,7 +3,6 @@ import { AssignableIpponCode, assignableIppons } from "@hajime/core";
 
 import AssignButton from "./AssignButton.vue";
 
-
 const emit = defineEmits<{
   assign: [code: AssignableIpponCode];
 }>();

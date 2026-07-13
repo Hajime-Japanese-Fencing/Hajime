@@ -31,37 +31,38 @@ export function distributeFightersInPools(
   // --- FIGHTERS DISTRIBUTION ---
   const sortedFighters = sortFighters(fighters, true, true);
 
-    for (let fighter of sortedFighters) {
+  for (let fighter of sortedFighters) {
+    const poolFighter = toPoolFighter(fighter);
 
-        const poolFighter = toPoolFighter(fighter)
+    let poolIndex = 0;
+    for (let pool of pools) {
+      // --- LOGICAL TESTS ---
+      const poolIsFull = pool.fighters.length == pool.size;
+      const isLastPool = poolIndex == pools.length;
 
-        let poolIndex = 0
-        for (let pool of pools) {
+      // Same Club Members Check
+      const nbSameClubMembersInPool = countClubMembersInPool(pool, fighter.club);
+      const nbPoolsWithFewerSameClubMembers = pools.filter(
+        (p) => countClubMembersInPool(p, fighter.club) < nbSameClubMembersInPool,
+      ).length;
+      const passSameClubMembersRepulseCheck =
+        nbPoolsWithFewerSameClubMembers == 0 || !shouldRepulseSameClubMembers;
 
-            // --- LOGICAL TESTS ---
-            const poolIsFull = pool.fighters.length == pool.size
-            const isLastPool = poolIndex == pools.length
+      // Series Heads Check
+      const nbSeriesHeadsInPool = countSeriesHeadsInPool(pool);
+      const nbPoolsWithFewerSeriesHeads = pools.filter(
+        (p) => countSeriesHeadsInPool(p) < nbSeriesHeadsInPool,
+      ).length;
+      const passSeriesHeadsRepulseCheck =
+        !fighter.isSeriesHead || nbPoolsWithFewerSeriesHeads == 0 || !shouldRepulseSeriesHead;
 
-            // Same Club Members Check
-            const nbSameClubMembersInPool = countClubMembersInPool(pool, fighter.club)
-            const nbPoolsWithFewerSameClubMembers = pools
-                .filter(p => countClubMembersInPool(p, fighter.club) < nbSameClubMembersInPool)
-                .length
-            const passSameClubMembersRepulseCheck = nbPoolsWithFewerSameClubMembers == 0 || !shouldRepulseSameClubMembers
-
-            // Series Heads Check
-            const nbSeriesHeadsInPool = countSeriesHeadsInPool(pool)
-            const nbPoolsWithFewerSeriesHeads = pools
-                .filter(p => countSeriesHeadsInPool(p) < nbSeriesHeadsInPool)
-                .length
-            const passSeriesHeadsRepulseCheck = !fighter.isSeriesHead || nbPoolsWithFewerSeriesHeads == 0 || !shouldRepulseSeriesHead
-
-            if (!poolIsFull &&
-                ((passSameClubMembersRepulseCheck && passSeriesHeadsRepulseCheck) || isLastPool)
-            ) {
-                pool.fighters.push(poolFighter)
-                break
-            }
+      if (
+        !poolIsFull &&
+        ((passSameClubMembersRepulseCheck && passSeriesHeadsRepulseCheck) || isLastPool)
+      ) {
+        pool.fighters.push(poolFighter);
+        break;
+      }
 
       poolIndex += 1;
     }
