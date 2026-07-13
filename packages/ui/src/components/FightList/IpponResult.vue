@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import DestructiveButton from "../Overlay/DestructiveButton.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -28,21 +29,20 @@ function onRemove() {
 </script>
 
 <template>
-  <div class="relative group">
+  <div class="indicator group">
+    <DestructiveButton
+      v-if="props.removable"
+      class="indicator-item indicator-top indicator-end opacity-0 group-hover:opacity-100 transition-opacity"
+      aria-label="Remove"
+      @click.stop="onRemove"
+    />
+
     <span
       class="inline-flex h-8 w-8 items-center justify-center rounded-full font-semibold border"
       :class="resultClass"
     >
       <slot />
     </span>
-
-    <button
-      v-if="props.removable"
-      @click.stop="onRemove"
-      class="absolute -bottom-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity h-4 w-4 items-center justify-center rounded-full bg-warning text-warning-content"
-    >
-      x
-    </button>
   </div>
 </template>
 
