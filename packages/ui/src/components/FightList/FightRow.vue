@@ -49,7 +49,7 @@ interface FightRowProps {
             {{ props.score ?? "VS" }}
           </div>
 
-          <div class="grid grid-cols-[1fr_auto_1fr] items-center w-full">
+          <div class="grid grid-cols-[1fr_auto_1fr] items-start w-full">
             <div class="flex justify-end gap-2 mr-2">
               <slot name="left-score" />
             </div>

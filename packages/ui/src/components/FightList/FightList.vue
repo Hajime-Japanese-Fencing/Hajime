@@ -163,6 +163,7 @@ function isVisible(fight: Fight) {
             <IpponResultList
               :ippons="fight.fighter1.ipponsGiven"
               :removable="fight.editable"
+              alignment="end"
               @remove="(id) => removeIppon(fight.id, id)"
             />
           </template>
@@ -195,6 +196,7 @@ function isVisible(fight: Fight) {
             <IpponResultList
               :ippons="fight.fighter2.ipponsGiven"
               :removable="fight.editable"
+              alignment="start"
               @remove="(id) => removeIppon(fight.id, id)"
             />
           </template>

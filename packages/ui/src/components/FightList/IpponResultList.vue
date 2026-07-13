@@ -5,6 +5,7 @@ import type { IpponCode } from "@hajime/core";
 const props = defineProps<{
   ippons: IpponCode[];
   removable?: boolean;
+  alignment: "start" | "end"
 }>();
 
 const emit = defineEmits<{
@@ -17,10 +18,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex gap-2">
+  <div class="flex flex-wrap gap-1" :class="alignment === 'end' ? 'justify-end' : 'justify-start'">
     <IpponResult
       v-for="(ippon, index) in ippons"
-      :firstBlood="index === 1"
+      :firstBlood="index === 0"
       :removable="props.removable"
       @remove="emit('remove', index)"
     >
