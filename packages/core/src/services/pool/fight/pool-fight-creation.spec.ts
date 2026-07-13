@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vite-plus/test";
 import {PoolBuilder} from "../pool.interface.ts";
 import {organizePoolFights} from "./pool-fight-creation.service.ts";
-import type {PoolTurn} from "./pool-turn.interface.ts";
-import {newPoolFighter, toPoolFighter} from "../distribution/pool-fighter.interface.ts";
+import {newPoolFighter, type PoolFighter} from "../distribution/pool-fighter.interface.ts";
+import type {PoolFight} from "./pool-fight.interface.ts";
 
 describe("Pool Fight Creation - organize all turns and fights in a pool", () => {
     it("should return a pool with n-1 turns for n fighters with n even", () => {
@@ -42,7 +42,6 @@ describe("Pool Fight Creation - organize all turns and fights in a pool", () => 
         const resultTurns = organizePoolFights(inputPool)
 
         for (let turn = 0; turn < poolSize-1; turn ++) {
-            console.log(resultTurns[turn].fights)
             expect(resultTurns[turn].fights.length).toBe(poolSize / 2)
         }
     })
@@ -70,30 +69,74 @@ describe("Pool Fight Creation - organize all turns and fights in a pool", () => 
             .withSize(poolSize)
             .toPool()
 
-        const expectedTurns: PoolTurn[] = [
-            {
-                order: 1,
-                fights: [
-                    { fighter1: newPoolFighter("4" ), fighter2: newPoolFighter("2") },
-                    { fighter1: newPoolFighter("1" ), fighter2: newPoolFighter("3") }
-                ]
-            },
-            {
-                order: 2,
-                fights: [
-                    { fighter1: newPoolFighter("4" ), fighter2: newPoolFighter("1") },
-                    { fighter1: newPoolFighter("3" ), fighter2: newPoolFighter("2") }
-                ]
-            },
-            {
-                order: 3,
-                fights: [
-                    { fighter1: newPoolFighter("4" ), fighter2: newPoolFighter("3") },
-                    { fighter1: newPoolFighter("2" ), fighter2: newPoolFighter("1") }
-                ]
-            }
+        const fighter1 = newPoolFighter("1")
+        const fighter2 = newPoolFighter("2")
+        const fighter3 = newPoolFighter("3")
+        const fighter4 = newPoolFighter("4")
+
+        const expectedMatchups: PoolFighter[][][] = [
+            [
+                [fighter4, fighter2],
+                [fighter1, fighter3],
+            ],
+            [
+                [fighter4, fighter1],
+                [fighter2, fighter3],
+            ],
+            [
+                [fighter4, fighter3],
+                [fighter1, fighter2]
+            ]
         ]
 
-        expect(organizePoolFights(inputPool)).toStrictEqual(expectedTurns)
+        const turns = organizePoolFights(inputPool)
+
+        for (let turn = 0; turn < turns.length; turn++) {
+            for (let fight = 0; fight < turns[turn].fights.length; fight++) {
+                expect(fightContainsFighter(turns[turn].fights[fight], expectedMatchups[turn][fight][0])).toBe(true)
+                expect(fightContainsFighter(turns[turn].fights[fight], expectedMatchups[turn][fight][1])).toBe(true)
+            }
+        }
+    })
+
+    it("should return a pool containing all possible matchups fo n fighters with n odd", () => {
+        const poolBuilder = new PoolBuilder()
+        const poolSize = 3
+        const inputPool = poolBuilder
+            .createPool()
+            .withSize(poolSize)
+            .toPool()
+
+        const fighter1 = newPoolFighter("1")
+        const fighter2 = newPoolFighter("2")
+        const fighter3 = newPoolFighter("3")
+
+        const expectedMatchups: PoolFighter[][][] = [
+            [[fighter1, fighter2]],
+            [[fighter1, fighter3]],
+            [[fighter3, fighter2]],
+        ]
+
+        const turns = organizePoolFights(inputPool)
+
+        for (let turn = 0; turn < turns.length; turn++) {
+            for (let fight = 0; fight < turns[turn].fights.length; fight++) {
+                expect(fightContainsFighter(turns[turn].fights[fight], expectedMatchups[turn][fight][0])).toBe(true)
+                expect(fightContainsFighter(turns[turn].fights[fight], expectedMatchups[turn][fight][1])).toBe(true)
+            }
+        }
     })
 })
+
+function fightContainsFighter(fight: PoolFight, poolFighter: PoolFighter): boolean {
+    const fighter1 = fight.fighter1.fighter
+    const fighter2 = fight.fighter2.fighter
+    const fighter = poolFighter.fighter
+
+    return (fighter1.id == fighter.id &&
+            fighter1.isSeriesHead == fighter.isSeriesHead &&
+            fighter1.club == fighter.club) ||
+        (fighter2.id == fighter.id &&
+            fighter2.isSeriesHead == fighter.isSeriesHead &&
+            fighter2.club == fighter.club)
+}
