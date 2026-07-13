@@ -1,10 +1,10 @@
-import type { Fighter } from "../../fighter.interface.ts";
+import type { PoolFighterEntry } from "../../fighter.interface.ts";
 import type { PoolSetup } from "../setup/pool-setup.interface.ts";
 import type { Pool } from "../pool.interface.ts";
 import { toPoolFighter } from "./pool-fighter.interface.ts";
 
 export function distributeFightersInPools(
-  fighters: Fighter[],
+  fighters: PoolFighterEntry[],
   poolSetup: PoolSetup,
   shouldRepulseSameClubMembers: boolean = false,
   shouldRepulseSeriesHead: boolean = false,
@@ -80,12 +80,12 @@ function countSeriesHeadsInPool(pool: Pool): number {
 }
 
 function sortFighters(
-  fighters: Fighter[],
+  fighters: PoolFighterEntry[],
   sortBySeriesHeads: boolean,
   sortByClub: boolean,
-): Fighter[] {
-  let headFighters: Fighter[] = [];
-  let regularFighters: Fighter[] = fighters;
+): PoolFighterEntry[] {
+  let headFighters: PoolFighterEntry[] = [];
+  let regularFighters: PoolFighterEntry[] = fighters;
 
   if (sortBySeriesHeads) {
     headFighters = fighters.filter((fighter) => fighter.isSeriesHead);

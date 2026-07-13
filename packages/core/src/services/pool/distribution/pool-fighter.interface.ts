@@ -1,7 +1,7 @@
-import type { Fighter } from "../../fighter.interface.ts";
+import type { PoolFighterEntry } from "../../fighter.interface.ts";
 
 export interface PoolFighter {
-  fighter: Fighter;
+  fighter: PoolFighterEntry;
 }
 
 export function newPoolFighter(
@@ -18,7 +18,7 @@ export function newPoolFighter(
   };
 }
 
-export function toPoolFighter(fighter: Fighter): PoolFighter {
+export function toPoolFighter(fighter: PoolFighterEntry): PoolFighter {
   return {
     fighter: fighter,
   };
