@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import BackButton from "./BackButton.vue";
 
 const meta = {
-  title: "Actions/BackButton",
+  title: "Navigation/BackButton",
   component: BackButton,
   tags: ["autodocs"],
   argTypes: {

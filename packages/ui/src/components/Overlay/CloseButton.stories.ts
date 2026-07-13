@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import CloseButton from "./CloseButton.vue";
 
 const meta = {
-  title: "Actions/CloseButton",
+  title: "Overlay/CloseButton",
   component: CloseButton,
   tags: ["autodocs"],
   argTypes: {

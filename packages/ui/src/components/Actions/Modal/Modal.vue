@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T">
-import Button from "../Button/Button.vue";
-import CloseButton from "../Overlay/CloseButton.vue";
 import { Ellipsis } from "lucide-vue-next";
+import Button from "../Button/Button.vue";
+import CloseButton from "../../Overlay/CloseButton.vue";
 
 defineProps<{ title: string }>();
 </script>

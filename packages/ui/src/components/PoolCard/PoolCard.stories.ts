@@ -49,7 +49,7 @@ const rankingDetails: RankingDetail[] = [
 ];
 
 const meta = {
-  title: "PoolCard/PoolCard",
+  title: "Pool/PoolCard",
   component: PoolCard,
   tags: ["autodocs"],
   args: {
