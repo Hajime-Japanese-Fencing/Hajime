@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 import {PoolBuilder} from "../pool.interface.ts";
-import {organizePoolFights} from "./pool-fight-creation.service.ts";
+import {organizePoolFights} from "./pool-fight.service.ts";
 import {newPoolFighter, type PoolFighter} from "../distribution/pool-fighter.interface.ts";
 import type {PoolFight} from "./pool-fight.interface.ts";
 
