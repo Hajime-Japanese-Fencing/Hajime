@@ -96,8 +96,8 @@ function removeHansoku(fightId: number, side: Side) {
   emit("removeHansoku", fightId, side);
 }
 
-function isDisabled(fight: Fight) {
-  return fight.status === FightStatus.Finished;
+function isVisible(fight: Fight) {
+  return fight.status !== FightStatus.Finished;
 }
 </script>
 
@@ -139,12 +139,12 @@ function isDisabled(fight: Fight) {
             <div class="flex gap-2">
               <IpponAssignButtons
                 @assign="(code) => assignIppon(fight.id, leftSide.side, code)"
-                :disabled="isDisabled(fight)"
+                v-if="isVisible(fight)"
               />
               <AssignButton
                 :tooltip="hansoku.label"
                 @assign="assignHansoku(fight.id, leftSide.side)"
-                :disabled="isDisabled(fight)"
+                v-if="isVisible(fight)"
               >
                 {{ hansoku.code }}
               </AssignButton>
@@ -171,12 +171,12 @@ function isDisabled(fight: Fight) {
             <div class="flex gap-2">
               <IpponAssignButtons
                 @assign="(code) => assignIppon(fight.id, rightSide.side, code)"
-                :disabled="isDisabled(fight)"
+                v-if="isVisible(fight)"
               />
               <AssignButton
                 :tooltip="hansoku.label"
                 @assign="assignHansoku(fight.id, rightSide.side)"
-                :disabled="isDisabled(fight)"
+                v-if="isVisible(fight)"
               >
                 {{ hansoku.code }}
               </AssignButton>

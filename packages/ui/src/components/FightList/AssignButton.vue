@@ -5,11 +5,9 @@ import type { ButtonProps } from "../Actions/Button/button-props.type.ts";
 const props = withDefaults(
   defineProps<{
     tooltip: string;
-    disabled?: ButtonProps["disabled"]; // Que faire des boutons d'assignation quand un combat est en lecture seule? (Finished) : boutons disabled ou pas affichés du tout ?
     size?: ButtonProps["size"]; // utile si on veut rendre le bouton pour assigner un Hansoku plus petit?
   }>(),
   {
-    disabled: false,
     size: "sm",
   },
 );
@@ -26,7 +24,6 @@ const emit = defineEmits<{
       variant="outline"
       :size="props.size"
       shape="circle"
-      :disabled="props.disabled"
       @click="emit('assign')"
     >
       <slot />
