@@ -34,25 +34,25 @@ export function distributeFightersInPools(fighters: Fighter[], poolSetup: PoolSe
         const poolFighter = toPoolFighter(fighter)
 
         let poolIndex = 0
-
         for (let pool of pools) {
 
             // --- LOGICAL TESTS ---
             const poolIsFull = pool.fighters.length == pool.size
+            const isLastPool = poolIndex == pools.length
 
+            // Same Club Members Check
             const nbSameClubMembersInPool = countClubMembersInPool(pool, fighter.club)
             const nbPoolsWithFewerSameClubMembers = pools
                 .filter(p => countClubMembersInPool(p, fighter.club) < nbSameClubMembersInPool)
                 .length
             const passSameClubMembersRepulseCheck = nbPoolsWithFewerSameClubMembers == 0 || !shouldRepulseSameClubMembers
 
+            // Series Heads Check
             const nbSeriesHeadsInPool = countSeriesHeadsInPool(pool)
             const nbPoolsWithFewerSeriesHeads = pools
                 .filter(p => countSeriesHeadsInPool(p) < nbSeriesHeadsInPool)
                 .length
             const passSeriesHeadsRepulseCheck = !fighter.isSeriesHead || nbPoolsWithFewerSeriesHeads == 0 || !shouldRepulseSeriesHead
-
-            const isLastPool = poolIndex == pools.length
 
             if (!poolIsFull &&
                 ((passSameClubMembersRepulseCheck && passSeriesHeadsRepulseCheck) || isLastPool)
