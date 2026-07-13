@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import IpponResult from "./IpponResult.vue";
 
 const meta = {
-  title: "FightList/IpponResult",
+  title: "Fight/IpponResult",
   component: IpponResult,
   tags: ["autodocs"],
   argTypes: {

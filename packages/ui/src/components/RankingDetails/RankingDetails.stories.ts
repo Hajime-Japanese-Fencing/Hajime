@@ -38,7 +38,7 @@ const fullRanking: RankingDetail[] = [
 ];
 
 const meta = {
-  title: "RankingDetails/RankingDetails",
+  title: "Pool/RankingDetails",
   component: RankingDetails,
   tags: ["autodocs"],
   args: {

@@ -44,7 +44,7 @@ const finishedFight: Fight = {
 const allFights: Fight[] = [waitingFight, inProgressFight, finishedFight];
 
 const meta = {
-  title: "FightList/FightList",
+  title: "Fight/FightList",
   component: FightList,
   tags: ["autodocs"],
   argTypes: {

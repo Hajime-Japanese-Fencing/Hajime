@@ -6,7 +6,7 @@ import IpponAssignButtons from "./IpponAssignButtons.vue";
 import IpponResultList from "./IpponResultList.vue";
 
 const meta = {
-  title: "FightList/FightRow",
+  title: "Fight/FightRow",
   component: FightRow,
   tags: ["autodocs"],
   argTypes: {
