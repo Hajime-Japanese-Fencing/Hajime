@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { FightList } from "@hajime/ui";
 import type { AssignIpponEvent, Fight } from "@hajime/ui";
-import { FightStatus, IpponCode } from "@hajime/core";
+import { FightStatus, IpponCode, Side } from "@hajime/core";
 
 /*
  * @TODO ne plus bloquer les boutons pour ouvrir l'interface de combat lorsque l'on ouvre un combat Finished
@@ -43,7 +43,7 @@ const fights = ref<Fight[]>([
       fighterId: 9,
       fighterName: "Sato",
       ipponsGiven: [IpponCode.Do],
-      numberOfHansoku: 0,
+      numberOfHansoku: 1,
     },
     status: FightStatus.Finished,
     score: "2 - 1",
@@ -131,8 +131,8 @@ function updateFightStatus(id: number, status: FightStatus) {
 }
 
 // A refactor
-function onAssignIppon(id: number, event: AssignIpponEvent) {
-  const fight = getFight(id);
+function onAssignIppon(fightId: number, event: AssignIpponEvent) {
+  const fight = getFight(fightId);
   if (!fight) return;
 
   fight.scoreEvents.push({
@@ -144,17 +144,23 @@ function onAssignIppon(id: number, event: AssignIpponEvent) {
   });
 }
 
-function onRemoveIppon(id: number) {}
+function onRemoveIppon(fightId: number, ipponId: number) {
+  const fight = getFight(fightId);
+  if (!fight) return;
+}
 
-function onAssignHansoku(id: number) {
-  const fight = getFight(id);
+function onAssignHansoku(fightId: number, side: Side) {
+  const fight = getFight(fightId);
   if (!fight) return;
 
-  // Ajouter un moyen de designer a quel combattant attribuer le Hansoku en paramtre de la methode
+  // Ajouter un moyen de designer a quel combattant attribuer le Hansoku en paramètre de la methode
   // par side?, fighter1 / fighter2, autre ?
 }
 
-function onRemoveHansoku(id: number) {}
+function onRemoveHansoku(fightId: number, side: Side) {
+  const fight = getFight(fightId);
+  if (!fight) return;
+}
 
 function getFightScore(fight: Fight): string | null {
   const left = fight.fighter1.ipponsGiven.length;
@@ -178,6 +184,9 @@ function getFightScore(fight: Fight): string | null {
     @validate-fight="onValidateFight"
     @forfeit-fight="onForfeitFight"
     @assign-ippon="onAssignIppon"
+    @remove-ippon="onRemoveIppon"
+    @assign-hansoku="onAssignHansoku"
+    @remove-hansoku="onRemoveHansoku"
   />
 </template>
 
