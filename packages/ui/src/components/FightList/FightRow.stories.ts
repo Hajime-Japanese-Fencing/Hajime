@@ -56,6 +56,8 @@ export const Finished: Story = {
 export const ActiveWithSlots: Story = {
   args: {
     active: true,
+    leftFighter: "Yamamoto",
+    rightFighter: "Suzuki",
     fightStatus: FightStatus.InProgress,
     score: "1 - 0",
   },
@@ -65,19 +67,19 @@ export const ActiveWithSlots: Story = {
       return { args, FightStatus };
     },
     template: `
-      <FightRow v-bind="args">
+      <FightRow v-bind="args" >
         <template #left-assign>
           <IpponAssignButtons @click="() => {}" />
         </template>
         <template #left-score>
-          <IpponResultList :ippons="['M']" :removable="true" @remove="() => {}" />
+          <IpponResultList :ippons="['M']" :removable="true" @remove="() => {}" alignment="end"/>
         </template>
         <template #left-hansoku />
         <template #right-assign>
           <IpponAssignButtons @click="() => {}" />
         </template>
         <template #right-score>
-          <IpponResultList :ippons="[]" :removable="true" @remove="() => {}" />
+          <IpponResultList :ippons="[]" :removable="true" @remove="() => {}" alignment="start"/>
         </template>
         <template #right-hansoku />
         <template #actions-active>
