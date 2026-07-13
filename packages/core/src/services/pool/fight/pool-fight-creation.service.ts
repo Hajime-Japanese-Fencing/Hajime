@@ -16,18 +16,20 @@ export function organizePoolFights(pool: Pool): PoolTurn[] {
             // --- MATCHUP DISTRIBUTION ---
             // First Matchup
             turnfights.push({
-                fighter1: pool.fighters[poolSize],
-                fighter2: pool.fighters[poolSize / 2],
+                fighter1: pool.fighters[poolSize-1],
+                fighter2: pool.fighters[poolSize/2 - 1],
                 turn: turn
             })
 
             // Bulk matchup distribution
-            for (let j = 1; j < (poolSize)/2; j++) {
+            for (let j = 0; j < (poolSize)/2 - 1; j++) {
                 turnfights.push({
                     fighter1: pool.fighters[j],
-                    fighter2: pool.fighters[poolSize - j],
+                    fighter2: pool.fighters[poolSize-1 - (j+1)],
                     turn: turn
                 })
+
+                // console.log(turnfights[j])
             }
 
             poolTurns.push(
@@ -46,12 +48,15 @@ export function organizePoolFights(pool: Pool): PoolTurn[] {
             let turnfights: PoolFight[] = []
 
             // --- MATCHUP DISTRIBUTION ---
-            for (let j = 1; j < (poolSize) / 2; j++) {
+            for (let j = 0; j < (poolSize-1) / 2; j++) {
                 turnfights.push({
                     fighter1: pool.fighters[j],
-                    fighter2: pool.fighters[poolSize - j],
+                    fighter2: pool.fighters[poolSize-1 - (j+1)],
                     turn: turn
                 })
+
+                // console.log(turnfights[j])
+
             }
 
             poolTurns.push(
