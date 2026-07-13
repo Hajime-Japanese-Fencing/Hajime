@@ -6,26 +6,37 @@ const meta = {
   component: Button,
   tags: ["autodocs"],
   argTypes: {
+    color: {
+      control: "select",
+      options: ["neutral", "primary", "secondary", "accent", "info", "success", "warning", "error"],
+    },
     variant: {
       control: "select",
-      options: ["primary", "secondary", "accent", "ghost", "outline"],
+      options: [undefined, "outline", "dash", "soft", "ghost", "link"],
     },
     size: {
       control: "select",
-      options: ["xs", "sm", "md", "lg"],
+      options: ["xs", "sm", "md", "lg", "xl"],
     },
     shape: {
       control: "select",
       options: [undefined, "circle", "square"],
     },
+    block: { control: "boolean" },
+    wide: { control: "boolean" },
     disabled: { control: "boolean" },
+    loading: { control: "boolean" },
     default: { control: "text" },
   },
   args: {
-    variant: "primary",
+    color: "neutral",
+    variant: "soft",
     size: "md",
-    disabled: false,
     shape: undefined,
+    block: false,
+    wide: false,
+    disabled: false,
+    loading: false,
     default: "Button",
   },
   render: (args) => ({
@@ -40,56 +51,78 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Primary: Story = {
-  args: { variant: "primary", default: "Primary" },
-};
+export const Default: Story = {};
 
-export const Secondary: Story = {
-  args: { variant: "secondary", default: "Secondary" },
-};
-
-export const Accent: Story = {
-  args: { variant: "accent", default: "Accent" },
-};
-
-export const Ghost: Story = {
-  args: { variant: "ghost", default: "Ghost" },
-};
-
-export const Outline: Story = {
-  args: { variant: "outline", default: "Outline" },
-};
-
-export const Small: Story = {
-  args: { size: "sm", default: "Small" },
-};
-
-export const Large: Story = {
-  args: { size: "lg", default: "Large" },
+export const Loading: Story = {
+  args: { loading: true, default: "Saving..." },
 };
 
 export const Disabled: Story = {
-  args: { disabled: true, default: "Disabled" },
+  args: { disabled: true },
 };
 
-export const Circle: Story = {
-  args: { shape: "circle", default: "C" },
+export const Block: Story = {
+  args: { block: true, default: "Full width" },
 };
 
-export const Square: Story = {
-  args: { shape: "square", default: "S" },
-};
-
-export const AllVariants: Story = {
+export const AllColors: Story = {
   render: () => ({
     components: { Button },
     template: `
       <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-        <Button variant="primary">Primary</Button>
-        <Button variant="secondary">Secondary</Button>
-        <Button variant="accent">Accent</Button>
-        <Button variant="ghost">Ghost</Button>
-        <Button variant="outline">Outline</Button>
+        <Button color="neutral" variant="soft">Neutral</Button>
+        <Button color="primary" variant="soft">Primary</Button>
+        <Button color="secondary" variant="soft">Secondary</Button>
+        <Button color="accent" variant="soft">Accent</Button>
+        <Button color="info" variant="soft">Info</Button>
+        <Button color="success" variant="soft">Success</Button>
+        <Button color="warning" variant="soft">Warning</Button>
+        <Button color="error" variant="soft">Error</Button>
+      </div>
+    `,
+  }),
+};
+
+export const AllStyles: Story = {
+  render: () => ({
+    components: { Button },
+    template: `
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+        <Button color="primary">Default (soft)</Button>
+        <Button color="primary" variant="outline">Outline</Button>
+        <Button color="primary" variant="dash">Dash</Button>
+        <Button color="primary" variant="ghost">Ghost</Button>
+        <Button color="primary" variant="link">Link</Button>
+      </div>
+    `,
+  }),
+};
+
+export const ColorStyleCombined: Story = {
+  render: () => ({
+    components: { Button },
+    template: `
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+        <Button color="success" variant="soft">Success soft</Button>
+        <Button color="success" variant="outline">Success outline</Button>
+        <Button color="error" variant="soft">Error soft</Button>
+        <Button color="error" variant="outline">Error outline</Button>
+        <Button color="warning" variant="soft">Warning soft</Button>
+      </div>
+    `,
+  }),
+};
+
+export const AllSizes: Story = {
+  render: () => ({
+    components: { Button },
+    template: `
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+        <Button size="xs">XSmall</Button>
+        <Button size="sm">Small</Button>
+        <Button size="md">Medium</Button>
+        <Button size="lg">Large</Button>
+        <Button size="xl">XLarge</Button>
       </div>
     `,
   }),

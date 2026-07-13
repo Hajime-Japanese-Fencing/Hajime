@@ -2,11 +2,12 @@
 import Button from "./Button.vue";
 import type { ButtonProps } from "./button-props.type.ts";
 
-type OutlineButtonProps = Omit<ButtonProps, "variant">;
-
-const props = withDefaults(defineProps<OutlineButtonProps>(), {
-  size: "md",
+withDefaults(defineProps<Pick<ButtonProps, "size" | "disabled" | "loading" | "wide" | "block">>(), {
+  size: "sm",
   disabled: false,
+  loading: false,
+  wide: false,
+  block: false,
 });
 
 defineEmits<{
@@ -15,9 +16,7 @@ defineEmits<{
 </script>
 
 <template>
-  <Button v-bind="props" variant="outline" @click="$emit('click', $event)">
+  <Button color="error" variant="soft" v-bind="$props" @click="$emit('click', $event)">
     <slot />
   </Button>
 </template>
-
-<style scoped></style>

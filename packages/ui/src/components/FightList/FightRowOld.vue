@@ -3,7 +3,7 @@ import { ArchiveRestore, Eye, EyeOff } from "lucide-vue-next";
 import IpponAssignButtons from "./IpponAssignButtons.vue";
 import DropdownComboButton from "./DropdownComboButton.vue";
 import Badge from "../DataDisplay/Badge.vue";
-import RoundButton from "../Actions/Button/RoundButton.vue";
+import IconButton from "../Actions/Button/IconButton.vue";
 import { computed } from "vue";
 import IpponResultList from "./IpponResultList.vue";
 import type { Fight, Action, AssignIpponEvent } from "./types.ts";
@@ -223,16 +223,10 @@ function onCloseFight() {
 
     <td class="">
       <div v-if="!props.active" class="flex justify-center">
-        <RoundButton
-          size="sm"
-          variant="outline"
-          @click="onOpenFight"
-          :disabled="props.locked"
-          :class="props.locked ? '' : 'bg-neutral text-neutral-content'"
-        >
+        <IconButton variant="outline" @click="onOpenFight" :disabled="props.locked">
           <Eye v-if="props.fight.status === FightStatus.Finished" />
           <ArchiveRestore v-else />
-        </RoundButton>
+        </IconButton>
       </div>
 
       <div v-else class="flex flex-col gap-3 items-center justify-center">
@@ -241,15 +235,9 @@ function onCloseFight() {
           :id="props.fight.id"
           @action="handleAction"
         />
-        <RoundButton
-          v-else
-          size="sm"
-          variant="outline"
-          class="bg-neutral text-neutral-content"
-          @click="onCloseFight"
-        >
+        <IconButton v-else variant="outline" @click="onCloseFight">
           <EyeOff />
-        </RoundButton>
+        </IconButton>
       </div>
     </td>
   </tr>

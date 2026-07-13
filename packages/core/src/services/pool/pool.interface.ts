@@ -1,9 +1,9 @@
 import {type PoolFighter, toPoolFighter} from "./distribution/pool-fighter.interface.ts";
 
 export interface Pool {
-    number: number,
-    size: number,
-    fighters: PoolFighter[]
+  number: number;
+  size: number;
+  fighters: PoolFighter[];
 }
 
 export class PoolBuilder {

@@ -8,6 +8,7 @@ catalogMode: prefer
 catalog:
   "@types/node": ^24
   "@tanstack/store": ^0.7.1
+  "@tanstack/vue-query": ^5.73.3
   "@tailwindcss/vite": ^4.1.11
   "@vitejs/plugin-vue": ^6.0.6
   daisyui: ^5.0.43
@@ -16,6 +17,7 @@ catalog:
   vite: npm:@voidzero-dev/vite-plus-core@latest
   vitest: 4.1.9
   unplugin-vue: ^7.2.0
+  vue-router: ^4.5.2
   vue-tsc: ^3.3.5
   vite-plus: latest
   "@tsdown/css": ^0.22.3
@@ -32,3 +34,4 @@ peerDependencyRules:
     vitest: "*"
 allowBuilds:
   esbuild: true
+  vue-demi: true

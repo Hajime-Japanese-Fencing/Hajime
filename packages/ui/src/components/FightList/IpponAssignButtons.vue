@@ -1,25 +1,34 @@
 <script setup lang="ts">
-import { type AssignableIpponCode, assignableCodes } from "@hajime/core";
-import OutlineButton from "../Actions/Button/OutlineButton.vue";
+import { AssignableIpponCode, assignableIppons } from "@hajime/core";
+
+import AssignButton from "./AssignButton.vue";
+import type { ButtonProps } from "../Actions/Button/button-props.type.ts";
+
+const props = withDefaults(
+  defineProps<{
+    disabled?: ButtonProps["disabled"];
+  }>(),
+  {
+    disabled: false,
+  },
+);
 
 const emit = defineEmits<{
-  (e: "click", code: AssignableIpponCode): void;
+  assign: [code: AssignableIpponCode];
 }>();
 </script>
 
 <template>
   <div class="flex justify-center gap-1">
-    <OutlineButton
-      v-for="ippon in assignableCodes"
+    <AssignButton
+      v-for="ippon in assignableIppons"
       :key="ippon.code"
-      size="xs"
-      shape="circle"
-      class="tooltip"
-      :data-tip="ippon.label"
-      @click="emit('click', ippon.code)"
+      :tooltip="ippon.label"
+      :disabled="props.disabled"
+      @assign="emit('assign', ippon.code)"
     >
       {{ ippon.code }}
-    </OutlineButton>
+    </AssignButton>
   </div>
 </template>
 

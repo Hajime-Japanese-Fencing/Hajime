@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ArrowLeftRight } from "lucide-vue-next";
-//import RoundButton from "../Actions/Button/RoundButton.vue";
 
 /*
- * Le swap de DaisyUi ne semble fonctionner qu'a l'interieur d'une balise 'label'
+ * Le swap de DaisyUI ne fonctionne qu'à l'intérieur d'une balise 'label' — contrainte daisyUI swap.
+ * Ne pas remplacer par Button.vue : le composant swap nécessite un <input type="checkbox"> enfant direct du label.
  */
 </script>
 
@@ -17,17 +17,4 @@ import { ArrowLeftRight } from "lucide-vue-next";
     <ArrowLeftRight class="swap-on" />
     <ArrowLeftRight class="swap-off" />
   </label>
-
-  <!--
-  <RoundButton
-    data-tip="Swap side colors"
-    variant="outline"
-    size="sm"
-    class="tooltip bg-neutral text-neutral-content swap swap-rotate"
-  >
-    <input type="checkbox" />
-    <CgArrowsExchange class="swap-on"/>
-    <CgArrowsExchangeAlt class="swap-off"/>
-  </RoundButton>
-  -->
 </template>
