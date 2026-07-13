@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vite-plus/test";
 import {PoolBuilder} from "../pool.interface.ts";
 import {organizePoolFights} from "./pool-fight-creation.service.ts";
+import type {PoolTurn} from "./pool-turn.interface.ts";
+import {newPoolFighter, toPoolFighter} from "../distribution/pool-fighter.interface.ts";
 
 describe("Pool Fight Creation - organize all turns and fights in a pool", () => {
     it("should return a pool with n-1 turns for n fighters with n even", () => {
@@ -58,5 +60,40 @@ describe("Pool Fight Creation - organize all turns and fights in a pool", () => 
         for (let turn = 0; turn < poolSize; turn ++) {
             expect(resultTurns[turn].fights.length).toBe((poolSize-1) / 2)
         }
+    })
+
+    it("should return a pool containing all possible matchups fo n fighters with n even", () => {
+        const poolBuilder = new PoolBuilder()
+        const poolSize = 4
+        const inputPool = poolBuilder
+            .createPool()
+            .withSize(poolSize)
+            .toPool()
+
+        const expectedTurns: PoolTurn[] = [
+            {
+                order: 1,
+                fights: [
+                    { fighter1: newPoolFighter("4" ), fighter2: newPoolFighter("2") },
+                    { fighter1: newPoolFighter("1" ), fighter2: newPoolFighter("3") }
+                ]
+            },
+            {
+                order: 2,
+                fights: [
+                    { fighter1: newPoolFighter("4" ), fighter2: newPoolFighter("1") },
+                    { fighter1: newPoolFighter("3" ), fighter2: newPoolFighter("2") }
+                ]
+            },
+            {
+                order: 3,
+                fights: [
+                    { fighter1: newPoolFighter("4" ), fighter2: newPoolFighter("3") },
+                    { fighter1: newPoolFighter("2" ), fighter2: newPoolFighter("1") }
+                ]
+            }
+        ]
+
+        expect(organizePoolFights(inputPool)).toStrictEqual(expectedTurns)
     })
 })

@@ -1,32 +1,35 @@
 import type {Pool} from "../pool.interface.ts";
 import type {PoolTurn} from "./pool-turn.interface.ts";
 import type {PoolFight} from "./pool-fight.interface.ts";
+import type {PoolFighter} from "../distribution/pool-fighter.interface.ts";
 
 export function organizePoolFights(pool: Pool): PoolTurn[] {
     let poolTurns: PoolTurn[] = []
 
+    let fighters = [...pool.fighters]
     const poolSize = pool.fighters.length
 
     if (poolSize % 2 == 0) {
 
-        for (let turn = 1; turn <= (poolSize - 1); turn++) {
+        const centerFighter: PoolFighter = fighters.pop()
+        const tableSize = fighters.length
+
+        for (let turn = 1; turn <= tableSize; turn++) {
 
             let turnfights: PoolFight[] = []
 
             // --- MATCHUP DISTRIBUTION ---
             // First Matchup
             turnfights.push({
-                fighter1: pool.fighters[poolSize-1],
-                fighter2: pool.fighters[poolSize/2 - 1],
-                turn: turn
+                fighter1: centerFighter,
+                fighter2: fighters[poolSize/2 - 1],
             })
 
             // Bulk matchup distribution
             for (let j = 0; j < (poolSize)/2 - 1; j++) {
                 turnfights.push({
-                    fighter1: pool.fighters[j],
-                    fighter2: pool.fighters[poolSize-1 - (j+1)],
-                    turn: turn
+                    fighter1: fighters[j],
+                    fighter2: fighters[tableSize - 1 - j],
                 })
 
                 // console.log(turnfights[j])
@@ -38,6 +41,8 @@ export function organizePoolFights(pool: Pool): PoolTurn[] {
                     fights: turnfights
                 }
             )
+
+            fighters = rotateFighters(fighters)
 
         }
 
@@ -50,9 +55,8 @@ export function organizePoolFights(pool: Pool): PoolTurn[] {
             // --- MATCHUP DISTRIBUTION ---
             for (let j = 0; j < (poolSize-1) / 2; j++) {
                 turnfights.push({
-                    fighter1: pool.fighters[j],
-                    fighter2: pool.fighters[poolSize-1 - (j+1)],
-                    turn: turn
+                    fighter1: fighters[j],
+                    fighter2: fighters[poolSize-1 - (j+1)],
                 })
 
                 // console.log(turnfights[j])
@@ -65,8 +69,26 @@ export function organizePoolFights(pool: Pool): PoolTurn[] {
                     fights: turnfights
                 }
             )
+
+            fighters = rotateFighters(fighters)
         }
     }
 
     return poolTurns
+}
+
+function rotateFighters(fighters: PoolFighter[]): PoolFighter[] {
+    const step = 1
+
+    let newFighters: PoolFighter[] = []
+
+    for (let i = fighters.length - step; i < fighters.length; i++) {
+        newFighters.push(fighters[i])
+    }
+
+    for (let i = 0; i < fighters.length - step; i++) {
+        newFighters.push(fighters[i])
+    }
+
+    return newFighters
 }
