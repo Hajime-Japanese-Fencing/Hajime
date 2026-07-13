@@ -1,5 +1,5 @@
+import type { CompetitionId } from "../../shared/competition-id.ts";
 import type { CompetitionDate } from "./competition-date.ts";
-import type { CompetitionId } from "./competition-id.ts";
 import type { CompetitionStatus } from "./competition-status.ts";
 
 export interface CompetitionOverview {
