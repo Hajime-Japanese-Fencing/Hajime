@@ -64,7 +64,105 @@ export const AllStatuses: Story = {
 };
 
 export const WithActiveFight: Story = {
-  args: { activeFightId: 2 },
+  args: {
+    activeFightId: 2,
+
+    fights: [
+      {
+        id: 1,
+
+        fighter1: {
+          fighterId: 1,
+          fighterName: "Yamamoto Taro",
+          ipponsGiven: [],
+          numberOfHansoku: 0,
+        },
+
+        fighter2: {
+          fighterId: 2,
+          fighterName: "Tanaka Kenji",
+          ipponsGiven: [],
+          numberOfHansoku: 0,
+        },
+
+        score: null,
+        status: "waiting",
+        scoreEvents: [],
+        editable: false,
+      },
+      {
+        id: 2,
+
+        fighter1: {
+          fighterId: 3,
+          fighterName: "Suzuki Hiroshi",
+          ipponsGiven: ["M"],
+          numberOfHansoku: 0,
+        },
+
+        fighter2: {
+          fighterId: 4,
+          fighterName: "Nakamura Yuki",
+          ipponsGiven: [],
+          numberOfHansoku: 1,
+        },
+
+        score: "1 - 0",
+        status: "in_progress",
+
+        scoreEvents: [
+          {
+            id: 1,
+            leftSide: true,
+            type: "ippon",
+            code: "M",
+            firstBlood: true,
+          },
+        ],
+
+        editable: true,
+      },
+      {
+        id: 3,
+
+        fighter1: {
+          fighterId: 5,
+          fighterName: "Watanabe Ryu",
+          ipponsGiven: ["K", "M"],
+          numberOfHansoku: 0,
+        },
+
+        fighter2: {
+          fighterId: 6,
+          fighterName: "Ito Sakura",
+          ipponsGiven: [],
+          numberOfHansoku: 0,
+        },
+
+        score: "K - M",
+        status: "finished",
+
+        scoreEvents: [
+          {
+            id: 2,
+            leftSide: true,
+            type: "ippon",
+            code: "K",
+            firstBlood: true,
+          },
+          {
+            id: 3,
+            leftSide: true,
+            type: "ippon",
+            code: "M",
+            firstBlood: false,
+          },
+        ],
+
+        editable: false,
+      },
+    ],
+  },
 };
 
 export const SingleWaiting: Story = {

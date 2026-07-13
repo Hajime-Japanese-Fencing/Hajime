@@ -57,7 +57,7 @@ export const ActiveWithSlots: Story = {
   args: {
     active: true,
     fightStatus: FightStatus.InProgress,
-    score: "M",
+    score: "1 - 0",
   },
   render: (args) => ({
     components: { FightRow, IpponResult, IpponAssignButtons, IpponResultList },
