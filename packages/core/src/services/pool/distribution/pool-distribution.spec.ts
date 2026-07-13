@@ -1,17 +1,18 @@
 import { describe, it, expect } from "vite-plus/test";
 import { distributeFightersInPools } from "./pool-distribution.service.ts";
 import type { PoolSetup } from "../setup/pool-setup.interface.ts";
-import { createFighter, type Fighter } from "../../fighter.interface.ts";
+import { fighterFactory } from "../../../__test__/factories.ts";
+import type { Fighter } from "../../fighter.interface.ts";
 
 describe("Pool Distribution - Distributes a list of fighters into pools", () => {
   it("should throws error if number of fighters do not match total pool capacity", () => {
     const fighters: Fighter[] = [
-      createFighter("1", false, "club A"),
-      createFighter("2", false, "club A"),
-      createFighter("3", false, "club B"),
-      createFighter("4", false, "club B"),
-      createFighter("5", false, "club C"),
-      createFighter("6", false, "club C"),
+      fighterFactory({ id: "1", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "2", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "3", isSeriesHead: false, club: "club B" }),
+      fighterFactory({ id: "4", isSeriesHead: false, club: "club B" }),
+      fighterFactory({ id: "5", isSeriesHead: false, club: "club C" }),
+      fighterFactory({ id: "6", isSeriesHead: false, club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -31,12 +32,12 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
 
   it("should build a pool list with the correct number of pools from the setup", () => {
     const fighters: Fighter[] = [
-      createFighter("1", false, "club A"),
-      createFighter("2", false, "club A"),
-      createFighter("3", false, "club B"),
-      createFighter("4", false, "club B"),
-      createFighter("5", false, "club C"),
-      createFighter("6", false, "club C"),
+      fighterFactory({ id: "1", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "2", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "3", isSeriesHead: false, club: "club B" }),
+      fighterFactory({ id: "4", isSeriesHead: false, club: "club B" }),
+      fighterFactory({ id: "5", isSeriesHead: false, club: "club C" }),
+      fighterFactory({ id: "6", isSeriesHead: false, club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -61,12 +62,12 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
 
   it("should repulse all fighters of the same club if there are enough pools and the option is selected", () => {
     const fighters: Fighter[] = [
-      createFighter("1", false, "club A"),
-      createFighter("2", false, "club A"),
-      createFighter("3", false, "club B"),
-      createFighter("4", false, "club B"),
-      createFighter("5", false, "club C"),
-      createFighter("6", false, "club C"),
+      fighterFactory({ id: "1", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "2", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "3", isSeriesHead: false, club: "club B" }),
+      fighterFactory({ id: "4", isSeriesHead: false, club: "club B" }),
+      fighterFactory({ id: "5", isSeriesHead: false, club: "club C" }),
+      fighterFactory({ id: "6", isSeriesHead: false, club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -97,12 +98,12 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
 
   it("should spread the maximum of same club members if not enough pools to separate them and the option is selected", () => {
     const fighters: Fighter[] = [
-      createFighter("1", false, "club A"),
-      createFighter("2", false, "club A"),
-      createFighter("3", false, "club A"),
-      createFighter("4", false, "club A"),
-      createFighter("5", false, "club C"),
-      createFighter("6", false, "club C"),
+      fighterFactory({ id: "1", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "2", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "3", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "4", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "5", isSeriesHead: false, club: "club C" }),
+      fighterFactory({ id: "6", isSeriesHead: false, club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -129,12 +130,12 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
 
   it("should not repulse fighters of the same club if the option is not selected", () => {
     const fighters: Fighter[] = [
-      createFighter("1", false, "club A"),
-      createFighter("2", false, "club A"),
-      createFighter("3", false, "club B"),
-      createFighter("4", false, "club B"),
-      createFighter("5", false, "club C"),
-      createFighter("6", false, "club C"),
+      fighterFactory({ id: "1", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "2", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "3", isSeriesHead: false, club: "club B" }),
+      fighterFactory({ id: "4", isSeriesHead: false, club: "club B" }),
+      fighterFactory({ id: "5", isSeriesHead: false, club: "club C" }),
+      fighterFactory({ id: "6", isSeriesHead: false, club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -166,12 +167,12 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
 
   it("should repulse series heads if there are enough pools and the option is selected", () => {
     const fighters: Fighter[] = [
-      createFighter("1", true, "club A"),
-      createFighter("2", false, "club A"),
-      createFighter("3", true, "club B"),
-      createFighter("4", false, "club B"),
-      createFighter("5", false, "club C"),
-      createFighter("6", false, "club C"),
+      fighterFactory({ id: "1", isSeriesHead: true, club: "club A" }),
+      fighterFactory({ id: "2", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "3", isSeriesHead: true, club: "club B" }),
+      fighterFactory({ id: "4", isSeriesHead: false, club: "club B" }),
+      fighterFactory({ id: "5", isSeriesHead: false, club: "club C" }),
+      fighterFactory({ id: "6", isSeriesHead: false, club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -194,12 +195,12 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
 
   it("should spread the maximum of series heads if there are not enough pools to separate them and the option is selected", () => {
     const fighters: Fighter[] = [
-      createFighter("1", true, "club A"),
-      createFighter("2", true, "club A"),
-      createFighter("3", true, "club B"),
-      createFighter("4", true, "club B"),
-      createFighter("5", false, "club C"),
-      createFighter("6", false, "club C"),
+      fighterFactory({ id: "1", isSeriesHead: true, club: "club A" }),
+      fighterFactory({ id: "2", isSeriesHead: true, club: "club A" }),
+      fighterFactory({ id: "3", isSeriesHead: true, club: "club B" }),
+      fighterFactory({ id: "4", isSeriesHead: true, club: "club B" }),
+      fighterFactory({ id: "5", isSeriesHead: false, club: "club C" }),
+      fighterFactory({ id: "6", isSeriesHead: false, club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -222,12 +223,12 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
 
   it("should not repulse series heads if the option is not selected", () => {
     const fighters: Fighter[] = [
-      createFighter("1", true, "club A"),
-      createFighter("2", true, "club A"),
-      createFighter("3", true, "club B"),
-      createFighter("4", false, "club B"),
-      createFighter("5", false, "club C"),
-      createFighter("6", false, "club C"),
+      fighterFactory({ id: "1", isSeriesHead: true, club: "club A" }),
+      fighterFactory({ id: "2", isSeriesHead: true, club: "club A" }),
+      fighterFactory({ id: "3", isSeriesHead: true, club: "club B" }),
+      fighterFactory({ id: "4", isSeriesHead: false, club: "club B" }),
+      fighterFactory({ id: "5", isSeriesHead: false, club: "club C" }),
+      fighterFactory({ id: "6", isSeriesHead: false, club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -250,12 +251,12 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
 
   it("should repulse along both criterias when possible", () => {
     const fighters: Fighter[] = [
-      createFighter("1", false, "club A"),
-      createFighter("2", true, "club A"),
-      createFighter("3", false, "club B"),
-      createFighter("4", true, "club B"),
-      createFighter("5", false, "club C"),
-      createFighter("6", false, "club C"),
+      fighterFactory({ id: "1", isSeriesHead: false, club: "club A" }),
+      fighterFactory({ id: "2", isSeriesHead: true, club: "club A" }),
+      fighterFactory({ id: "3", isSeriesHead: false, club: "club B" }),
+      fighterFactory({ id: "4", isSeriesHead: true, club: "club B" }),
+      fighterFactory({ id: "5", isSeriesHead: false, club: "club C" }),
+      fighterFactory({ id: "6", isSeriesHead: false, club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
