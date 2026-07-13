@@ -36,14 +36,14 @@ const fights = ref<Fight[]>([
     fighter1: {
       fighterId: 3,
       fighterName: "Yamamoto",
-      ipponsGiven: [IpponCode.Men, IpponCode.Kote, IpponCode.Tsuki],
+      ipponsGiven: [IpponCode.Men, IpponCode.Kote],
       numberOfHansoku: 0,
     },
     fighter2: {
       fighterId: 9,
       fighterName: "Sato",
       ipponsGiven: [IpponCode.Do],
-      numberOfHansoku: 0,
+      numberOfHansoku: 1,
     },
     status: FightStatus.Finished,
     score: "2 - 1",
