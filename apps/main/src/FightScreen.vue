@@ -1,19 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
 import { FightList } from "@hajime/ui";
-import type { AssignIpponEvent, Fight, IpponResultEvent } from "@hajime/ui";
+import type { AssignIpponEvent, Fight } from "@hajime/ui";
 import { FightStatus, Side, makeCompetitionId, type FightId } from "@hajime/core";
-import type { FightRecord } from "@hajime/core";
+import type { FightRecord, ScoreEventId } from "@hajime/core";
 import { useContainer } from "./bootstrap/container/useContainer.ts";
 import { useActiveCompetition } from "./active-competition/composables/use-active-competition.ts";
 import { DemoLoadCompetitionFightsAdapter } from "./active-competition/adapters/demo-load-competition-fights.adapter.ts";
-
-/*
- * @TODO ne plus bloquer les boutons pour ouvrir l'interface de combat lorsque l'on ouvre un combat Finished
- *   C'est le activeFightId qui 'active' un combat lorsque l'on ouvre l'interface d'un combat, qu'il soit fini ou non
- * @TODO décider de la source de verité pour la liste des ippons d'un combat, et harmoniser la logique en fonction
- *   (ipponsGiven est un bon candidat mais en l'etat on ne peut pas savoir quel Ippon est le firstBlood dans un combat donné)
- */
 
 const container = useContainer();
 const activeCompetition = useActiveCompetition(container.activeCompetition);
@@ -37,13 +30,7 @@ onMounted(async () => {
  * Fait actuellement la conversion store <-> UI component
  */
 function toUiFight(record: FightRecord): Fight {
-  const scoreEvents = record.scoreEvents.map((e) => ({
-    id: Number(e.id),
-    leftSide: e.fighterId === record.redFighterId,
-    type: e.type,
-    code: e.code as IpponResultEvent["code"],
-    firstBlood: e.firstBlood,
-  }));
+  const scoreEvents = record.scoreEvents;
 
   const ipponsRed = record.scoreEvents
     .filter((e) => e.type === "ippon" && e.fighterId === record.redFighterId)
@@ -53,32 +40,20 @@ function toUiFight(record: FightRecord): Fight {
     .filter((e) => e.type === "ippon" && e.fighterId === record.whiteFighterId)
     .map((e) => e.code as any);
 
-  const hansokuRed = record.scoreEvents.filter(
-    (e) => e.type === "hansoku" && e.fighterId === record.redFighterId,
-  ).length;
-
-  const hansokuWhite = record.scoreEvents.filter(
-    (e) => e.type === "hansoku" && e.fighterId === record.whiteFighterId,
-  ).length;
-
   const score =
     ipponsRed.length === 0 && ipponsWhite.length === 0
       ? null
       : `${ipponsRed.length} - ${ipponsWhite.length}`;
 
   return {
-    id: Number(record.id),
+    id: record.id,
     fighter1: {
-      fighterId: Number(record.redFighterId),
+      fighterId: record.redFighterId,
       fighterName: String(record.redFighterId),
-      ipponsGiven: ipponsRed,
-      numberOfHansoku: hansokuRed,
     },
     fighter2: {
-      fighterId: Number(record.whiteFighterId),
+      fighterId: record.whiteFighterId,
       fighterName: String(record.whiteFighterId),
-      ipponsGiven: ipponsWhite,
-      numberOfHansoku: hansokuWhite,
     },
     status: record.status,
     score,
@@ -93,7 +68,7 @@ const fights = computed<Fight[]>(() =>
 
 const activeFightId = activeCompetition.activeFightId;
 
-function getFightRecord(fightId: number): FightRecord | undefined {
+function getFightRecord(fightId: FightId): FightRecord | undefined {
   return container.activeCompetition.fights.state[fightId as FightId];
 }
 
@@ -101,7 +76,7 @@ function getFightRecord(fightId: number): FightRecord | undefined {
 // Event handlers — délèguent au store
 // ---------------------------------------------------------------------------
 
-function onOpenFight(id: number) {
+function onOpenFight(id: FightId) {
   activeCompetition.openFight(id as FightId);
 }
 
@@ -109,19 +84,19 @@ function onCloseFight() {
   activeCompetition.closeFight();
 }
 
-function onCancelFight(id: number) {
+function onCancelFight(id: FightId) {
   activeCompetition.cancelFight(id as FightId);
 }
 
-function onValidateFight(id: number) {
+function onValidateFight(id: FightId) {
   activeCompetition.validateFight(id as FightId);
 }
 
-function onForfeitFight(id: number) {
+function onForfeitFight(id: FightId) {
   activeCompetition.forfeitFight(id as FightId);
 }
 
-function onAssignIppon(fightId: number, event: AssignIpponEvent) {
+function onAssignIppon(fightId: FightId, event: AssignIpponEvent) {
   const fight = getFightRecord(fightId);
   if (!fight) return;
 
@@ -129,11 +104,11 @@ function onAssignIppon(fightId: number, event: AssignIpponEvent) {
   activeCompetition.assignIppon(fightId as FightId, fighterId, event.code as any);
 }
 
-function onRemoveIppon(fightId: number, ipponId: number) {
+function onRemoveIppon(fightId: FightId, ipponId: ScoreEventId) {
   activeCompetition.removeIppon(fightId as FightId, ipponId);
 }
 
-function onAssignHansoku(fightId: number, side: Side) {
+function onAssignHansoku(fightId: FightId, side: Side) {
   const fight = getFightRecord(fightId);
   if (!fight) return;
 
@@ -141,23 +116,11 @@ function onAssignHansoku(fightId: number, side: Side) {
   activeCompetition.assignHansoku(fightId as FightId, fighterId);
 }
 
-function onRemoveHansoku(fightId: number, side: Side) {
+function onRemoveHansoku(fightId: FightId, hansokuId: ScoreEventId) {
   const fight = getFightRecord(fightId);
   if (!fight) return;
 
-  // @TODO: when removing, we need the specific score event id, not the side
-  // For now, remove the last hansoku of that side
-  const lastHansoku = [...fight.scoreEvents]
-    .reverse()
-    .find(
-      (e) =>
-        e.type === "hansoku" &&
-        e.fighterId === (side === Side.Red ? fight.redFighterId : fight.whiteFighterId),
-    );
-
-  if (lastHansoku) {
-    activeCompetition.removeHansoku(fightId as FightId, lastHansoku.id);
-  }
+  activeCompetition.removeHansoku(fightId as FightId, hansokuId);
 }
 </script>
 
