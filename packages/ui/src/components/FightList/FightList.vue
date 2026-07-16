@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import type { Fight, FightSide, AssignIpponEvent, Action } from "./types.ts";
+import type { ScoreEvent, ScoreEventId, FightId } from "@hajime/core";
 import { FightStatus, Side, SideLabel, AssignableIpponCode, hansoku } from "@hajime/core";
 import SwapButton from "./SwapButton.vue";
 import FightRow from "./FightRow.vue";
@@ -9,24 +10,23 @@ import IpponResultList from "./IpponResultList.vue";
 import IconButton from "../Actions/Button/IconButton.vue";
 import { ArchiveRestore, Eye, EyeOff } from "lucide-vue-next";
 import DropdownComboButton from "./DropdownComboButton.vue";
-import IpponResult from "./IpponResult.vue";
 import AssignButton from "./AssignButton.vue";
 
 const props = defineProps<{
   fights: Fight[];
-  activeFightId: number | null;
+  activeFightId: FightId | null;
 }>();
 
 const emit = defineEmits<{
-  openFight: [fightId: number];
-  closeFight: [fightId: number];
-  cancelFight: [fightId: number];
-  validateFight: [fightId: number];
-  forfeitFight: [fightId: number];
-  assignIppon: [fightId: number, event: AssignIpponEvent];
-  removeIppon: [fightId: number, ipponId: number];
-  assignHansoku: [fightId: number, side: Side];
-  removeHansoku: [fightId: number, side: Side];
+  openFight: [fightId: FightId];
+  closeFight: [fightId: FightId];
+  cancelFight: [fightId: FightId];
+  validateFight: [fightId: FightId];
+  forfeitFight: [fightId: FightId];
+  assignIppon: [fightId: FightId, event: AssignIpponEvent];
+  removeIppon: [fightId: FightId, scoreEventId: ScoreEventId];
+  assignHansoku: [fightId: FightId, side: Side];
+  removeHansoku: [fightId: FightId, scoreEventId: ScoreEventId];
 }>();
 
 const RedFightSide: FightSide = {
@@ -52,7 +52,7 @@ function swapColors() {
   leftSide.value = leftSide.value.side === "RED" ? WhiteFightSide : RedFightSide;
 }
 
-function handleAction(action: Action, id: number) {
+function handleAction(action: Action, id: FightId) {
   // Close the UI element
   openedFightId.value = null;
 
@@ -75,7 +75,7 @@ function handleAction(action: Action, id: number) {
 /*
  * Manages the state of opened fight UI-side (doesn't necessarily mean the fight is active)
  */
-const openedFightId = ref<number | null>(null);
+const openedFightId = ref<FightId | null>(null);
 
 function openFight(fight: Fight) {
   openedFightId.value = fight.id;
@@ -93,23 +93,35 @@ function closeFight(fight: Fight) {
   }
 }
 
-function assignIppon(fightId: number, side: Side, code: AssignableIpponCode) {
+function assignIppon(fightId: FightId, side: Side, code: AssignableIpponCode) {
   emit("assignIppon", fightId, {
     side,
     code,
   });
 }
 
-function removeIppon(fightId: number, ipponId: number) {
-  emit("removeIppon", fightId, ipponId);
+function removeIppon(fightId: FightId, eventId: ScoreEventId) {
+  emit("removeIppon", fightId, eventId);
 }
 
-function assignHansoku(fightId: number, side: Side) {
+function assignHansoku(fightId: FightId, side: Side) {
   emit("assignHansoku", fightId, side);
 }
 
-function removeHansoku(fightId: number, side: Side) {
-  emit("removeHansoku", fightId, side);
+function removeHansoku(fightId: FightId, eventId: ScoreEventId) {
+  emit("removeHansoku", fightId, eventId);
+}
+
+function getIppons(fight: Fight, side: Side): ScoreEvent[] {
+  const fighterId = side === Side.Red ? fight.fighter1.fighterId : fight.fighter2.fighterId;
+
+  return fight.scoreEvents.filter((e) => e.type === "ippon" && e.fighterId === fighterId);
+}
+
+function getHansoku(fight: Fight, side: Side): ScoreEvent[] {
+  const fighterId = side === Side.Red ? fight.fighter1.fighterId : fight.fighter2.fighterId;
+
+  return fight.scoreEvents.filter((e) => e.type === "hansoku" && e.fighterId === fighterId);
 }
 </script>
 
@@ -163,17 +175,16 @@ function removeHansoku(fightId: number, side: Side) {
             </div>
           </template>
           <template #left-hansoku>
-            <IpponResult
-              v-for="_ in fight.fighter1.numberOfHansoku"
+            <IpponResultList
+              :events="getHansoku(fight, leftSide.side)"
               :removable="fight.editable"
-              @remove="removeHansoku(fight.id, leftSide.side)"
-            >
-              {{ AssignableIpponCode.Hansoku }}
-            </IpponResult>
+              alignment="start"
+              @remove="(id) => removeHansoku(fight.id, id)"
+            />
           </template>
           <template #left-score>
             <IpponResultList
-              :ippons="fight.fighter1.ipponsGiven"
+              :events="getIppons(fight, leftSide.side)"
               :removable="fight.editable"
               alignment="end"
               @remove="(id) => removeIppon(fight.id, id)"
@@ -196,17 +207,16 @@ function removeHansoku(fightId: number, side: Side) {
             </div>
           </template>
           <template #right-hansoku>
-            <IpponResult
-              v-for="_ in fight.fighter2.numberOfHansoku"
+            <IpponResultList
+              :events="getHansoku(fight, rightSide.side)"
               :removable="fight.editable"
-              @remove="removeHansoku(fight.id, rightSide.side)"
-            >
-              {{ AssignableIpponCode.Hansoku }}
-            </IpponResult>
+              alignment="end"
+              @remove="(id) => removeHansoku(fight.id, id)"
+            />
           </template>
           <template #right-score>
             <IpponResultList
-              :ippons="fight.fighter2.ipponsGiven"
+              :events="getIppons(fight, rightSide.side)"
               :removable="fight.editable"
               alignment="start"
               @remove="(id) => removeIppon(fight.id, id)"

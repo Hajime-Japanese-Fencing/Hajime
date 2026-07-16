@@ -1,32 +1,27 @@
 <script setup lang="ts">
 import IpponResult from "./IpponResult.vue";
-import type { IpponCode } from "@hajime/core";
+import type { ScoreEvent, ScoreEventId } from "@hajime/core";
 
 const props = defineProps<{
-  ippons: IpponCode[];
+  events: ScoreEvent[];
   removable?: boolean;
   alignment: "start" | "end";
 }>();
 
 const emit = defineEmits<{
-  remove: [id: number];
+  remove: [id: ScoreEventId];
 }>();
-
-/*
- * REvoir le firstBlood pour qu'il soit seulement attribué au premier ippon du combat, pas au premier de chaque combattant
- */
 </script>
 
 <template>
   <div class="flex flex-wrap gap-1" :class="alignment === 'end' ? 'justify-end' : 'justify-start'">
     <IpponResult
-      v-for="(ippon, index) in ippons"
-      :firstBlood="index === 0"
+      v-for="event in events"
+      :key="event.id"
+      :event="event"
       :removable="props.removable"
-      @remove="emit('remove', index)"
-    >
-      {{ ippon }}
-    </IpponResult>
+      @remove="emit('remove', $event)"
+    />
   </div>
 </template>
 
