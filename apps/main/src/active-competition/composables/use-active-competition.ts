@@ -27,7 +27,7 @@ export function useActiveCompetition(competition: ActiveCompetition) {
     Object.values(state),
   );
   const activeFightId = useSelector(asSelectionSource(competition.activeFightId), (id) =>
-    id !== null ? Number(id) : null,
+    id !== null ? id : null,
   );
 
   return {
