@@ -1,6 +1,6 @@
-import type {PoolFight} from "./pool-fight.interface.ts";
+import type { PoolFight } from "./pool-fight.interface.ts";
 
 export interface PoolTurn {
-    order: number,
-    fights: PoolFight[]
+  order: number;
+  fights: PoolFight[];
 }

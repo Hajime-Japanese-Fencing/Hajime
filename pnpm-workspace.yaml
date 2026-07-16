@@ -7,7 +7,8 @@ catalogMode: prefer
 
 catalog:
   "@types/node": ^24
-  "@tanstack/store": ^0.7.1
+  "@tanstack/store": ^0.11.0
+  "@tanstack/vue-store": ^0.11.0
   "@tanstack/vue-query": ^5.73.3
   "@tailwindcss/vite": ^4.1.11
   "@vitejs/plugin-vue": ^6.0.6

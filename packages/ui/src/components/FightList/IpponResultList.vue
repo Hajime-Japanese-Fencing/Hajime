@@ -5,7 +5,7 @@ import type { IpponCode } from "@hajime/core";
 const props = defineProps<{
   ippons: IpponCode[];
   removable?: boolean;
-  alignment: "start" | "end"
+  alignment: "start" | "end";
 }>();
 
 const emit = defineEmits<{

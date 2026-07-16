@@ -1,21 +1,25 @@
-import type { Fighter } from "../../fighter.interface.ts";
+import type { PoolFighterEntry } from "../../fighter.interface.ts";
 
 export interface PoolFighter {
-  fighter: Fighter;
+  fighter: PoolFighterEntry;
 }
 
-export function newPoolFighter(id: string, club: string = "club A", isSeriesHead: boolean = false, ): PoolFighter {
+export function newPoolFighter(
+  id: string,
+  club: string = "club A",
+  isSeriesHead: boolean = false,
+): PoolFighter {
   return {
     fighter: {
       id: id,
       isSeriesHead: isSeriesHead,
-      club: club
-    }
+      club: club,
+    },
   };
 }
 
-export function toPoolFighter(fighter: Fighter): PoolFighter {
+export function toPoolFighter(fighter: PoolFighterEntry): PoolFighter {
   return {
-    fighter: fighter
-    }
+    fighter: fighter,
+  };
 }
