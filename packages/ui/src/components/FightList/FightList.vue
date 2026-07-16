@@ -49,11 +49,14 @@ function isLocked(fight: Fight): boolean {
 }
 
 function swapColors() {
-  console.log(leftSide.value);
   leftSide.value = leftSide.value.side === "RED" ? WhiteFightSide : RedFightSide;
 }
 
 function handleAction(action: Action, id: number) {
+  // Close the UI element
+  openedFightId.value = null;
+
+  // emit the correct event
   switch (action) {
     case "validate":
       emit("validateFight", id);
@@ -69,12 +72,25 @@ function handleAction(action: Action, id: number) {
   }
 }
 
-function openFight(fightId: number) {
-  emit("openFight", fightId);
+/*
+ * Manages the state of opened fight UI-side (doesn't necessarily mean the fight is active)
+ */
+const openedFightId = ref<number | null>(null);
+
+function openFight(fight: Fight) {
+  openedFightId.value = fight.id;
+
+  if (fight.editable) {
+    emit("openFight", fight.id);
+  }
 }
 
-function closeFight(fightId: number) {
-  emit("closeFight", fightId);
+function closeFight(fight: Fight) {
+  openedFightId.value = null;
+
+  if (fight.editable) {
+    emit("closeFight", fight.id);
+  }
 }
 
 function assignIppon(fightId: number, side: Side, code: AssignableIpponCode) {
@@ -94,10 +110,6 @@ function assignHansoku(fightId: number, side: Side) {
 
 function removeHansoku(fightId: number, side: Side) {
   emit("removeHansoku", fightId, side);
-}
-
-function isVisible(fight: Fight) {
-  return fight.status !== FightStatus.Finished;
 }
 </script>
 
@@ -130,7 +142,7 @@ function isVisible(fight: Fight) {
           v-for="fight in props.fights"
           :key="fight.id"
           :fight-status="fight.status"
-          :active="props.activeFightId === fight.id"
+          :open="openedFightId === fight.id"
           :left-fighter="fight.fighter1.fighterName"
           :right-fighter="fight.fighter2.fighterName"
           :score="fight.score"
@@ -139,12 +151,12 @@ function isVisible(fight: Fight) {
             <div class="flex gap-2">
               <IpponAssignButtons
                 @assign="(code) => assignIppon(fight.id, leftSide.side, code)"
-                v-if="isVisible(fight)"
+                v-if="fight.editable"
               />
               <AssignButton
                 :tooltip="hansoku.label"
                 @assign="assignHansoku(fight.id, leftSide.side)"
-                v-if="isVisible(fight)"
+                v-if="fight.editable"
               >
                 {{ hansoku.code }}
               </AssignButton>
@@ -172,12 +184,12 @@ function isVisible(fight: Fight) {
             <div class="flex gap-2">
               <IpponAssignButtons
                 @assign="(code) => assignIppon(fight.id, rightSide.side, code)"
-                v-if="isVisible(fight)"
+                v-if="fight.editable"
               />
               <AssignButton
                 :tooltip="hansoku.label"
                 @assign="assignHansoku(fight.id, rightSide.side)"
-                v-if="isVisible(fight)"
+                v-if="fight.editable"
               >
                 {{ hansoku.code }}
               </AssignButton>
@@ -202,7 +214,7 @@ function isVisible(fight: Fight) {
           </template>
 
           <template #actions-inactive>
-            <IconButton variant="outline" @click="openFight(fight.id)" :disabled="isLocked(fight)">
+            <IconButton variant="outline" @click="openFight(fight)" :disabled="isLocked(fight)">
               <Eye v-if="fight.status === FightStatus.Finished" />
               <ArchiveRestore v-else />
             </IconButton>
@@ -213,7 +225,7 @@ function isVisible(fight: Fight) {
               :id="fight.id"
               @action="(e) => handleAction(e, fight.id)"
             />
-            <IconButton v-else variant="outline" @click="closeFight(fight.id)">
+            <IconButton v-else variant="outline" @click="closeFight(fight)">
               <EyeOff />
             </IconButton>
           </template>

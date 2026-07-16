@@ -7,7 +7,7 @@ const props = defineProps<FightRowProps>();
 
 interface FightRowProps {
   fightStatus: FightStatus;
-  active: boolean;
+  open: boolean;
   leftFighter: string;
   rightFighter: string;
   score: string | null; // Ajout afin de pouvoir laisser l'affichage du score numérique dans FightRow
@@ -16,7 +16,7 @@ interface FightRowProps {
 
 <template>
   <!-- Inactive row -->
-  <tr v-if="!props.active" class="hover:bg-base-200">
+  <tr v-if="!props.open" class="hover:bg-base-200">
     <td class="text-right font-medium align-middle">
       {{ props.leftFighter }}
     </td>
