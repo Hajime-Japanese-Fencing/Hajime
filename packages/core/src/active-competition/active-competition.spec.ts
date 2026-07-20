@@ -13,6 +13,8 @@ import {
   fighterWhite,
   poolId1,
 } from "./__test__/fixtures.ts";
+import { FakeSaveGeneratedFightsAdapter } from "./__test__/fake-save-generated-fights.adapter.ts";
+import { makeCompetitionId } from "../shared/competition-id.ts";
 
 /**
  * @todo Splitter en plusieurs fichiers de tests
@@ -21,8 +23,12 @@ import {
 
 function makeActiveCompetition() {
   const saveAdapter = new FakeSaveFightResultAdapter();
-  const activeCompetition = createActiveCompetitionStore({ saveFightResult: saveAdapter });
-  return { activeCompetition, saveAdapter };
+  const saveGeneratedAdapter = new FakeSaveGeneratedFightsAdapter();
+  const activeCompetition = createActiveCompetitionStore({
+    saveGeneratedFights: saveGeneratedAdapter,
+    saveFightResult: saveAdapter,
+  });
+  return { activeCompetition, saveAdapter, saveGeneratedAdapter };
 }
 
 function loadOneWaitingFight(activeCompetition: ReturnType<typeof createActiveCompetitionStore>) {
@@ -375,5 +381,20 @@ describe("ActiveCompetition — derived poolFights", () => {
     expect(derived.state[0].status).toBe(FightStatus.InProgress);
 
     subscription.unsubscribe();
+  });
+});
+
+// ---------------------------------------------------------------------------
+
+describe("ActiveCompetition — saveGeneratedFights", () => {
+  it("persists the generated pools and fights through the port", () => {
+    const { activeCompetition, saveGeneratedAdapter } = makeActiveCompetition();
+    const competitionId = makeCompetitionId("competition 1");
+
+    const data = { pools: [makePoolRecord()], fights: [makeFightRecord()] };
+
+    activeCompetition.saveGeneratedFights(competitionId, data);
+
+    expect(saveGeneratedAdapter.getGeneratedFights(competitionId)).toEqual(data);
   });
 });

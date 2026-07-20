@@ -8,3 +8,4 @@ export * from "./state/fight-store.ts";
 export * from "./state/next-score-event-id-store.ts";
 export * from "./state/pool-store.ts";
 export * from "./active-competition.store.ts";
+export * from "./ports/save-generated-fights.port.ts";

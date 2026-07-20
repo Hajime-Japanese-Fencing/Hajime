@@ -5,6 +5,7 @@ import {
 } from "@hajime/core";
 import { DemoRetrieveCompetitionsAdapter } from "../../competitions/adapters/demo-retrieve-competitions.adapter.ts";
 import { DemoSaveFightResultAdapter } from "../../active-competition/adapters/demo-save-fight-result.adapter.ts";
+import { DemoSaveGeneratedFightsAdapter } from "../../active-competition/adapters/demo-save-generated-fights.adapter.ts";
 
 export interface AppContainer {
   retrieveCompetitions: RetrieveCompetitionsQuery;
@@ -14,6 +15,7 @@ export interface AppContainer {
 export function bootstrapContainer(env: ImportMetaEnv): AppContainer {
   const activeCompetition = createActiveCompetitionStore({
     saveFightResult: new DemoSaveFightResultAdapter(),
+    saveGeneratedFights: new DemoSaveGeneratedFightsAdapter(),
   });
 
   if (env.DEV) {
