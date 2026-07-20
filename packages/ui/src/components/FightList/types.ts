@@ -1,33 +1,21 @@
-import type { IpponCode, AssignableIpponCode, Side, FightStatus } from "@hajime/core";
+import type { AssignableIpponCode, Side, FightStatus, ScoreEvent } from "@hajime/core";
 import { BadgeColor } from "../DataDisplay/types.ts";
+import type { FighterId, FightId } from "@hajime/core";
 
 // Metier
 interface SideFighter {
-  fighterId: number; // Obsolète si utilisation de slots
+  fighterId: FighterId; // Obsolète si utilisation de slots
   fighterName: string;
-  ipponsGiven: IpponCode[]; // Obsolète si utilisation de slots
-  numberOfHansoku: number; // Obsolète si utilisation de slots
 }
 
 export interface Fight {
-  id: number;
+  id: FightId;
   fighter1: SideFighter;
   fighter2: SideFighter;
   score: string | null;
   status: FightStatus;
-  scoreEvents: IpponResultEvent[];
+  scoreEvents: ScoreEvent[];
   editable: boolean;
-}
-
-export type IpponResultData = Pick<IpponResultEvent, "id" | "code" | "firstBlood">;
-
-// UI
-export interface IpponResultEvent {
-  id: number;
-  leftSide: boolean;
-  type: "ippon" | "hansoku";
-  code: "K" | "M" | "D" | "T" | "Ht" | "Δ";
-  firstBlood: boolean;
 }
 
 // CE QU ON GARDE EN DESSOUS

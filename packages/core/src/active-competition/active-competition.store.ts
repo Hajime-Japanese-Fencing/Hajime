@@ -5,7 +5,7 @@ import type { IpponCode } from "../ippons.ts";
 import type { FightId } from "../shared/fight-id.ts";
 import type { FighterId } from "../shared/fighter-id.ts";
 import type { PoolId } from "../shared/pool-id.ts";
-import { makeScoreEventId } from "../shared/score-event-id.ts";
+import { makeScoreEventId, type ScoreEventId } from "../shared/score-event-id.ts";
 import type { FightRecord } from "./domain/fight-record.ts";
 import type { PoolRecord } from "./domain/pool-record.ts";
 import type { ScoreEvent } from "./domain/score-event.ts";
@@ -188,7 +188,7 @@ export function createActiveCompetitionStore(deps: ActiveCompetitionDeps) {
   }
 
   /** Remove an ippon by its score event ID. */
-  function removeIppon(fightId: FightId, scoreEventId: number): void {
+  function removeIppon(fightId: FightId, scoreEventId: ScoreEventId): void {
     const fight = getFight(fightId);
     if (!fight) return;
 
@@ -216,7 +216,7 @@ export function createActiveCompetitionStore(deps: ActiveCompetitionDeps) {
   }
 
   /** Remove a hansoku by its score event ID. */
-  function removeHansoku(fightId: FightId, scoreEventId: number): void {
+  function removeHansoku(fightId: FightId, scoreEventId: ScoreEventId): void {
     const fight = getFight(fightId);
     if (!fight) return;
 

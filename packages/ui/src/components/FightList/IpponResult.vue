@@ -1,47 +1,40 @@
 <script setup lang="ts">
+import type { ScoreEvent, ScoreEventId } from "@hajime/core";
 import { computed } from "vue";
 import DestructiveButton from "../Overlay/DestructiveButton.vue";
 
-const props = withDefaults(
-  defineProps<{
-    removable?: boolean;
-    firstBlood?: boolean;
-  }>(),
-  {
-    removable: false,
-    firstBlood: false,
-  },
-);
+const props = defineProps<{
+  event: ScoreEvent;
+  removable: boolean;
+}>();
 
 const emit = defineEmits<{
-  remove: [];
+  remove: [id: ScoreEventId];
 }>();
 
 const resultClass = computed(() =>
-  props.firstBlood
+  props.event.firstBlood
     ? "bg-base text-base-content border-base-content"
     : "bg-base text-base-content border-transparent",
 );
 
 function onRemove() {
-  emit("remove");
+  emit("remove", props.event.id);
 }
 </script>
 
 <template>
   <div class="indicator group">
-    <DestructiveButton
-      v-if="props.removable"
+    <div
       class="indicator-item indicator-top indicator-end opacity-0 group-hover:opacity-100 transition-opacity"
-      aria-label="Remove"
-      @click.stop="onRemove"
-    />
-
+    >
+      <DestructiveButton v-if="props.removable" aria-label="Remove" @click.stop="onRemove" />
+    </div>
     <span
       class="inline-flex h-8 w-8 items-center justify-center rounded-full font-semibold border"
       :class="resultClass"
     >
-      <slot />
+      {{ props.event.code }}
     </span>
   </div>
 </template>
