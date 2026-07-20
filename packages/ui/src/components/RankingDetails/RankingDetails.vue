@@ -11,7 +11,7 @@ const sortedFighters = computed(() => {
 </script>
 
 <template>
-  <table class="table w-auto">
+  <table class="table w-auto bg-black">
     <thead class="text-neutral-300">
       <tr>
         <td>#</td>
@@ -22,7 +22,7 @@ const sortedFighters = computed(() => {
         <td>Ippons Received</td>
       </tr>
     </thead>
-    <tbody>
+    <tbody class="text-neutral-100">
       <tr v-for="fighter in sortedFighters">
         <td>{{ fighter.poolRank }}</td>
         <td>{{ fighter.fighterName }}</td>
@@ -37,7 +37,7 @@ const sortedFighters = computed(() => {
 
 <style scoped>
 tbody > tr:nth-child(odd) > td {
-  background-color: #0a0a0a;
+  background-color: #1f1f1f;
   border-top: 1px solid #323232;
   border-bottom: 1px solid #323232;
 }

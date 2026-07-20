@@ -7,7 +7,7 @@ defineProps<{ title: string }>();
 </script>
 
 <template>
-  <Button color="neutral" variant="ghost" onclick="modal1.showModal();" class="w-max px-1">
+  <Button color="info" variant="ghost" onclick="modal1.showModal();" class="w-max px-1">
     <Ellipsis />
   </Button>
 
