@@ -397,4 +397,34 @@ describe("ActiveCompetition — saveGeneratedFights", () => {
 
     expect(saveGeneratedAdapter.getGeneratedFights(competitionId)).toEqual(data);
   });
+
+  it("sends the pool data to the store", () => {
+    const { activeCompetition } = makeActiveCompetition();
+    const competitionId = makeCompetitionId("competition 1");
+
+    const data = { pools: [makePoolRecord()], fights: [makeFightRecord()] };
+
+    const expectedPools = {
+      "1": data.pools[0],
+    };
+
+    activeCompetition.saveGeneratedFights(competitionId, data);
+
+    expect(activeCompetition.pools.state).toEqual(expectedPools);
+  });
+
+  it("sends the fights data to the store", () => {
+    const { activeCompetition } = makeActiveCompetition();
+    const competitionId = makeCompetitionId("competition 1");
+
+    const data = { pools: [makePoolRecord()], fights: [makeFightRecord()] };
+
+    const expectedFights = {
+      "1": data.fights[0],
+    };
+
+    activeCompetition.saveGeneratedFights(competitionId, data);
+
+    expect(activeCompetition.fights.state).toEqual(expectedFights);
+  });
 });

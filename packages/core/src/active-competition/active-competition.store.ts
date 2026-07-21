@@ -227,6 +227,13 @@ export function createActiveCompetitionStore(deps: ActiveCompetitionDeps) {
 
   /** saves a list of pools and a list of fights */
   function saveGeneratedFights(competitionId: CompetitionId, data: GeneratedFightsData): void {
+    // Sends data to the store
+    batch(() => {
+      poolsStore.setPools(data.pools);
+      fightsStore.setFights(data.fights);
+    });
+
+    //
     void deps.saveGeneratedFights.saveGeneratedFights(competitionId, data);
   }
 
