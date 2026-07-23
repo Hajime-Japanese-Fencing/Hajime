@@ -31,7 +31,7 @@ function loadOneWaitingFight(activeCompetition: ReturnType<typeof createActiveCo
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — loadFights", () => {
+describe("ActiveCompetition Store — loadFights", () => {
   it("populates pools and fights in the store", () => {
     const { activeCompetition } = makeActiveCompetition();
     const pool = makePoolRecord();
@@ -59,7 +59,7 @@ describe("ActiveCompetition — loadFights", () => {
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — openFight", () => {
+describe("ActiveCompetition Store — openFight", () => {
   it("sets activeFightId", () => {
     const { activeCompetition } = makeActiveCompetition();
     loadOneWaitingFight(activeCompetition);
@@ -119,7 +119,7 @@ describe("ActiveCompetition — openFight", () => {
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — closeFight", () => {
+describe("ActiveCompetition Store — closeFight", () => {
   it("clears activeFightId without changing fight status", () => {
     const { activeCompetition } = makeActiveCompetition();
     loadOneWaitingFight(activeCompetition);
@@ -134,7 +134,7 @@ describe("ActiveCompetition — closeFight", () => {
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — cancelFight", () => {
+describe("ActiveCompetition Store — cancelFight", () => {
   it("reverts fight to Waiting and clears activeFightId", () => {
     const { activeCompetition } = makeActiveCompetition();
     loadOneWaitingFight(activeCompetition);
@@ -159,7 +159,7 @@ describe("ActiveCompetition — cancelFight", () => {
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — validateFight", () => {
+describe("ActiveCompetition Store — validateFight", () => {
   it("marks fight as Finished and clears activeFightId", () => {
     const { activeCompetition } = makeActiveCompetition();
     loadOneWaitingFight(activeCompetition);
@@ -184,7 +184,7 @@ describe("ActiveCompetition — validateFight", () => {
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — forfeitFight", () => {
+describe("ActiveCompetition Store — forfeitFight", () => {
   it("marks fight as Finished and clears activeFightId", () => {
     const { activeCompetition } = makeActiveCompetition();
     loadOneWaitingFight(activeCompetition);
@@ -199,7 +199,7 @@ describe("ActiveCompetition — forfeitFight", () => {
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — assignIppon", () => {
+describe("ActiveCompetition Store — assignIppon", () => {
   it("adds a score event with the correct fighter and code", () => {
     const { activeCompetition } = makeActiveCompetition();
     loadOneWaitingFight(activeCompetition);
@@ -244,7 +244,7 @@ describe("ActiveCompetition — assignIppon", () => {
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — removeIppon", () => {
+describe("ActiveCompetition Store — removeIppon", () => {
   it("removes the score event by id", () => {
     const { activeCompetition } = makeActiveCompetition();
     loadOneWaitingFight(activeCompetition);
@@ -270,7 +270,7 @@ describe("ActiveCompetition — removeIppon", () => {
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — assignHansoku", () => {
+describe("ActiveCompetition Store — assignHansoku", () => {
   it("adds a hansoku score event", () => {
     const { activeCompetition } = makeActiveCompetition();
     loadOneWaitingFight(activeCompetition);
@@ -287,7 +287,7 @@ describe("ActiveCompetition — assignHansoku", () => {
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — removeHansoku", () => {
+describe("ActiveCompetition Store — removeHansoku", () => {
   it("removes the hansoku score event by id", () => {
     const { activeCompetition } = makeActiveCompetition();
     loadOneWaitingFight(activeCompetition);
@@ -302,7 +302,7 @@ describe("ActiveCompetition — removeHansoku", () => {
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — derived activeFight", () => {
+describe("ActiveCompetition Store — derived activeFight", () => {
   it("returns undefined when no fight is active", () => {
     const { activeCompetition } = makeActiveCompetition();
     loadOneWaitingFight(activeCompetition);
@@ -344,7 +344,7 @@ describe("ActiveCompetition — derived activeFight", () => {
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — derived poolFights", () => {
+describe("ActiveCompetition Store — derived poolFights", () => {
   it("returns fights belonging to a pool in order", () => {
     const { activeCompetition } = makeActiveCompetition();
     const pool = makePoolRecord({ fightIds: [fightId1, fightId2] });
@@ -380,7 +380,7 @@ describe("ActiveCompetition — derived poolFights", () => {
 
 // ---------------------------------------------------------------------------
 
-describe("ActiveCompetition — applyDraw", () => {
+describe("ActiveCompetition Store — applyDraw", () => {
   it("applies the generated pools and fights to the store", () => {
     const { activeCompetition } = makeActiveCompetition();
     const data = { pools: [makePoolRecord()], fights: [makeFightRecord()] };

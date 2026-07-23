@@ -38,7 +38,7 @@ class SpySaveGeneratedFightsPort implements SaveGeneratedFightsPort {
   }
 }
 
-describe("publishDraw", () => {
+describe("PublishDraw UseCase", () => {
   it("applies the draw before persisting it", async () => {
     const events: string[] = [];
     const applyDraw = new SpyApplyDrawPort(events);
