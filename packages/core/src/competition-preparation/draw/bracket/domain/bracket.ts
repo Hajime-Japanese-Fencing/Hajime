@@ -1,4 +1,4 @@
-import type { FighterEntry } from "../../shared/fighter.ts";
+import type { FighterEntry } from "../../../../shared/fighter.ts";
 
 export interface Bracket {
   size: number;

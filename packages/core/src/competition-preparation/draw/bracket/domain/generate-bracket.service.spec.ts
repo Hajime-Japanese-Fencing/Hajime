@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 import { generateBracket } from "./generate-bracket.service.ts";
-import type { FighterEntry } from "../../shared/fighter.ts";
+import type { FighterEntry } from "../../../../shared/fighter.ts";
 
 function makeFighters(count: number, seriesHeadCount = 0): FighterEntry[] {
   return Array.from({ length: count }, (_, i) => ({
@@ -72,7 +72,9 @@ describe("Bracket Generation - Direct elimination", () => {
 
     const seriesHeadIds = fighters.filter((f) => f.isSeriesHead).map((f) => f.id);
 
-    expect(byeFighterIds.sort()).toEqual(seriesHeadIds.sort());
+    expect(byeFighterIds.sort((a, b) => a.localeCompare(b))).toEqual(
+      seriesHeadIds.sort((a, b) => a.localeCompare(b)),
+    );
   });
 
   it("should build empty placeholder rounds down to a single final match", () => {

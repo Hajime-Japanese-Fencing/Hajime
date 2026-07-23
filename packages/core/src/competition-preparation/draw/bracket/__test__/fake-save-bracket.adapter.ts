@@ -1,4 +1,4 @@
-import type { CompetitionId } from "../../shared/competition-id.ts";
+import type { CompetitionId } from "../../../../shared/competition-id.ts";
 import type { Bracket } from "../domain/bracket.ts";
 import type { SaveBracketPort } from "../ports/save-bracket.port.ts";
 

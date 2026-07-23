@@ -12,4 +12,5 @@ export * from "./competition-overview/domain/competition-date.ts";
 export * from "./competition-overview/domain/competition-overview.ts";
 export * from "./competition-overview/ports/retrieve-competitions.port.ts";
 export * from "./active-competition/index.ts";
-export * from "./bracket-generation/index.ts";
+export * from "./competition-preparation/draw/bracket/index.ts";
+export * from "./competition-preparation/draw/pool/index.ts";
