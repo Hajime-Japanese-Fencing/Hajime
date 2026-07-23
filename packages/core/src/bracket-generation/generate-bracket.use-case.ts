@@ -1,6 +1,6 @@
-import type { PoolFighterEntry } from "../services/fighter.interface.ts";
-import { generateBracket } from "../services/bracket/bracket-generation.service.ts";
-import type { Bracket } from "../services/bracket/bracket.interface.ts";
+import type { FighterEntry } from "../fighter.ts";
+import { generateBracket } from "./domain/generate-bracket.service.ts";
+import type { Bracket } from "./domain/bracket.interface.ts";
 import type { CompetitionId } from "../shared/competition-id.ts";
 import type { SaveBracketPort } from "./ports/save-bracket.port.ts";
 
@@ -17,7 +17,7 @@ export interface GenerateBracketUseCaseDeps {
 export async function generateBracketUseCase(
   deps: GenerateBracketUseCaseDeps,
   competitionId: CompetitionId,
-  fighters: PoolFighterEntry[],
+  fighters: FighterEntry[],
 ): Promise<Bracket> {
   const bracket = generateBracket(fighters);
 

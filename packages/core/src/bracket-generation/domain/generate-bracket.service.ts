@@ -1,9 +1,9 @@
-import type { PoolFighterEntry } from "../fighter.interface.ts";
+import type { FighterEntry } from "../../fighter.ts";
 import type { BracketMatch } from "./bracket-match.interface.ts";
 import type { BracketRound } from "./bracket-round.interface.ts";
 import type { Bracket } from "./bracket.interface.ts";
 
-export function generateBracket(fighters: PoolFighterEntry[]): Bracket {
+export function generateBracket(fighters: FighterEntry[]): Bracket {
   // --- TESTING FOR INCORRECT INPUTS ---
   if (!Number.isInteger(fighters.length) || fighters.length < 2) {
     throw new Error("cannot create a bracket for less than 2 fighters");
@@ -53,9 +53,9 @@ function nextPowerOfTwo(n: number): number {
 }
 
 function selectByeFighters(
-  fighters: PoolFighterEntry[],
+  fighters: FighterEntry[],
   nbByes: number,
-): { byeFighters: PoolFighterEntry[]; remainingFighters: PoolFighterEntry[] } {
+): { byeFighters: FighterEntry[]; remainingFighters: FighterEntry[] } {
   if (nbByes === 0) {
     return { byeFighters: [], remainingFighters: [...fighters] };
   }
@@ -79,7 +79,7 @@ function selectByeFighters(
   return { byeFighters, remainingFighters: remainingPool };
 }
 
-function pairFighters(fighters: PoolFighterEntry[]): BracketMatch[] {
+function pairFighters(fighters: FighterEntry[]): BracketMatch[] {
   const matches: BracketMatch[] = [];
 
   for (let i = 0; i < fighters.length; i += 2) {

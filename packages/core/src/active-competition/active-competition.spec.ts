@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
-import { FightStatus } from "../fight.ts";
-import { IpponCode } from "../ippons.ts";
+import { FightStatus } from "../fight-status.type.ts";
+import { IpponCode } from "../shared/ippons.ts";
 import { createActiveCompetitionStore } from "./active-competition.store.ts";
 import type { FightRecord } from "./domain/fight-record.ts";
 import { FakeSaveFightResultAdapter } from "./__test__/fake-save-fight-result.adapter.ts";

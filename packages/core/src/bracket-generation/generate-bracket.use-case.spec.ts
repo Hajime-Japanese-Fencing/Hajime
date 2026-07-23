@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vite-plus/test";
 import { generateBracketUseCase } from "./generate-bracket.use-case.ts";
-import { FakeSaveBracketAdapter } from "./__test__/fake-save-bracket.adapter.ts";
+import { SpySaveBracketAdapter } from "./__test__/fake-save-bracket.adapter.ts";
 import { makeCompetitionId } from "../shared/competition-id.ts";
-import type { PoolFighterEntry } from "../services/fighter.interface.ts";
+import type { FighterEntry } from "../fighter.ts";
 
-function makeFighters(count: number): PoolFighterEntry[] {
+function makeFighters(count: number): FighterEntry[] {
   return Array.from({ length: count }, (_, i) => ({
     id: `fighter-${i + 1}`,
     isSeriesHead: false,
@@ -14,7 +14,7 @@ function makeFighters(count: number): PoolFighterEntry[] {
 
 describe("Generate Bracket Use Case", () => {
   it("should generate a bracket and persist it via the port", async () => {
-    const saveBracket = new FakeSaveBracketAdapter();
+    const saveBracket = new SpySaveBracketAdapter();
     const competitionId = makeCompetitionId("competition-1");
 
     const bracket = await generateBracketUseCase({ saveBracket }, competitionId, makeFighters(8));
@@ -25,7 +25,7 @@ describe("Generate Bracket Use Case", () => {
   });
 
   it("should not save anything when bracket generation fails", async () => {
-    const saveBracket = new FakeSaveBracketAdapter();
+    const saveBracket = new SpySaveBracketAdapter();
     const competitionId = makeCompetitionId("competition-1");
 
     await expect(
@@ -37,7 +37,7 @@ describe("Generate Bracket Use Case", () => {
   });
 
   it("should persist brackets independently per competition", async () => {
-    const saveBracket = new FakeSaveBracketAdapter();
+    const saveBracket = new SpySaveBracketAdapter();
     const competitionA = makeCompetitionId("competition-a");
     const competitionB = makeCompetitionId("competition-b");
 

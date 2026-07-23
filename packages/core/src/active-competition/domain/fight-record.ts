@@ -1,4 +1,4 @@
-import type { FightStatus } from "../../fight.ts";
+import type { FightStatus } from "../../fight-status.type.ts";
 import type { FighterId } from "../../shared/fighter-id.ts";
 import type { FightId } from "../../shared/fight-id.ts";
 import type { PoolId } from "../../shared/pool-id.ts";

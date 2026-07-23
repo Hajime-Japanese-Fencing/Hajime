@@ -1,4 +1,4 @@
-import type { IpponCode } from "../../ippons.ts";
+import type { IpponCode } from "../../shared/ippons.ts";
 import type { FighterId } from "../../shared/fighter-id.ts";
 import type { ScoreEventId } from "../../shared/score-event-id.ts";
 

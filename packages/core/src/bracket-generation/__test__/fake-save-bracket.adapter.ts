@@ -1,12 +1,12 @@
 import type { CompetitionId } from "../../shared/competition-id.ts";
-import type { Bracket } from "../../services/bracket/bracket.interface.ts";
+import type { Bracket } from "../domain/bracket.interface.ts";
 import type { SaveBracketPort } from "../ports/save-bracket.port.ts";
 
 /**
  * Fake adapter for SaveBracketPort.
  * Designed for unit tests — stores state in-memory and exposes it for assertions.
  */
-export class FakeSaveBracketAdapter implements SaveBracketPort {
+export class SpySaveBracketAdapter implements SaveBracketPort {
   private savedBrackets = new Map<CompetitionId, Bracket>();
   public callCount = 0;
 

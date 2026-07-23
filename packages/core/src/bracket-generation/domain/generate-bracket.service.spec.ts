@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vite-plus/test";
-import { generateBracket } from "./bracket-generation.service.ts";
-import type { PoolFighterEntry } from "../fighter.interface.ts";
+import { generateBracket } from "./generate-bracket.service.ts";
+import type { FighterEntry } from "../../fighter.ts";
 
-function makeFighters(count: number, seriesHeadCount = 0): PoolFighterEntry[] {
+function makeFighters(count: number, seriesHeadCount = 0): FighterEntry[] {
   return Array.from({ length: count }, (_, i) => ({
     id: `fighter-${i + 1}`,
     isSeriesHead: i < seriesHeadCount,
@@ -10,11 +10,11 @@ function makeFighters(count: number, seriesHeadCount = 0): PoolFighterEntry[] {
   }));
 }
 
-function allFightersInBracket(fighters: PoolFighterEntry[]) {
+function allFightersInBracket(fighters: FighterEntry[]) {
   const bracket = generateBracket(fighters);
 
   const fightersInFirstRound = bracket.rounds[0].matches.flatMap((match) =>
-    [match.fighter1, match.fighter2].filter((f): f is PoolFighterEntry => f !== null),
+    [match.fighter1, match.fighter2].filter((f): f is FighterEntry => f !== null),
   );
 
   return { bracket, fightersInFirstRound };
