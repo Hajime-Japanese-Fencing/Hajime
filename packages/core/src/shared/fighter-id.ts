@@ -1,6 +1,6 @@
-declare const __fighterIdBrand: unique symbol;
+import type { Brand } from "./brand.ts";
 
-export type FighterId = string & { readonly [__fighterIdBrand]: true };
+export type FighterId = Brand<string, "FighterId">;
 
 export function makeFighterId(id: string): FighterId {
   return id as FighterId;

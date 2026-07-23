@@ -1,6 +1,6 @@
-declare const __poolIdBrand: unique symbol;
+import type { Brand } from "./brand.ts";
 
-export type PoolId = number & { readonly [__poolIdBrand]: true };
+export type PoolId = Brand<number, "PoolId">;
 
 export function makePoolId(id: number): PoolId {
   return id as PoolId;
