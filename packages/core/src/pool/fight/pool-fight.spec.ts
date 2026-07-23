@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vite-plus/test";
-import { PoolBuilder } from "../__test__/factories.ts";
+import { makePoolFighter, PoolBuilder } from "../__test__/factories.ts";
 import { organizePoolFights } from "./pool-fight.service.ts";
-import { newPoolFighter, type PoolFighter } from "../distribution/pool-fighter.ts";
+import type { PoolFighter } from "../distribution/pool-fighter.ts";
 import type { PoolFight } from "./pool-fight.ts";
 
 describe("Pool Fight Creation - organize all turns and fights in a pool", () => {
@@ -54,10 +54,10 @@ describe("Pool Fight Creation - organize all turns and fights in a pool", () => 
     const poolSize = 4;
     const inputPool = poolBuilder.createPool().withSize(poolSize).toPool();
 
-    const fighter1 = newPoolFighter("1");
-    const fighter2 = newPoolFighter("2");
-    const fighter3 = newPoolFighter("3");
-    const fighter4 = newPoolFighter("4");
+    const fighter1 = makePoolFighter("1");
+    const fighter2 = makePoolFighter("2");
+    const fighter3 = makePoolFighter("3");
+    const fighter4 = makePoolFighter("4");
 
     const expectedMatchups: PoolFighter[][][] = [
       [
@@ -93,9 +93,9 @@ describe("Pool Fight Creation - organize all turns and fights in a pool", () => 
     const poolSize = 3;
     const inputPool = poolBuilder.createPool().withSize(poolSize).toPool();
 
-    const fighter1 = newPoolFighter("1");
-    const fighter2 = newPoolFighter("2");
-    const fighter3 = newPoolFighter("3");
+    const fighter1 = makePoolFighter("1");
+    const fighter2 = makePoolFighter("2");
+    const fighter3 = makePoolFighter("3");
 
     const expectedMatchups: PoolFighter[][][] = [
       [[fighter1, fighter2]],

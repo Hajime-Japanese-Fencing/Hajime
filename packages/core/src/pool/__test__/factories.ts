@@ -1,5 +1,5 @@
 import type { FighterEntry } from "../../shared/fighter.ts";
-import { type PoolFighter, newPoolFighter } from "../distribution/pool-fighter.ts";
+import type { PoolFighter } from "../distribution/pool-fighter.ts";
 import type { Pool } from "../pool.ts";
 
 export function poolFighterEntryFactory(fighterEntry: Partial<FighterEntry>): FighterEntry {
@@ -10,13 +10,28 @@ export function poolFighterEntryFactory(fighterEntry: Partial<FighterEntry>): Fi
     ...fighterEntry,
   };
 }
+
+export function makePoolFighter(
+  id: string,
+  club: string = "club A",
+  isSeriesHead: boolean = false,
+): PoolFighter {
+  return {
+    fighter: {
+      id,
+      isSeriesHead,
+      club,
+    },
+  };
+}
+
 export class PoolBuilder {
   protected number: number = 1;
   protected size: number = 3;
   protected fighters: PoolFighter[] = [
-    newPoolFighter("1"),
-    newPoolFighter("2"),
-    newPoolFighter("3"),
+    makePoolFighter("1"),
+    makePoolFighter("2"),
+    makePoolFighter("3"),
   ];
 
   public createPool(): PoolBuilder {
@@ -27,7 +42,7 @@ export class PoolBuilder {
     this.size = newSize;
     this.fighters = [];
     for (let i = 0; i < this.size; i++) {
-      this.fighters.push(newPoolFighter((i + 1).toString()));
+      this.fighters.push(makePoolFighter((i + 1).toString()));
     }
     return this.createPool();
   }
