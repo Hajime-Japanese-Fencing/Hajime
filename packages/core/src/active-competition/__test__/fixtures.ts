@@ -1,4 +1,4 @@
-import { FightStatus } from "../../fight-status.type.ts";
+import { FightStatus } from "../../shared/fight-status.ts";
 import { makeFightId } from "../../shared/fight-id.ts";
 import { makeFighterId } from "../../shared/fighter-id.ts";
 import { makePoolId } from "../../shared/pool-id.ts";

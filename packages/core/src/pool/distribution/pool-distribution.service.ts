@@ -1,4 +1,4 @@
-import type { FighterEntry } from "../../fighter.ts";
+import type { FighterEntry } from "../../shared/fighter.ts";
 import type { PoolSetup } from "../setup/pool-setup.interface.ts";
 import type { Pool } from "../pool.interface.ts";
 import { toPoolFighter } from "./pool-fighter.interface.ts";

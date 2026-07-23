@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { FightStatus } from "../fight-status.type.ts";
+import { FightStatus } from "../shared/fight-status.ts";
 import { IpponCode } from "../shared/ippons.ts";
 import { createActiveCompetitionStore } from "./active-competition.store.ts";
 import type { FightRecord } from "./domain/fight-record.ts";

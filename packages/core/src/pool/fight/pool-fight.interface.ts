@@ -4,3 +4,8 @@ export interface PoolFight {
   fighter1: PoolFighter;
   fighter2: PoolFighter;
 }
+
+export interface PoolTurn {
+  order: number;
+  fights: PoolFight[];
+}

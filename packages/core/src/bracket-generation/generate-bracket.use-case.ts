@@ -1,4 +1,4 @@
-import type { FighterEntry } from "../fighter.ts";
+import type { FighterEntry } from "../shared/fighter.ts";
 import { generateBracket } from "./domain/generate-bracket.service.ts";
 import type { Bracket } from "./domain/bracket.interface.ts";
 import type { CompetitionId } from "../shared/competition-id.ts";

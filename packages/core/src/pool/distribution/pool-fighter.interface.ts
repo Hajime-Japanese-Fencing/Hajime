@@ -1,4 +1,4 @@
-import type { FighterEntry } from "../../fighter.ts";
+import type { FighterEntry } from "../../shared/fighter.ts";
 
 export interface PoolFighter {
   fighter: FighterEntry;

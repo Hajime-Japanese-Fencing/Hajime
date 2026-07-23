@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 import { generateBracket } from "./generate-bracket.service.ts";
-import type { FighterEntry } from "../../fighter.ts";
+import type { FighterEntry } from "../../shared/fighter.ts";
 
 function makeFighters(count: number, seriesHeadCount = 0): FighterEntry[] {
   return Array.from({ length: count }, (_, i) => ({

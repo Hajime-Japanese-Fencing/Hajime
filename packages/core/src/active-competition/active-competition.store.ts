@@ -1,6 +1,6 @@
 import { batch, createStore } from "@tanstack/store";
 import type { ReadonlyStore } from "@tanstack/store";
-import { FightStatus } from "../fight-status.type.ts";
+import { FightStatus } from "../shared/fight-status.ts";
 import type { IpponCode } from "../shared/ippons.ts";
 import type { FightId } from "../shared/fight-id.ts";
 import type { FighterId } from "../shared/fighter-id.ts";
