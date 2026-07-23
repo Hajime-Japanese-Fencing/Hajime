@@ -1,6 +1,6 @@
-import type { Pool } from "../pool.interface.ts";
-import type { PoolFight, PoolTurn } from "./pool-fight.interface.ts";
-import type { PoolFighter } from "../distribution/pool-fighter.interface.ts";
+import type { Pool } from "../pool.ts";
+import type { PoolFight, PoolTurn } from "./pool-fight.ts";
+import type { PoolFighter } from "../distribution/pool-fighter.ts";
 
 export function organizePoolFights(pool: Pool): PoolTurn[] {
   let poolTurns: PoolTurn[] = [];

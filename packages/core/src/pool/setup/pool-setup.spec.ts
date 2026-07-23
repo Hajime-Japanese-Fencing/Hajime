@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 import { calculatePossiblePoolSetups } from "./pool-setup.service.ts";
-import type { PoolSetup } from "./pool-setup.interface.ts";
+import type { PoolSetup } from "./pool-setup.ts";
 
 describe("Pool Setup - Determine possible pool setups", () => {
   it("should return all pool setups (4*3, 3*4, 2*6) for 12 fighters", () => {

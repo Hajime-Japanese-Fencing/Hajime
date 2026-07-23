@@ -1,4 +1,4 @@
-import { type PoolFighter } from "./distribution/pool-fighter.interface.ts";
+import { type PoolFighter } from "./distribution/pool-fighter.ts";
 
 export interface Pool {
   number: number;

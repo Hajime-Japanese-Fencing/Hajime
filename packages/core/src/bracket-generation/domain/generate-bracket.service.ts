@@ -1,5 +1,5 @@
 import type { FighterEntry } from "../../shared/fighter.ts";
-import type { Bracket, BracketMatch, BracketRound } from "./bracket.interface.ts";
+import type { Bracket, BracketMatch, BracketRound } from "./bracket.ts";
 
 export function generateBracket(fighters: FighterEntry[]): Bracket {
   // --- TESTING FOR INCORRECT INPUTS ---

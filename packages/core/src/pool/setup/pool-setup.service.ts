@@ -1,4 +1,4 @@
-import { type PoolSetup, poolSetupEquals, toPoolSetup } from "./pool-setup.interface.ts";
+import { type PoolSetup, poolSetupEquals, toPoolSetup } from "./pool-setup.ts";
 
 export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
   // --- TESTING FOR INCORRECT INPUTS ---

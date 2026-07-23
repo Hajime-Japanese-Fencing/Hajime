@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vite-plus/test";
 import { PoolBuilder } from "../__test__/factories.ts";
 import { organizePoolFights } from "./pool-fight.service.ts";
-import { newPoolFighter, type PoolFighter } from "../distribution/pool-fighter.interface.ts";
-import type { PoolFight } from "./pool-fight.interface.ts";
+import { newPoolFighter, type PoolFighter } from "../distribution/pool-fighter.ts";
+import type { PoolFight } from "./pool-fight.ts";
 
 describe("Pool Fight Creation - organize all turns and fights in a pool", () => {
   it("should return a pool with n-1 turns for n fighters with n even", () => {

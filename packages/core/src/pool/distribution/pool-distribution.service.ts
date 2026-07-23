@@ -1,7 +1,7 @@
 import type { FighterEntry } from "../../shared/fighter.ts";
-import type { PoolSetup } from "../setup/pool-setup.interface.ts";
-import type { Pool } from "../pool.interface.ts";
-import { toPoolFighter } from "./pool-fighter.interface.ts";
+import type { PoolSetup } from "../setup/pool-setup.ts";
+import type { Pool } from "../pool.ts";
+import { toPoolFighter } from "./pool-fighter.ts";
 
 export function distributeFightersInPools(
   fighters: FighterEntry[],
