@@ -1,5 +1,5 @@
 import { useSelector } from "@tanstack/vue-store";
-import type { ActiveCompetition, FightsState } from "@hajime/core";
+import type { ActiveCompetition } from "@hajime/core";
 import type { Store } from "@tanstack/store";
 
 /**
@@ -23,7 +23,7 @@ function asSelectionSource<T>(store: Store<T>): {
  * the selected slice actually changes.
  */
 export function useActiveCompetition(competition: ActiveCompetition) {
-  const fights = useSelector(asSelectionSource(competition.fights), (state: FightsState) =>
+  const fights = useSelector(asSelectionSource(competition.fights), (state) =>
     Object.values(state),
   );
   const activeFightId = useSelector(asSelectionSource(competition.activeFightId), (id) =>

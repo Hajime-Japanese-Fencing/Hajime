@@ -1,6 +1,6 @@
 import type { FighterEntry } from "../../../../shared/fighter.ts";
-import type { PoolFighter } from "../distribution/pool-fighter.ts";
-import type { Pool } from "../pool.ts";
+import type { PoolFighter } from "../domain/distribution/pool-fighter.ts";
+import type { Pool } from "../domain/pool.ts";
 
 export function poolFighterEntryFactory(fighterEntry: Partial<FighterEntry>): FighterEntry {
   return {
