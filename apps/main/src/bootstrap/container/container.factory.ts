@@ -20,7 +20,6 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
   const saveGeneratedFights = new DemoSaveGeneratedFightsAdapter();
   const activeCompetition = createActiveCompetitionStore({
     saveFightResult: new DemoSaveFightResultAdapter(),
-    saveGeneratedFights,
   });
   const publishDraw = (competitionId: CompetitionId, draw: GeneratedFightsData) =>
     publishDrawUseCase({ applyDraw: activeCompetition, saveGeneratedFights }, competitionId, draw);

@@ -13,8 +13,6 @@ import {
   fighterWhite,
   poolId1,
 } from "./__test__/fixtures.ts";
-import { FakeSaveGeneratedFightsAdapter } from "./__test__/fake-save-generated-fights.adapter.ts";
-import { makeCompetitionId } from "../shared/competition-id.ts";
 
 /**
  * @todo Splitter en plusieurs fichiers de tests
@@ -23,12 +21,8 @@ import { makeCompetitionId } from "../shared/competition-id.ts";
 
 function makeActiveCompetition() {
   const saveAdapter = new FakeSaveFightResultAdapter();
-  const saveGeneratedAdapter = new FakeSaveGeneratedFightsAdapter();
-  const activeCompetition = createActiveCompetitionStore({
-    saveGeneratedFights: saveGeneratedAdapter,
-    saveFightResult: saveAdapter,
-  });
-  return { activeCompetition, saveAdapter, saveGeneratedAdapter };
+  const activeCompetition = createActiveCompetitionStore({ saveFightResult: saveAdapter });
+  return { activeCompetition, saveAdapter };
 }
 
 function loadOneWaitingFight(activeCompetition: ReturnType<typeof createActiveCompetitionStore>) {
@@ -387,58 +381,13 @@ describe("ActiveCompetition — derived poolFights", () => {
 // ---------------------------------------------------------------------------
 
 describe("ActiveCompetition — applyDraw", () => {
-  it("applies the generated pools and fights to the store without persisting them", () => {
-    const { activeCompetition, saveGeneratedAdapter } = makeActiveCompetition();
-    const competitionId = makeCompetitionId("competition 1");
+  it("applies the generated pools and fights to the store", () => {
+    const { activeCompetition } = makeActiveCompetition();
     const data = { pools: [makePoolRecord()], fights: [makeFightRecord()] };
 
     activeCompetition.applyDraw(data);
 
     expect(activeCompetition.pools.state).toEqual({ "1": data.pools[0] });
     expect(activeCompetition.fights.state).toEqual({ "1": data.fights[0] });
-    expect(saveGeneratedAdapter.getGeneratedFights(competitionId)).toBeUndefined();
-  });
-});
-
-describe("ActiveCompetition — saveGeneratedFights", () => {
-  it("persists the generated pools and fights through the port", () => {
-    const { activeCompetition, saveGeneratedAdapter } = makeActiveCompetition();
-    const competitionId = makeCompetitionId("competition 1");
-
-    const data = { pools: [makePoolRecord()], fights: [makeFightRecord()] };
-
-    activeCompetition.saveGeneratedFights(competitionId, data);
-
-    expect(saveGeneratedAdapter.getGeneratedFights(competitionId)).toEqual(data);
-  });
-
-  it("sends the pool data to the store", () => {
-    const { activeCompetition } = makeActiveCompetition();
-    const competitionId = makeCompetitionId("competition 1");
-
-    const data = { pools: [makePoolRecord()], fights: [makeFightRecord()] };
-
-    const expectedPools = {
-      "1": data.pools[0],
-    };
-
-    activeCompetition.saveGeneratedFights(competitionId, data);
-
-    expect(activeCompetition.pools.state).toEqual(expectedPools);
-  });
-
-  it("sends the fights data to the store", () => {
-    const { activeCompetition } = makeActiveCompetition();
-    const competitionId = makeCompetitionId("competition 1");
-
-    const data = { pools: [makePoolRecord()], fights: [makeFightRecord()] };
-
-    const expectedFights = {
-      "1": data.fights[0],
-    };
-
-    activeCompetition.saveGeneratedFights(competitionId, data);
-
-    expect(activeCompetition.fights.state).toEqual(expectedFights);
   });
 });

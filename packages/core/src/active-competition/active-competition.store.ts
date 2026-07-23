@@ -14,11 +14,7 @@ import { createActiveFightIdStore } from "./state/active-fight-store.ts";
 import { createFightStore } from "./state/fight-store.ts";
 import { createNextScoreEventIdStore } from "./state/next-score-event-id-store.ts";
 import { createPoolStore } from "./state/pool-store.ts";
-import type {
-  GeneratedFightsData,
-  SaveGeneratedFightsPort,
-} from "./ports/save-generated-fights.port.ts";
-import type { CompetitionId } from "../shared/competition-id.ts";
+import type { GeneratedFightsData } from "./ports/save-generated-fights.port.ts";
 
 /**
  * @todo Les stores sont splittés mais anémiques... (vide)
@@ -32,7 +28,6 @@ import type { CompetitionId } from "../shared/competition-id.ts";
 
 export interface ActiveCompetitionDeps {
   saveFightResult: SaveFightResultPort;
-  saveGeneratedFights: SaveGeneratedFightsPort;
 }
 
 // ---------------------------------------------------------------------------
@@ -225,12 +220,6 @@ export function createActiveCompetitionStore(deps: ActiveCompetitionDeps) {
     persistScoreEvents(fightId, updatedEvents);
   }
 
-  /** saves a list of pools and a list of fights */
-  function saveGeneratedFights(competitionId: CompetitionId, data: GeneratedFightsData): void {
-    applyDraw(data);
-    void deps.saveGeneratedFights.saveGeneratedFights(competitionId, data);
-  }
-
   function applyDraw(data: GeneratedFightsData): void {
     batch(() => {
       poolsStore.setPools(data.pools);
@@ -260,7 +249,6 @@ export function createActiveCompetitionStore(deps: ActiveCompetitionDeps) {
     applyDraw,
     assignHansoku,
     removeHansoku,
-    saveGeneratedFights,
   };
 }
 
