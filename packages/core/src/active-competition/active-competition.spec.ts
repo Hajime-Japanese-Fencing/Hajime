@@ -386,6 +386,20 @@ describe("ActiveCompetition — derived poolFights", () => {
 
 // ---------------------------------------------------------------------------
 
+describe("ActiveCompetition — applyDraw", () => {
+  it("applies the generated pools and fights to the store without persisting them", () => {
+    const { activeCompetition, saveGeneratedAdapter } = makeActiveCompetition();
+    const competitionId = makeCompetitionId("competition 1");
+    const data = { pools: [makePoolRecord()], fights: [makeFightRecord()] };
+
+    activeCompetition.applyDraw(data);
+
+    expect(activeCompetition.pools.state).toEqual({ "1": data.pools[0] });
+    expect(activeCompetition.fights.state).toEqual({ "1": data.fights[0] });
+    expect(saveGeneratedAdapter.getGeneratedFights(competitionId)).toBeUndefined();
+  });
+});
+
 describe("ActiveCompetition — saveGeneratedFights", () => {
   it("persists the generated pools and fights through the port", () => {
     const { activeCompetition, saveGeneratedAdapter } = makeActiveCompetition();

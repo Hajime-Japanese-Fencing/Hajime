@@ -227,14 +227,15 @@ export function createActiveCompetitionStore(deps: ActiveCompetitionDeps) {
 
   /** saves a list of pools and a list of fights */
   function saveGeneratedFights(competitionId: CompetitionId, data: GeneratedFightsData): void {
-    // Sends data to the store
+    applyDraw(data);
+    void deps.saveGeneratedFights.saveGeneratedFights(competitionId, data);
+  }
+
+  function applyDraw(data: GeneratedFightsData): void {
     batch(() => {
       poolsStore.setPools(data.pools);
       fightsStore.setFights(data.fights);
     });
-
-    //
-    void deps.saveGeneratedFights.saveGeneratedFights(competitionId, data);
   }
 
   // -------------------------------------------------------------------------
@@ -256,6 +257,7 @@ export function createActiveCompetitionStore(deps: ActiveCompetitionDeps) {
     forfeitFight,
     assignIppon,
     removeIppon,
+    applyDraw,
     assignHansoku,
     removeHansoku,
     saveGeneratedFights,
