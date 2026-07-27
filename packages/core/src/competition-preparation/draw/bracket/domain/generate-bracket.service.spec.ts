@@ -5,7 +5,7 @@ import type { FighterEntry } from "../../../../shared/fighter.ts";
 function makeFighters(count: number, seriesHeadCount = 0): FighterEntry[] {
   return Array.from({ length: count }, (_, i) => ({
     id: `fighter-${i + 1}`,
-    isSeriesHead: i < seriesHeadCount,
+    isSeeded: i < seriesHeadCount,
     club: "club A",
   }));
 }
@@ -20,7 +20,7 @@ function allFightersInBracket(fighters: FighterEntry[]) {
   return { bracket, fightersInFirstRound };
 }
 
-describe("Bracket Generation - Direct elimination", () => {
+describe("Building a direct-elimination bracket", () => {
   it("should create a bracket without byes for a power-of-two number of fighters", () => {
     const fighters = makeFighters(8);
 
@@ -61,7 +61,7 @@ describe("Bracket Generation - Direct elimination", () => {
     expect(byeMatches.every((match) => match.fighter1 !== null)).toBe(true);
   });
 
-  it("should prioritize series heads when distributing byes", () => {
+  it("should give byes to seeded competitors first", () => {
     const fighters = makeFighters(11, 5); // 5 series heads, exactly the number of byes needed
 
     const { bracket } = allFightersInBracket(fighters);
@@ -70,7 +70,7 @@ describe("Bracket Generation - Direct elimination", () => {
       .filter((match) => match.fighter2 === null)
       .map((match) => match.fighter1!.id);
 
-    const seriesHeadIds = fighters.filter((f) => f.isSeriesHead).map((f) => f.id);
+    const seriesHeadIds = fighters.filter((f) => f.isSeeded).map((f) => f.id);
 
     expect(byeFighterIds.sort((a, b) => a.localeCompare(b))).toEqual(
       seriesHeadIds.sort((a, b) => a.localeCompare(b)),

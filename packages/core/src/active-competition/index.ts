@@ -1,6 +1,7 @@
 export * from "./application/active-competition.facade.ts";
 export * from "./application/command-result.ts";
 export * from "./application/publish-draw.use-case.ts";
+export * from "./domain/competition-draw.ts";
 export * from "./domain/fight-record.ts";
 export * from "./domain/pool-record.ts";
 export * from "./domain/score-event.ts";

@@ -1,5 +1,5 @@
-import type { GeneratedFightsData } from "./save-generated-fights.port.ts";
+import type { CompetitionDraw } from "../domain/competition-draw.ts";
 
-export interface ApplyDrawPort {
-  applyDraw(data: GeneratedFightsData): void;
+export interface CompetitionDrawReceiver {
+  applyDraw(draw: CompetitionDraw): void;
 }

@@ -7,12 +7,12 @@ import type { FighterEntry } from "../../../../shared/fighter.ts";
 function makeFighters(count: number): FighterEntry[] {
   return Array.from({ length: count }, (_, i) => ({
     id: `fighter-${i + 1}`,
-    isSeriesHead: false,
+    isSeeded: false,
     club: "club A",
   }));
 }
 
-describe("Generate Bracket Use Case", () => {
+describe("Generating an elimination bracket", () => {
   it("should generate a bracket and persist it via the port", async () => {
     const saveBracket = new SpySaveBracketAdapter();
     const competitionId = makeCompetitionId("competition-1");

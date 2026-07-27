@@ -1,5 +1,5 @@
 export interface FighterEntry {
   id: string;
-  isSeriesHead: boolean;
+  isSeeded: boolean;
   club: string;
 }

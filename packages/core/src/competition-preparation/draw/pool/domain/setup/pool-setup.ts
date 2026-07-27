@@ -5,7 +5,7 @@ export interface PoolGroup {
 
 export interface PoolSetup {
   poolGroups: PoolGroup[];
-  nbFights: number;
+  fightCount: number;
 }
 
 export function toPoolSetup(poolGroups: PoolGroup[]): PoolSetup {
@@ -15,7 +15,7 @@ export function toPoolSetup(poolGroups: PoolGroup[]): PoolSetup {
 
   return {
     poolGroups: poolGroups,
-    nbFights: calculateNbFightsInPool(poolGroups),
+    fightCount: calculateFightCount(poolGroups),
   };
 }
 
@@ -31,14 +31,14 @@ export function poolSetupEquals(setup1: PoolSetup, setup2: PoolSetup): boolean {
   );
 }
 
-export function calculateNbFightsInPool(poolGroups: PoolGroup[]): number {
-  let nbFightsTotal = 0;
+export function calculateFightCount(poolGroups: PoolGroup[]): number {
+  let fightCountTotal = 0;
 
   for (let group of poolGroups) {
-    const nbFightsInPool = (group.poolSize * (group.poolSize - 1)) / 2;
-    // const nbFightsInPool = factorial(group.poolSize) / (2*(factorial(group.poolSize - 2)))
+    const fightCountInPool = (group.poolSize * (group.poolSize - 1)) / 2;
+    // const fightCountInPool = factorial(group.poolSize) / (2*(factorial(group.poolSize - 2)))
 
-    nbFightsTotal += group.amount * nbFightsInPool;
+    fightCountTotal += group.amount * fightCountInPool;
   }
-  return nbFightsTotal;
+  return fightCountTotal;
 }

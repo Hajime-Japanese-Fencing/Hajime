@@ -2,13 +2,13 @@ import { describe, it, expect } from "vite-plus/test";
 import { calculatePossiblePoolSetups } from "./pool-setup.service.ts";
 import type { PoolSetup } from "./pool-setup.ts";
 
-describe("Pool Setup - Determine possible pool setups", () => {
+describe("Determining pool setups", () => {
   it("should return all pool setups (4*3, 3*4, 2*6) for 12 fighters", () => {
     const possiblePoolSetups = calculatePossiblePoolSetups(12);
 
     const poolSetupsForSixFighters: PoolSetup[] = [
       {
-        nbFights: 12,
+        fightCount: 12,
         poolGroups: [
           {
             poolSize: 3,
@@ -17,7 +17,7 @@ describe("Pool Setup - Determine possible pool setups", () => {
         ],
       },
       {
-        nbFights: 18,
+        fightCount: 18,
         poolGroups: [
           {
             poolSize: 4,
@@ -26,7 +26,7 @@ describe("Pool Setup - Determine possible pool setups", () => {
         ],
       },
       {
-        nbFights: 30,
+        fightCount: 30,
         poolGroups: [
           {
             poolSize: 6,
@@ -39,12 +39,12 @@ describe("Pool Setup - Determine possible pool setups", () => {
     expect(possiblePoolSetups).toStrictEqual(poolSetupsForSixFighters);
   });
 
-  it("return all possible setups (3*3, 4*1+5*1) for 9 fighters", () => {
+  it("should return every valid setup for nine competitors", () => {
     const possiblePoolSetups = calculatePossiblePoolSetups(9);
 
     const poolSetupsForNineFighters: PoolSetup[] = [
       {
-        nbFights: 9,
+        fightCount: 9,
         poolGroups: [
           {
             poolSize: 3,
@@ -53,7 +53,7 @@ describe("Pool Setup - Determine possible pool setups", () => {
         ],
       },
       {
-        nbFights: 16,
+        fightCount: 16,
         poolGroups: [
           {
             poolSize: 4,
@@ -70,12 +70,12 @@ describe("Pool Setup - Determine possible pool setups", () => {
     expect(possiblePoolSetups).toStrictEqual(poolSetupsForNineFighters);
   });
 
-  it("return all possible setups for 23 fighters", () => {
+  it("should return every valid setup for 23 competitors", () => {
     const possiblePoolSetups = calculatePossiblePoolSetups(23);
 
     const poolSetupsExpected: PoolSetup[] = [
       {
-        nbFights: 27,
+        fightCount: 27,
         poolGroups: [
           {
             poolSize: 3,
@@ -88,7 +88,7 @@ describe("Pool Setup - Determine possible pool setups", () => {
         ],
       },
       {
-        nbFights: 33,
+        fightCount: 33,
         poolGroups: [
           {
             poolSize: 3,
@@ -101,7 +101,7 @@ describe("Pool Setup - Determine possible pool setups", () => {
         ],
       },
       {
-        nbFights: 42,
+        fightCount: 42,
         poolGroups: [
           {
             poolSize: 4,
@@ -114,7 +114,7 @@ describe("Pool Setup - Determine possible pool setups", () => {
         ],
       },
       {
-        nbFights: 55,
+        fightCount: 55,
         poolGroups: [
           {
             poolSize: 5,
@@ -127,7 +127,7 @@ describe("Pool Setup - Determine possible pool setups", () => {
         ],
       },
       {
-        nbFights: 77,
+        fightCount: 77,
         poolGroups: [
           {
             poolSize: 7,
@@ -140,7 +140,7 @@ describe("Pool Setup - Determine possible pool setups", () => {
         ],
       },
       {
-        nbFights: 121,
+        fightCount: 121,
         poolGroups: [
           {
             poolSize: 11,

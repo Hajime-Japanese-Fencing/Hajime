@@ -3,13 +3,13 @@ import type { ScoreEventId } from "../../shared/score-event-id.ts";
 import { removeScoreEvent as applyRemoveScoreEvent } from "../domain/fight/score-event-rules.ts";
 import { isRejection } from "../domain/fight/fight-rules.ts";
 import type { ScoreEventType } from "../domain/score-event.ts";
-import type { SaveFightResultPort } from "../ports/save-fight-result.port.ts";
+import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 import type { ActiveCompetitionState } from "../state/competition-state.ts";
-import type { CommandResult } from "./command-result.ts";
+import type { FightActionResult } from "./command-result.ts";
 import { toCommandRejection } from "./rejection-to-command-result.ts";
 
 export interface RemoveScoreEventDeps {
-  saveFightResult: SaveFightResultPort;
+  saveFightResult: FightResultRecorder;
   state: ActiveCompetitionState;
 }
 
@@ -18,7 +18,7 @@ export async function removeScoreEvent(
   fightId: FightId,
   scoreEventId: ScoreEventId,
   expectedType: ScoreEventType,
-): Promise<CommandResult> {
+): Promise<FightActionResult> {
   const snapshot = deps.state.snapshot();
   const fight = snapshot.fightsById[fightId];
   if (!fight) return { ok: false, reason: "fight_not_found" };

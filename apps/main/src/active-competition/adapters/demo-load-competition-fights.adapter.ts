@@ -5,12 +5,12 @@ import {
   makePoolId,
   makeScoreEventId,
   type CompetitionId,
-  type CompetitionFightsData,
-  type LoadCompetitionFightsPort,
+  type CompetitionDraw,
+  type CompetitionDrawLoader,
 } from "@hajime/core";
 
-export class DemoLoadCompetitionFightsAdapter implements LoadCompetitionFightsPort {
-  async load(_competitionId: CompetitionId): Promise<CompetitionFightsData> {
+export class DemoLoadCompetitionFightsAdapter implements CompetitionDrawLoader {
+  async load(_competitionId: CompetitionId): Promise<CompetitionDraw> {
     const poolId = makePoolId(1);
 
     const redFighter = makeFighterId("3");

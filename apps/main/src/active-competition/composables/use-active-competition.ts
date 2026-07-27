@@ -1,6 +1,6 @@
 import type { ReadonlyStore } from "@tanstack/store";
 import { useSelector } from "@tanstack/vue-store";
-import type { ActiveCompetitionFacade } from "@hajime/core";
+import type { ActiveCompetition } from "@hajime/core";
 
 function asSelectionSource<T>(store: ReadonlyStore<T>): {
   get: () => T;
@@ -12,22 +12,22 @@ function asSelectionSource<T>(store: ReadonlyStore<T>): {
   };
 }
 
-export function useActiveCompetition(competition: ActiveCompetitionFacade) {
+export function useActiveCompetition(competition: ActiveCompetition) {
   const view = useSelector(asSelectionSource(competition.view), (view) => view);
 
   return {
     view,
-    openFight: (fightId: Parameters<ActiveCompetitionFacade["openFight"]>[0]) =>
+    openFight: (fightId: Parameters<ActiveCompetition["openFight"]>[0]) =>
       competition.openFight(fightId),
     closeFight: () => competition.closeFight(),
     cancelActiveFight: () => competition.cancelActiveFight(),
     validateActiveFight: () => competition.validateActiveFight(),
     forfeitActiveFight: () => competition.forfeitActiveFight(),
-    recordIppon: (input: Parameters<ActiveCompetitionFacade["recordIppon"]>[0]) =>
+    recordIppon: (input: Parameters<ActiveCompetition["recordIppon"]>[0]) =>
       competition.recordIppon(input),
-    removeScoreEvent: (input: Parameters<ActiveCompetitionFacade["removeScoreEvent"]>[0]) =>
+    removeScoreEvent: (input: Parameters<ActiveCompetition["removeScoreEvent"]>[0]) =>
       competition.removeScoreEvent(input),
-    recordHansoku: (input: Parameters<ActiveCompetitionFacade["recordHansoku"]>[0]) =>
+    recordHansoku: (input: Parameters<ActiveCompetition["recordHansoku"]>[0]) =>
       competition.recordHansoku(input),
   };
 }

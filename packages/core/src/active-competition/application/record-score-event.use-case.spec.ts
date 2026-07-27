@@ -5,10 +5,10 @@ import { IpponCode } from "../../shared/ippons.ts";
 import type { ScoreEvent } from "../domain/score-event.ts";
 import { FakeActiveCompetitionState } from "../__test__/fake-active-competition-state.ts";
 import { fighterRed, fighterWhite, fightId1, makeFightRecord } from "../__test__/fixtures.ts";
-import type { SaveFightResultPort } from "../ports/save-fight-result.port.ts";
+import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 import { recordHansoku, recordIppon } from "./record-score-event.use-case.ts";
 
-class SpySaveFightResultPort implements SaveFightResultPort {
+class SpyFightResultRecorder implements FightResultRecorder {
   public savedScoreEvents: ScoreEvent[] | undefined;
 
   constructor(
@@ -25,15 +25,15 @@ class SpySaveFightResultPort implements SaveFightResultPort {
   async updateStatus(_fightId: FightId, _status: FightStatus): Promise<void> {}
 }
 
-describe("RecordScoreEvent UseCase", () => {
-  it("records an ippon in the active fight before persisting its score events", async () => {
+describe("Recording a score event", () => {
+  it("should record an ippon in the active fight and save the score", async () => {
     const events: string[] = [];
     const fight = makeFightRecord({ status: FightStatus.InProgress });
     const state = new FakeActiveCompetitionState(
       { fightsById: { [fightId1]: fight }, activeFightId: fightId1, nextScoreEventId: 4 },
       events,
     );
-    const saveFightResult = new SpySaveFightResultPort(events);
+    const saveFightResult = new SpyFightResultRecorder(events);
 
     await expect(
       recordIppon({ state, saveFightResult }, fightId1, fighterRed, IpponCode.Men),
@@ -49,7 +49,7 @@ describe("RecordScoreEvent UseCase", () => {
     expect(events).toEqual(["state:commit-fight", "port:save-score-events"]);
   });
 
-  it("records a hansoku in the active fight", async () => {
+  it("should record a hansoku in the active fight", async () => {
     const fight = makeFightRecord({ status: FightStatus.InProgress });
     const state = new FakeActiveCompetitionState({
       fightsById: { [fightId1]: fight },
@@ -58,7 +58,7 @@ describe("RecordScoreEvent UseCase", () => {
 
     await expect(
       recordHansoku(
-        { state, saveFightResult: new SpySaveFightResultPort([]) },
+        { state, saveFightResult: new SpyFightResultRecorder([]) },
         fightId1,
         fighterWhite,
       ),
@@ -71,13 +71,13 @@ describe("RecordScoreEvent UseCase", () => {
     });
   });
 
-  it("rejects a non-active fight without allocating a score event id", async () => {
+  it("should reject scoring a fight that is not active", async () => {
     const fight = makeFightRecord({ status: FightStatus.InProgress });
     const state = new FakeActiveCompetitionState({ fightsById: { [fightId1]: fight } });
 
     await expect(
       recordIppon(
-        { state, saveFightResult: new SpySaveFightResultPort([]) },
+        { state, saveFightResult: new SpyFightResultRecorder([]) },
         fightId1,
         fighterRed,
         IpponCode.Men,
@@ -89,7 +89,7 @@ describe("RecordScoreEvent UseCase", () => {
     expect(state.snapshot().nextScoreEventId).toBe(1);
   });
 
-  it("keeps the optimistic state change when score persistence fails", async () => {
+  it("should keep the recorded score when saving fails", async () => {
     const fight = makeFightRecord({ status: FightStatus.InProgress });
     const state = new FakeActiveCompetitionState({
       fightsById: { [fightId1]: fight },
@@ -98,7 +98,7 @@ describe("RecordScoreEvent UseCase", () => {
 
     await expect(
       recordIppon(
-        { state, saveFightResult: new SpySaveFightResultPort([], new Error("save failed")) },
+        { state, saveFightResult: new SpyFightResultRecorder([], new Error("save failed")) },
         fightId1,
         fighterRed,
         IpponCode.Men,

@@ -1,4 +1,4 @@
-export type CommandResult =
+export type FightActionResult =
   | { ok: true }
   | {
       ok: false;

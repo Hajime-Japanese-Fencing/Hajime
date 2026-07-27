@@ -65,7 +65,7 @@ export function calculatePossiblePoolSetups(nbFighters: number): PoolSetup[] {
     }
   }
 
-  possiblePoolSetups.sort((a, b) => a.nbFights - b.nbFights);
+  possiblePoolSetups.sort((a, b) => a.fightCount - b.fightCount);
 
   return possiblePoolSetups;
 }

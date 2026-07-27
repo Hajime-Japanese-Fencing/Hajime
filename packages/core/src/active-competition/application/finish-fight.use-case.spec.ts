@@ -4,10 +4,10 @@ import type { FightId } from "../../shared/fight-id.ts";
 import type { ScoreEvent } from "../domain/score-event.ts";
 import { FakeActiveCompetitionState } from "../__test__/fake-active-competition-state.ts";
 import { fightId1, makeFightRecord } from "../__test__/fixtures.ts";
-import type { SaveFightResultPort } from "../ports/save-fight-result.port.ts";
+import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 import { finishFight } from "./finish-fight.use-case.ts";
 
-class SpySaveFightResultPort implements SaveFightResultPort {
+class SpyFightResultRecorder implements FightResultRecorder {
   constructor(private readonly events: string[]) {}
 
   async saveScoreEvents(_fightId: FightId, _scoreEvents: ScoreEvent[]): Promise<void> {}
@@ -17,8 +17,8 @@ class SpySaveFightResultPort implements SaveFightResultPort {
   }
 }
 
-describe("FinishFight UseCase", () => {
-  it("finishes the active InProgress fight before persisting it", async () => {
+describe("Finishing a fight", () => {
+  it("should finish the active fight and save its status", async () => {
     const events: string[] = [];
     const fight = makeFightRecord({ status: FightStatus.InProgress });
     const state = new FakeActiveCompetitionState(
@@ -27,7 +27,7 @@ describe("FinishFight UseCase", () => {
     );
 
     await expect(
-      finishFight({ state, saveFightResult: new SpySaveFightResultPort(events) }, fightId1),
+      finishFight({ state, saveFightResult: new SpyFightResultRecorder(events) }, fightId1),
     ).resolves.toEqual({ ok: true });
 
     expect(state.snapshot().fightsById[fightId1].status).toBe(FightStatus.Finished);
@@ -35,7 +35,7 @@ describe("FinishFight UseCase", () => {
     expect(events).toEqual(["state:commit-fight", "port:update-status"]);
   });
 
-  it("rejects a Waiting fight even when it is active", async () => {
+  it("should reject a waiting fight even when it is active", async () => {
     const fight = makeFightRecord();
     const state = new FakeActiveCompetitionState({
       fightsById: { [fightId1]: fight },
@@ -43,7 +43,7 @@ describe("FinishFight UseCase", () => {
     });
 
     await expect(
-      finishFight({ state, saveFightResult: new SpySaveFightResultPort([]) }, fightId1),
+      finishFight({ state, saveFightResult: new SpyFightResultRecorder([]) }, fightId1),
     ).resolves.toEqual({
       ok: false,
       reason: "illegal_transition",

@@ -11,32 +11,30 @@ import {
   makePoolRecord,
   poolId1,
 } from "../__test__/fixtures.ts";
-import type {
-  CompetitionFightsData,
-  LoadCompetitionFightsPort,
-} from "../ports/load-competition-fights.port.ts";
-import { createActiveCompetitionFacade } from "./active-competition.facade.ts";
+import type { CompetitionDraw } from "../domain/competition-draw.ts";
+import type { CompetitionDrawLoader } from "../ports/load-competition-fights.port.ts";
+import { createActiveCompetition } from "./active-competition.facade.ts";
 
-class StubLoadCompetitionFightsPort implements LoadCompetitionFightsPort {
-  constructor(private readonly data: CompetitionFightsData) {}
+class StubCompetitionDrawLoader implements CompetitionDrawLoader {
+  constructor(private readonly data: CompetitionDraw) {}
 
-  async load(_competitionId: CompetitionId): Promise<CompetitionFightsData> {
+  async load(_competitionId: CompetitionId): Promise<CompetitionDraw> {
     return this.data;
   }
 }
 
-function createFacade(data: CompetitionFightsData) {
+function createFacade(data: CompetitionDraw) {
   const saveFightResult = new FakeSaveFightResultAdapter();
-  const facade = createActiveCompetitionFacade({
+  const facade = createActiveCompetition({
     saveFightResult,
-    loadCompetitionFights: new StubLoadCompetitionFightsPort(data),
+    loadCompetitionFights: new StubCompetitionDrawLoader(data),
   });
 
   return { facade, saveFightResult };
 }
 
-describe("ActiveCompetition Facade", () => {
-  it("loads data into the public view and exposes ordered pool fights", async () => {
+describe("Managing an active competition", () => {
+  it("should show the competition fights by pool after loading it", async () => {
     const fight = makeFightRecord();
     const { facade } = createFacade({ pools: [makePoolRecord()], fights: [fight] });
 
@@ -47,7 +45,7 @@ describe("ActiveCompetition Facade", () => {
     expect(facade.view.state.activeFight).toBeUndefined();
   });
 
-  it("acts on the active fight and resolves the fighter from the requested side", async () => {
+  it("should record an ippon for the competitor on the selected side", async () => {
     const { facade, saveFightResult } = createFacade({
       pools: [makePoolRecord()],
       fights: [makeFightRecord()],
@@ -73,7 +71,7 @@ describe("ActiveCompetition Facade", () => {
     );
   });
 
-  it("does not expose inactive-fight commands as successful operations", async () => {
+  it("should reject scoring or ending a fight when no fight is active", async () => {
     const { facade } = createFacade({ pools: [makePoolRecord()], fights: [makeFightRecord()] });
     await facade.loadCompetition(makeCompetitionId("competition-1"));
 
@@ -89,7 +87,7 @@ describe("ActiveCompetition Facade", () => {
     });
   });
 
-  it("rejects opening an unknown or Finished fight", async () => {
+  it("should reject opening an unknown or finished fight", async () => {
     const { facade } = createFacade({
       pools: [makePoolRecord()],
       fights: [makeFightRecord({ status: "finished" })],
@@ -106,7 +104,7 @@ describe("ActiveCompetition Facade", () => {
     });
   });
 
-  it("rejects score-event removal when the requested type does not match", async () => {
+  it("should keep a penalty when removing it as a score", async () => {
     const { facade } = createFacade({ pools: [makePoolRecord()], fights: [makeFightRecord()] });
     await facade.loadCompetition(makeCompetitionId("competition-1"));
     await facade.openFight(fightId1);
@@ -118,7 +116,7 @@ describe("ActiveCompetition Facade", () => {
     expect(facade.view.state.activeFight?.scoreEvents).toHaveLength(1);
   });
 
-  it("applies a draw atomically and resets the active fight and score event sequence", async () => {
+  it("should replace the current competition with a published draw", async () => {
     const { facade } = createFacade({ pools: [makePoolRecord()], fights: [makeFightRecord()] });
     await facade.loadCompetition(makeCompetitionId("competition-1"));
     await facade.openFight(fightId1);

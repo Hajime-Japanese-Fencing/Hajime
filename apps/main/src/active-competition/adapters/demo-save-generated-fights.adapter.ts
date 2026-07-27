@@ -1,10 +1,7 @@
-import type { CompetitionId, GeneratedFightsData, SaveGeneratedFightsPort } from "@hajime/core";
+import type { CompetitionDraw, CompetitionDrawRepository, CompetitionId } from "@hajime/core";
 
-export class DemoSaveGeneratedFightsAdapter implements SaveGeneratedFightsPort {
-  async saveGeneratedFights(
-    competitionId: CompetitionId,
-    data: GeneratedFightsData,
-  ): Promise<void> {
-    console.debug("[demo] saveGeneratedFights", competitionId, data);
+export class DemoSaveGeneratedFightsAdapter implements CompetitionDrawRepository {
+  async save(competitionId: CompetitionId, draw: CompetitionDraw): Promise<void> {
+    console.debug("[demo] save competition draw", competitionId, draw);
   }
 }

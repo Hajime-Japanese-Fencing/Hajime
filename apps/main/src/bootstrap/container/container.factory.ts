@@ -1,9 +1,9 @@
 import {
-  createActiveCompetitionFacade,
-  publishDraw as publishDrawUseCase,
-  type ActiveCompetitionFacade,
+  createActiveCompetition,
+  publishDraw,
+  type ActiveCompetition,
+  type CompetitionDraw,
   type CompetitionId,
-  type GeneratedFightsData,
   type RetrieveCompetitionsQuery,
 } from "@hajime/core";
 import { DemoRetrieveCompetitionsAdapter } from "../../competitions/adapters/demo-retrieve-competitions.adapter.ts";
@@ -13,24 +13,28 @@ import { DemoSaveGeneratedFightsAdapter } from "../../active-competition/adapter
 
 export interface AppContainer {
   retrieveCompetitions: RetrieveCompetitionsQuery;
-  activeCompetition: ActiveCompetitionFacade;
+  activeCompetition: ActiveCompetition;
   loadCompetition(competitionId: CompetitionId): Promise<void>;
-  publishDraw(competitionId: CompetitionId, draw: GeneratedFightsData): Promise<void>;
+  publishDraw(competitionId: CompetitionId, draw: CompetitionDraw): Promise<void>;
 }
 
 export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
   const saveGeneratedFights = new DemoSaveGeneratedFightsAdapter();
-  const activeCompetition = createActiveCompetitionFacade({
+  const activeCompetition = createActiveCompetition({
     loadCompetitionFights: new DemoLoadCompetitionFightsAdapter(),
     saveFightResult: new DemoSaveFightResultAdapter(),
   });
-  const publishDraw = (competitionId: CompetitionId, draw: GeneratedFightsData) =>
-    publishDrawUseCase({ applyDraw: activeCompetition, saveGeneratedFights }, competitionId, draw);
+  const publishCompetitionDraw = (competitionId: CompetitionId, draw: CompetitionDraw) =>
+    publishDraw(
+      { drawReceiver: activeCompetition, drawRepository: saveGeneratedFights },
+      competitionId,
+      draw,
+    );
 
   return {
     retrieveCompetitions: new DemoRetrieveCompetitionsAdapter(),
     activeCompetition,
     loadCompetition: (competitionId) => activeCompetition.loadCompetition(competitionId),
-    publishDraw,
+    publishDraw: publishCompetitionDraw,
   };
 }

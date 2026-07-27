@@ -3,9 +3,9 @@ import { FightStatus } from "../../../shared/fight-status.ts";
 import { makeFightRecord } from "../../__test__/fixtures.ts";
 import { cancelFight, finishFight, startFight } from "./fight-rules.ts";
 
-describe("Fight rules", () => {
+describe("Fight state transitions", () => {
   describe("startFight", () => {
-    it("starts a Waiting fight without mutating the source record", () => {
+    it("should start a waiting fight without changing the original fight", () => {
       const fight = makeFightRecord();
 
       const result = startFight(fight);
@@ -14,7 +14,7 @@ describe("Fight rules", () => {
       expect(fight.status).toBe(FightStatus.Waiting);
     });
 
-    it("rejects an InProgress or Finished fight", () => {
+    it("should reject a fight that has already started or finished", () => {
       expect(startFight(makeFightRecord({ status: FightStatus.InProgress }))).toEqual({
         reason: "illegal_transition",
       });
@@ -25,14 +25,14 @@ describe("Fight rules", () => {
   });
 
   describe("cancelFight", () => {
-    it("returns an InProgress fight to Waiting", () => {
+    it("should return an in-progress fight to waiting", () => {
       const fight = makeFightRecord({ status: FightStatus.InProgress });
 
       expect(cancelFight(fight)).toEqual({ ...fight, status: FightStatus.Waiting });
       expect(fight.status).toBe(FightStatus.InProgress);
     });
 
-    it("rejects a Waiting or Finished fight", () => {
+    it("should reject a waiting or finished fight", () => {
       expect(cancelFight(makeFightRecord())).toEqual({ reason: "illegal_transition" });
       expect(cancelFight(makeFightRecord({ status: FightStatus.Finished }))).toEqual({
         reason: "illegal_transition",
@@ -41,14 +41,14 @@ describe("Fight rules", () => {
   });
 
   describe("finishFight", () => {
-    it("finishes an InProgress fight", () => {
+    it("should finish an in-progress fight", () => {
       const fight = makeFightRecord({ status: FightStatus.InProgress });
 
       expect(finishFight(fight)).toEqual({ ...fight, status: FightStatus.Finished });
       expect(fight.status).toBe(FightStatus.InProgress);
     });
 
-    it("rejects a Waiting or Finished fight", () => {
+    it("should reject a waiting or finished fight", () => {
       expect(finishFight(makeFightRecord())).toEqual({ reason: "illegal_transition" });
       expect(finishFight(makeFightRecord({ status: FightStatus.Finished }))).toEqual({
         reason: "illegal_transition",

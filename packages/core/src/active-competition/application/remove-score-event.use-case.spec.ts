@@ -6,10 +6,10 @@ import { makeScoreEventId } from "../../shared/score-event-id.ts";
 import type { ScoreEvent } from "../domain/score-event.ts";
 import { FakeActiveCompetitionState } from "../__test__/fake-active-competition-state.ts";
 import { fighterRed, fightId1, makeFightRecord } from "../__test__/fixtures.ts";
-import type { SaveFightResultPort } from "../ports/save-fight-result.port.ts";
+import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 import { removeScoreEvent } from "./remove-score-event.use-case.ts";
 
-class SpySaveFightResultPort implements SaveFightResultPort {
+class SpyFightResultRecorder implements FightResultRecorder {
   constructor(private readonly events: string[]) {}
 
   async saveScoreEvents(_fightId: FightId, _scoreEvents: ScoreEvent[]): Promise<void> {
@@ -19,8 +19,8 @@ class SpySaveFightResultPort implements SaveFightResultPort {
   async updateStatus(_fightId: FightId, _status: FightStatus): Promise<void> {}
 }
 
-describe("RemoveScoreEvent UseCase", () => {
-  it("removes a matching event from the active fight before persisting it", async () => {
+describe("Removing a score event", () => {
+  it("should remove the selected score from the active fight and save it", async () => {
     const events: string[] = [];
     const scoreEvent = {
       id: makeScoreEventId(1),
@@ -37,7 +37,7 @@ describe("RemoveScoreEvent UseCase", () => {
 
     await expect(
       removeScoreEvent(
-        { state, saveFightResult: new SpySaveFightResultPort(events) },
+        { state, saveFightResult: new SpyFightResultRecorder(events) },
         fightId1,
         scoreEvent.id,
         "ippon",
@@ -48,7 +48,7 @@ describe("RemoveScoreEvent UseCase", () => {
     expect(events).toEqual(["state:commit-fight", "port:save-score-events"]);
   });
 
-  it("maps a domain score-event type mismatch to an illegal transition result", async () => {
+  it("should reject removing a penalty as a score", async () => {
     const scoreEvent = {
       id: makeScoreEventId(1),
       fighterId: fighterRed,
@@ -64,7 +64,7 @@ describe("RemoveScoreEvent UseCase", () => {
 
     await expect(
       removeScoreEvent(
-        { state, saveFightResult: new SpySaveFightResultPort([]) },
+        { state, saveFightResult: new SpyFightResultRecorder([]) },
         fightId1,
         scoreEvent.id,
         "ippon",

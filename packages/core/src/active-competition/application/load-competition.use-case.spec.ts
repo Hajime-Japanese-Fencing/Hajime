@@ -3,22 +3,20 @@ import { makeCompetitionId, type CompetitionId } from "../../shared/competition-
 import { makeScoreEventId } from "../../shared/score-event-id.ts";
 import { FakeActiveCompetitionState } from "../__test__/fake-active-competition-state.ts";
 import { makeFightRecord, makePoolRecord } from "../__test__/fixtures.ts";
-import type {
-  CompetitionFightsData,
-  LoadCompetitionFightsPort,
-} from "../ports/load-competition-fights.port.ts";
+import type { CompetitionDraw } from "../domain/competition-draw.ts";
+import type { CompetitionDrawLoader } from "../ports/load-competition-fights.port.ts";
 import { loadCompetition } from "./load-competition.use-case.ts";
 
-class StubLoadCompetitionFightsPort implements LoadCompetitionFightsPort {
-  constructor(private readonly data: CompetitionFightsData) {}
+class StubCompetitionDrawLoader implements CompetitionDrawLoader {
+  constructor(private readonly data: CompetitionDraw) {}
 
-  async load(_competitionId: CompetitionId): Promise<CompetitionFightsData> {
+  async load(_competitionId: CompetitionId): Promise<CompetitionDraw> {
     return this.data;
   }
 }
 
-describe("LoadCompetition UseCase", () => {
-  it("loads and atomically replaces competition data with a reset active fight and next score event id", async () => {
+describe("Loading a competition", () => {
+  it("should replace the current competition and clear the active fight", async () => {
     const state = new FakeActiveCompetitionState();
     const fight = makeFightRecord({
       scoreEvents: [
@@ -34,7 +32,7 @@ describe("LoadCompetition UseCase", () => {
     const data = { pools: [makePoolRecord()], fights: [fight] };
 
     await loadCompetition(
-      { state, loadCompetitionFights: new StubLoadCompetitionFightsPort(data) },
+      { state, loadCompetitionFights: new StubCompetitionDrawLoader(data) },
       makeCompetitionId("competition-1"),
     );
 

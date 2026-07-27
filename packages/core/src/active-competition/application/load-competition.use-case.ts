@@ -1,9 +1,9 @@
 import type { CompetitionId } from "../../shared/competition-id.ts";
-import type { LoadCompetitionFightsPort } from "../ports/load-competition-fights.port.ts";
+import type { CompetitionDrawLoader } from "../ports/load-competition-fights.port.ts";
 import type { ActiveCompetitionState } from "../state/competition-state.ts";
 
 export interface LoadCompetitionDeps {
-  loadCompetitionFights: LoadCompetitionFightsPort;
+  loadCompetitionFights: CompetitionDrawLoader;
   state: ActiveCompetitionState;
 }
 

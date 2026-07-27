@@ -4,10 +4,10 @@ import type { FightId } from "../../shared/fight-id.ts";
 import type { ScoreEvent } from "../domain/score-event.ts";
 import { FakeActiveCompetitionState } from "../__test__/fake-active-competition-state.ts";
 import { fightId1, makeFightRecord } from "../__test__/fixtures.ts";
-import type { SaveFightResultPort } from "../ports/save-fight-result.port.ts";
+import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 import { cancelFight } from "./cancel-fight.use-case.ts";
 
-class SpySaveFightResultPort implements SaveFightResultPort {
+class SpyFightResultRecorder implements FightResultRecorder {
   constructor(private readonly events: string[]) {}
 
   async saveScoreEvents(_fightId: FightId, _scoreEvents: ScoreEvent[]): Promise<void> {}
@@ -17,8 +17,8 @@ class SpySaveFightResultPort implements SaveFightResultPort {
   }
 }
 
-describe("CancelFight UseCase", () => {
-  it("returns the active InProgress fight to Waiting before persisting it", async () => {
+describe("Cancelling a fight", () => {
+  it("should return the active fight to waiting and save its status", async () => {
     const events: string[] = [];
     const fight = makeFightRecord({ status: FightStatus.InProgress });
     const state = new FakeActiveCompetitionState(
@@ -27,7 +27,7 @@ describe("CancelFight UseCase", () => {
     );
 
     await expect(
-      cancelFight({ state, saveFightResult: new SpySaveFightResultPort(events) }, fightId1),
+      cancelFight({ state, saveFightResult: new SpyFightResultRecorder(events) }, fightId1),
     ).resolves.toEqual({ ok: true });
 
     expect(state.snapshot().fightsById[fightId1].status).toBe(FightStatus.Waiting);
@@ -35,12 +35,12 @@ describe("CancelFight UseCase", () => {
     expect(events).toEqual(["state:commit-fight", "port:update-status"]);
   });
 
-  it("rejects a non-active fight without changing state", async () => {
+  it("should leave the competition unchanged when the fight is not active", async () => {
     const fight = makeFightRecord({ status: FightStatus.InProgress });
     const state = new FakeActiveCompetitionState({ fightsById: { [fightId1]: fight } });
 
     await expect(
-      cancelFight({ state, saveFightResult: new SpySaveFightResultPort([]) }, fightId1),
+      cancelFight({ state, saveFightResult: new SpyFightResultRecorder([]) }, fightId1),
     ).resolves.toEqual({
       ok: false,
       reason: "not_active",

@@ -1,12 +1,6 @@
 import type { CompetitionId } from "../../shared/competition-id.ts";
-import type { PoolRecord } from "../domain/pool-record.ts";
-import type { FightRecord } from "../domain/fight-record.ts";
+import type { CompetitionDraw } from "../domain/competition-draw.ts";
 
-export interface GeneratedFightsData {
-  pools: PoolRecord[];
-  fights: FightRecord[];
-}
-
-export interface SaveGeneratedFightsPort {
-  saveGeneratedFights(competitionId: CompetitionId, data: GeneratedFightsData): Promise<void>;
+export interface CompetitionDrawRepository {
+  save(competitionId: CompetitionId, draw: CompetitionDraw): Promise<void>;
 }

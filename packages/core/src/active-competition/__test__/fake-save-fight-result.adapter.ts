@@ -1,7 +1,7 @@
 import type { FightStatus } from "../../shared/fight-status.ts";
 import type { FightId } from "../../shared/fight-id.ts";
 import type { ScoreEvent } from "../domain/score-event.ts";
-import type { SaveFightResultPort } from "../ports/save-fight-result.port.ts";
+import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 
 export interface SavedFightState {
   scoreEvents: ScoreEvent[];
@@ -9,10 +9,10 @@ export interface SavedFightState {
 }
 
 /**
- * Fake adapter for SaveFightResultPort.
+ * Fake adapter for FightResultRecorder.
  * Designed for unit tests — stores state in-memory and exposes it for assertions.
  */
-export class FakeSaveFightResultAdapter implements SaveFightResultPort {
+export class FakeSaveFightResultAdapter implements FightResultRecorder {
   private savedEvents = new Map<FightId, ScoreEvent[]>();
   private savedStatuses = new Map<FightId, FightStatus>();
 

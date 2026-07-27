@@ -1,20 +1,18 @@
 import type { CompetitionId } from "../../shared/competition-id.ts";
-import type { ApplyDrawPort } from "../ports/apply-draw.port.ts";
-import type {
-  GeneratedFightsData,
-  SaveGeneratedFightsPort,
-} from "../ports/save-generated-fights.port.ts";
+import type { CompetitionDraw } from "../domain/competition-draw.ts";
+import type { CompetitionDrawReceiver } from "../ports/apply-draw.port.ts";
+import type { CompetitionDrawRepository } from "../ports/save-generated-fights.port.ts";
 
 export interface PublishDrawDeps {
-  applyDraw: ApplyDrawPort;
-  saveGeneratedFights: SaveGeneratedFightsPort;
+  drawReceiver: CompetitionDrawReceiver;
+  drawRepository: CompetitionDrawRepository;
 }
 
 export async function publishDraw(
   deps: PublishDrawDeps,
   competitionId: CompetitionId,
-  draw: GeneratedFightsData,
+  draw: CompetitionDraw,
 ): Promise<void> {
-  deps.applyDraw.applyDraw(draw);
-  await deps.saveGeneratedFights.saveGeneratedFights(competitionId, draw);
+  deps.drawReceiver.applyDraw(draw);
+  await deps.drawRepository.save(competitionId, draw);
 }

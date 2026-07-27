@@ -8,13 +8,13 @@ import {
   recordIppon as applyIppon,
 } from "../domain/fight/score-event-rules.ts";
 import { isRejection, type FightRuleResult } from "../domain/fight/fight-rules.ts";
-import type { SaveFightResultPort } from "../ports/save-fight-result.port.ts";
+import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 import type { ActiveCompetitionState } from "../state/competition-state.ts";
-import type { CommandResult } from "./command-result.ts";
+import type { FightActionResult } from "./command-result.ts";
 import { toCommandRejection } from "./rejection-to-command-result.ts";
 
 export interface RecordScoreEventDeps {
-  saveFightResult: SaveFightResultPort;
+  saveFightResult: FightResultRecorder;
   state: ActiveCompetitionState;
 }
 
@@ -23,7 +23,7 @@ export async function recordIppon(
   fightId: FightId,
   fighterId: FighterId,
   code: IpponCode,
-): Promise<CommandResult> {
+): Promise<FightActionResult> {
   return recordScoreEvent(deps, fightId, (fight, eventId) =>
     applyIppon(fight, fighterId, code, eventId),
   );
@@ -33,7 +33,7 @@ export async function recordHansoku(
   deps: RecordScoreEventDeps,
   fightId: FightId,
   fighterId: FighterId,
-): Promise<CommandResult> {
+): Promise<FightActionResult> {
   return recordScoreEvent(deps, fightId, (fight, eventId) =>
     applyHansoku(fight, fighterId, eventId),
   );
@@ -43,7 +43,7 @@ async function recordScoreEvent(
   deps: RecordScoreEventDeps,
   fightId: FightId,
   apply: (fight: FightRecord, eventId: ScoreEventId) => FightRuleResult,
-): Promise<CommandResult> {
+): Promise<FightActionResult> {
   const snapshot = deps.state.snapshot();
   const fight = snapshot.fightsById[fightId];
   if (!fight) return { ok: false, reason: "fight_not_found" };

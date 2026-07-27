@@ -4,8 +4,8 @@ import type { PoolSetup } from "../setup/pool-setup.ts";
 import { poolFighterEntryFactory } from "../../__test__/factories.ts";
 import type { FighterEntry } from "../../../../../shared/fighter.ts";
 
-describe("Pool Distribution - Distributes a list of fighters into pools", () => {
-  it("should throws error if number of fighters do not match total pool capacity", () => {
+describe("Distributing competitors into pools", () => {
+  it("should reject a pool setup whose capacity differs from the competitor count", () => {
     const fighters: FighterEntry[] = [
       poolFighterEntryFactory({ id: "1", club: "club A" }),
       poolFighterEntryFactory({ id: "2", club: "club A" }),
@@ -16,7 +16,7 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     ];
 
     const poolSetup: PoolSetup = {
-      nbFights: 21,
+      fightCount: 21,
       poolGroups: [
         {
           poolSize: 3,
@@ -32,16 +32,16 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
 
   it("should build a pool list with the correct number of pools from the setup", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", isSeriesHead: false, club: "club A" }),
-      poolFighterEntryFactory({ id: "2", isSeriesHead: false, club: "club A" }),
-      poolFighterEntryFactory({ id: "3", isSeriesHead: false, club: "club B" }),
-      poolFighterEntryFactory({ id: "4", isSeriesHead: false, club: "club B" }),
-      poolFighterEntryFactory({ id: "5", isSeriesHead: false, club: "club C" }),
-      poolFighterEntryFactory({ id: "6", isSeriesHead: false, club: "club C" }),
+      poolFighterEntryFactory({ id: "1", isSeeded: false, club: "club A" }),
+      poolFighterEntryFactory({ id: "2", isSeeded: false, club: "club A" }),
+      poolFighterEntryFactory({ id: "3", isSeeded: false, club: "club B" }),
+      poolFighterEntryFactory({ id: "4", isSeeded: false, club: "club B" }),
+      poolFighterEntryFactory({ id: "5", isSeeded: false, club: "club C" }),
+      poolFighterEntryFactory({ id: "6", isSeeded: false, club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
-      nbFights: 6,
+      fightCount: 6,
       poolGroups: [
         {
           poolSize: 3,
@@ -60,7 +60,7 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     expect(pools.length).toBe(expectedNbPools);
   });
 
-  it("should repulse all fighters of the same club if there are enough pools and the option is selected", () => {
+  it("should separate competitors from the same club when possible", () => {
     const fighters: FighterEntry[] = [
       poolFighterEntryFactory({ id: "1", club: "club A" }),
       poolFighterEntryFactory({ id: "2", club: "club A" }),
@@ -71,7 +71,7 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     ];
 
     const poolSetup: PoolSetup = {
-      nbFights: 6,
+      fightCount: 6,
       poolGroups: [
         {
           poolSize: 3,
@@ -107,7 +107,7 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     ];
 
     const poolSetup: PoolSetup = {
-      nbFights: 6,
+      fightCount: 6,
       poolGroups: [
         {
           poolSize: 3,
@@ -128,7 +128,7 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     expect(nbOfCInPool2).toBe(1);
   });
 
-  it("should not repulse fighters of the same club if the option is not selected", () => {
+  it("should keep club members together when separation is disabled", () => {
     const fighters: FighterEntry[] = [
       poolFighterEntryFactory({ id: "1", club: "club A" }),
       poolFighterEntryFactory({ id: "2", club: "club A" }),
@@ -139,7 +139,7 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     ];
 
     const poolSetup: PoolSetup = {
-      nbFights: 6,
+      fightCount: 6,
       poolGroups: [
         {
           poolSize: 3,
@@ -165,18 +165,18 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     expect(nbOfCInPool2).toBe(2);
   });
 
-  it("should repulse series heads if there are enough pools and the option is selected", () => {
+  it("should separate seeded competitors when possible", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", isSeriesHead: true, club: "club A" }),
+      poolFighterEntryFactory({ id: "1", isSeeded: true, club: "club A" }),
       poolFighterEntryFactory({ id: "2", club: "club A" }),
-      poolFighterEntryFactory({ id: "3", isSeriesHead: true, club: "club B" }),
+      poolFighterEntryFactory({ id: "3", isSeeded: true, club: "club B" }),
       poolFighterEntryFactory({ id: "4", club: "club B" }),
       poolFighterEntryFactory({ id: "5", club: "club C" }),
       poolFighterEntryFactory({ id: "6", club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
-      nbFights: 6,
+      fightCount: 6,
       poolGroups: [
         {
           poolSize: 3,
@@ -186,25 +186,25 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     };
 
     const pools = distributeFightersInPools(fighters, poolSetup, false, true);
-    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeriesHead).length;
-    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeriesHead).length;
+    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeeded).length;
+    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeeded).length;
 
     expect(nbOfSeriesHeadsInPool1).toBe(1);
     expect(nbOfSeriesHeadsInPool2).toBe(1);
   });
 
-  it("should spread the maximum of series heads if there are not enough pools to separate them and the option is selected", () => {
+  it("should spread seeded competitors as evenly as possible when pools are limited", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", isSeriesHead: true, club: "club A" }),
-      poolFighterEntryFactory({ id: "2", isSeriesHead: true, club: "club A" }),
-      poolFighterEntryFactory({ id: "3", isSeriesHead: true, club: "club B" }),
-      poolFighterEntryFactory({ id: "4", isSeriesHead: true, club: "club B" }),
+      poolFighterEntryFactory({ id: "1", isSeeded: true, club: "club A" }),
+      poolFighterEntryFactory({ id: "2", isSeeded: true, club: "club A" }),
+      poolFighterEntryFactory({ id: "3", isSeeded: true, club: "club B" }),
+      poolFighterEntryFactory({ id: "4", isSeeded: true, club: "club B" }),
       poolFighterEntryFactory({ id: "5", club: "club C" }),
       poolFighterEntryFactory({ id: "6", club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
-      nbFights: 6,
+      fightCount: 6,
       poolGroups: [
         {
           poolSize: 3,
@@ -214,25 +214,25 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     };
 
     const pools = distributeFightersInPools(fighters, poolSetup, false, true);
-    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeriesHead).length;
-    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeriesHead).length;
+    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeeded).length;
+    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeeded).length;
 
     expect(nbOfSeriesHeadsInPool1).toBe(2);
     expect(nbOfSeriesHeadsInPool2).toBe(2);
   });
 
-  it("should not repulse series heads if the option is not selected", () => {
+  it("should keep seeded competitors together when separation is disabled", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", isSeriesHead: true, club: "club A" }),
-      poolFighterEntryFactory({ id: "2", isSeriesHead: true, club: "club A" }),
-      poolFighterEntryFactory({ id: "3", isSeriesHead: true, club: "club B" }),
+      poolFighterEntryFactory({ id: "1", isSeeded: true, club: "club A" }),
+      poolFighterEntryFactory({ id: "2", isSeeded: true, club: "club A" }),
+      poolFighterEntryFactory({ id: "3", isSeeded: true, club: "club B" }),
       poolFighterEntryFactory({ id: "4", club: "club B" }),
       poolFighterEntryFactory({ id: "5", club: "club C" }),
       poolFighterEntryFactory({ id: "6", club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
-      nbFights: 6,
+      fightCount: 6,
       poolGroups: [
         {
           poolSize: 3,
@@ -242,25 +242,25 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
     };
 
     const pools = distributeFightersInPools(fighters, poolSetup);
-    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeriesHead).length;
-    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeriesHead).length;
+    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeeded).length;
+    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeeded).length;
 
     expect(nbOfSeriesHeadsInPool1).toBe(3);
     expect(nbOfSeriesHeadsInPool2).toBe(0);
   });
 
-  it("should repulse along both criterias when possible", () => {
+  it("should separate clubs and seeded competitors when possible", () => {
     const fighters: FighterEntry[] = [
       poolFighterEntryFactory({ id: "1", club: "club A" }),
-      poolFighterEntryFactory({ id: "2", isSeriesHead: true, club: "club A" }),
+      poolFighterEntryFactory({ id: "2", isSeeded: true, club: "club A" }),
       poolFighterEntryFactory({ id: "3", club: "club B" }),
-      poolFighterEntryFactory({ id: "4", isSeriesHead: true, club: "club B" }),
+      poolFighterEntryFactory({ id: "4", isSeeded: true, club: "club B" }),
       poolFighterEntryFactory({ id: "5", club: "club C" }),
       poolFighterEntryFactory({ id: "6", club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
-      nbFights: 6,
+      fightCount: 6,
       poolGroups: [
         {
           poolSize: 3,
@@ -271,8 +271,8 @@ describe("Pool Distribution - Distributes a list of fighters into pools", () => 
 
     const pools = distributeFightersInPools(fighters, poolSetup, true, true);
 
-    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeriesHead).length;
-    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeriesHead).length;
+    const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeeded).length;
+    const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeeded).length;
 
     const nbOfAInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club A").length;
     const nbOfBInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club B").length;

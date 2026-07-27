@@ -4,7 +4,7 @@ import { organizePoolFights } from "./pool-fight.service.ts";
 import type { PoolFighter } from "../distribution/pool-fighter.ts";
 import type { PoolFight } from "./pool-fight.ts";
 
-describe("Pool Fight Creation - organize all turns and fights in a pool", () => {
+describe("Scheduling pool fights", () => {
   it("should return a pool with n-1 turns for n fighters with n even", () => {
     const poolBuilder = new PoolBuilder();
     const poolSize = 4;
@@ -49,7 +49,7 @@ describe("Pool Fight Creation - organize all turns and fights in a pool", () => 
     }
   });
 
-  it("should return a pool containing all possible matchups fo n fighters with n even", () => {
+  it("should schedule every pairing for an even number of competitors", () => {
     const poolBuilder = new PoolBuilder();
     const poolSize = 4;
     const inputPool = poolBuilder.createPool().withSize(poolSize).toPool();
@@ -88,7 +88,7 @@ describe("Pool Fight Creation - organize all turns and fights in a pool", () => 
     }
   });
 
-  it("should return a pool containing all possible matchups fo n fighters with n odd", () => {
+  it("should schedule every pairing for an odd number of competitors", () => {
     const poolBuilder = new PoolBuilder();
     const poolSize = 3;
     const inputPool = poolBuilder.createPool().withSize(poolSize).toPool();
@@ -125,10 +125,10 @@ function fightContainsFighter(fight: PoolFight, poolFighter: PoolFighter): boole
 
   return (
     (fighter1.id == fighter.id &&
-      fighter1.isSeriesHead == fighter.isSeriesHead &&
+      fighter1.isSeeded == fighter.isSeeded &&
       fighter1.club == fighter.club) ||
     (fighter2.id == fighter.id &&
-      fighter2.isSeriesHead == fighter.isSeriesHead &&
+      fighter2.isSeeded == fighter.isSeeded &&
       fighter2.club == fighter.club)
   );
 }

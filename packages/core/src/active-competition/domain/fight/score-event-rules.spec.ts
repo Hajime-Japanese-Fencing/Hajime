@@ -6,9 +6,9 @@ import { makeScoreEventId } from "../../../shared/score-event-id.ts";
 import { fighterRed, fighterWhite, makeFightRecord } from "../../__test__/fixtures.ts";
 import { recordHansoku, recordIppon, removeScoreEvent } from "./score-event-rules.ts";
 
-describe("Score event rules", () => {
+describe("Fight scoring", () => {
   describe("recordIppon", () => {
-    it("records an ippon for a fight participant and marks the first ippon as firstBlood", () => {
+    it("should record an ippon for a competitor and mark the first ippon as firstBlood", () => {
       const fight = makeFightRecord({ status: FightStatus.InProgress });
 
       const result = recordIppon(fight, fighterRed, IpponCode.Men, makeScoreEventId(1));
@@ -28,7 +28,7 @@ describe("Score event rules", () => {
       expect(fight.scoreEvents).toEqual([]);
     });
 
-    it("recalculates firstBlood from the resulting score event list", () => {
+    it("should restore firstBlood when the recorded score is inconsistent", () => {
       const fight = makeFightRecord({
         status: FightStatus.InProgress,
         scoreEvents: [
@@ -59,7 +59,7 @@ describe("Score event rules", () => {
       });
     });
 
-    it("rejects scoring when the fight is not InProgress", () => {
+    it("should reject scoring a fight that is not in progress", () => {
       expect(
         recordIppon(makeFightRecord(), fighterRed, IpponCode.Men, makeScoreEventId(1)),
       ).toEqual({ reason: "scoring_not_allowed" });
@@ -73,7 +73,7 @@ describe("Score event rules", () => {
       ).toEqual({ reason: "scoring_not_allowed" });
     });
 
-    it("rejects an ippon for a fighter who does not take part in the fight", () => {
+    it("should reject an ippon for a competitor outside the fight", () => {
       const fight = makeFightRecord({ status: FightStatus.InProgress });
 
       expect(

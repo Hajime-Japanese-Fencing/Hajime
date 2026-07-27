@@ -6,8 +6,8 @@ import { toPoolFighter } from "./pool-fighter.ts";
 export function distributeFightersInPools(
   fighters: FighterEntry[],
   poolSetup: PoolSetup,
-  shouldRepulseSameClubMembers: boolean = false,
-  shouldRepulseSeriesHead: boolean = false,
+  shouldSeparateClubMembers: boolean = false,
+  shouldSeparateSeededCompetitors: boolean = false,
 ): Pool[] {
   const poolSetupCapacity = poolSetup.poolGroups.reduce(
     (total, group) => total + group.amount * group.poolSize,
@@ -45,21 +45,19 @@ export function distributeFightersInPools(
       const nbPoolsWithFewerSameClubMembers = pools.filter(
         (p) => countClubMembersInPool(p, fighter.club) < nbSameClubMembersInPool,
       ).length;
-      const passSameClubMembersRepulseCheck =
-        nbPoolsWithFewerSameClubMembers == 0 || !shouldRepulseSameClubMembers;
+      const canPlaceClubMember = nbPoolsWithFewerSameClubMembers == 0 || !shouldSeparateClubMembers;
 
       // Series Heads Check
-      const nbSeriesHeadsInPool = countSeriesHeadsInPool(pool);
-      const nbPoolsWithFewerSeriesHeads = pools.filter(
-        (p) => countSeriesHeadsInPool(p) < nbSeriesHeadsInPool,
+      const nbSeededCompetitorsInPool = countSeededCompetitorsInPool(pool);
+      const nbPoolsWithFewerSeededCompetitors = pools.filter(
+        (p) => countSeededCompetitorsInPool(p) < nbSeededCompetitorsInPool,
       ).length;
-      const passSeriesHeadsRepulseCheck =
-        !fighter.isSeriesHead || nbPoolsWithFewerSeriesHeads == 0 || !shouldRepulseSeriesHead;
+      const canPlaceSeededCompetitor =
+        !fighter.isSeeded ||
+        nbPoolsWithFewerSeededCompetitors == 0 ||
+        !shouldSeparateSeededCompetitors;
 
-      if (
-        !poolIsFull &&
-        ((passSameClubMembersRepulseCheck && passSeriesHeadsRepulseCheck) || isLastPool)
-      ) {
+      if (!poolIsFull && ((canPlaceClubMember && canPlaceSeededCompetitor) || isLastPool)) {
         pool.fighters.push(poolFighter);
         break;
       }
@@ -75,21 +73,21 @@ function countClubMembersInPool(pool: Pool, clubName: string): number {
   return pool.fighters.filter((poolFighter) => poolFighter.fighter.club == clubName).length;
 }
 
-function countSeriesHeadsInPool(pool: Pool): number {
-  return pool.fighters.filter((poolFighter) => poolFighter.fighter.isSeriesHead).length;
+function countSeededCompetitorsInPool(pool: Pool): number {
+  return pool.fighters.filter((poolFighter) => poolFighter.fighter.isSeeded).length;
 }
 
 function sortFighters(
   fighters: FighterEntry[],
-  sortBySeriesHeads: boolean,
+  sortBySeededCompetitors: boolean,
   sortByClub: boolean,
 ): FighterEntry[] {
   let headFighters: FighterEntry[] = [];
   let regularFighters: FighterEntry[] = fighters;
 
-  if (sortBySeriesHeads) {
-    headFighters = fighters.filter((fighter) => fighter.isSeriesHead);
-    regularFighters = fighters.filter((fighter) => !fighter.isSeriesHead);
+  if (sortBySeededCompetitors) {
+    headFighters = fighters.filter((fighter) => fighter.isSeeded);
+    regularFighters = fighters.filter((fighter) => !fighter.isSeeded);
   }
 
   if (sortByClub) {

@@ -59,11 +59,11 @@ function selectByeFighters(
   }
 
   // --- SERIES HEADS ARE PRIORITIZED FOR BYES ---
-  const seriesHeads = fighters.filter((fighter) => fighter.isSeriesHead);
-  const others = fighters.filter((fighter) => !fighter.isSeriesHead);
+  const seededFighters = fighters.filter((fighter) => fighter.isSeeded);
+  const others = fighters.filter((fighter) => !fighter.isSeeded);
 
-  const byeFighters = seriesHeads.slice(0, nbByes);
-  let remainingPool = [...seriesHeads.slice(nbByes), ...others];
+  const byeFighters = seededFighters.slice(0, nbByes);
+  let remainingPool = [...seededFighters.slice(nbByes), ...others];
 
   // --- NOT ENOUGH SERIES HEADS: COMPLETE BYES RANDOMLY ---
   if (byeFighters.length < nbByes) {
