@@ -1,13 +1,8 @@
+import type { ReadonlyStore } from "@tanstack/store";
 import { useSelector } from "@tanstack/vue-store";
-import type { ActiveCompetition } from "@hajime/core";
-import type { Store } from "@tanstack/store";
+import type { ActiveCompetitionFacade } from "@hajime/core";
 
-/**
- * Builds a SelectionSource from a TanStack Store.
- * This wrapper is structurally identical to what useSelector expects, avoiding
- * any mismatch between the Store class type and the SelectionSource interface.
- */
-function asSelectionSource<T>(store: Store<T>): {
+function asSelectionSource<T>(store: ReadonlyStore<T>): {
   get: () => T;
   subscribe: (listener: (value: T) => void) => { unsubscribe: () => void };
 } {
@@ -17,30 +12,22 @@ function asSelectionSource<T>(store: Store<T>): {
   };
 }
 
-/**
- * Bridges the framework-agnostic TanStack Store with Vue reactivity.
- * Each selector creates a scoped subscription: components only re-render when
- * the selected slice actually changes.
- */
-export function useActiveCompetition(competition: ActiveCompetition) {
-  const fights = useSelector(asSelectionSource(competition.fights), (state) =>
-    Object.values(state),
-  );
-  const activeFightId = useSelector(asSelectionSource(competition.activeFightId), (id) =>
-    id !== null ? id : null,
-  );
+export function useActiveCompetition(competition: ActiveCompetitionFacade) {
+  const view = useSelector(asSelectionSource(competition.view), (view) => view);
 
   return {
-    fights,
-    activeFightId,
-    openFight: competition.openFight,
-    closeFight: competition.closeFight,
-    cancelFight: competition.cancelFight,
-    validateFight: competition.validateFight,
-    forfeitFight: competition.forfeitFight,
-    assignIppon: competition.assignIppon,
-    removeIppon: competition.removeIppon,
-    assignHansoku: competition.assignHansoku,
-    removeHansoku: competition.removeHansoku,
+    view,
+    openFight: (fightId: Parameters<ActiveCompetitionFacade["openFight"]>[0]) =>
+      competition.openFight(fightId),
+    closeFight: () => competition.closeFight(),
+    cancelActiveFight: () => competition.cancelActiveFight(),
+    validateActiveFight: () => competition.validateActiveFight(),
+    forfeitActiveFight: () => competition.forfeitActiveFight(),
+    recordIppon: (input: Parameters<ActiveCompetitionFacade["recordIppon"]>[0]) =>
+      competition.recordIppon(input),
+    removeScoreEvent: (input: Parameters<ActiveCompetitionFacade["removeScoreEvent"]>[0]) =>
+      competition.removeScoreEvent(input),
+    recordHansoku: (input: Parameters<ActiveCompetitionFacade["recordHansoku"]>[0]) =>
+      competition.recordHansoku(input),
   };
 }
