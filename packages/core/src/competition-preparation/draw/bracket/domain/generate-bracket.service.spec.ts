@@ -11,7 +11,7 @@ function makeFighters(count: number, seriesHeadCount = 0): FighterEntry[] {
 }
 
 function allFightersInBracket(fighters: FighterEntry[]) {
-  const bracket = generateBracket(fighters);
+  const bracket = generateBracket(fighters, true);
 
   const fightersInFirstRound = bracket.rounds[0].matches.flatMap((match) =>
     [match.fighter1, match.fighter2].filter((f): f is FighterEntry => f !== null),
@@ -88,6 +88,65 @@ describe("Building a direct-elimination bracket", () => {
         .slice(1)
         .every((round) => round.matches.every((m) => m.fighter1 === null && m.fighter2 === null)),
     ).toBe(true);
+  });
+
+  it("should place the top two series heads in opposite halves of the bracket, so they cannot meet before the final", () => {
+    const fighters = makeFighters(8, 2);
+
+    const { bracket } = allFightersInBracket(fighters);
+
+    const slotOrder = bracket.rounds[0].matches.flatMap((match) => [
+      match.fighter1,
+      match.fighter2,
+    ]);
+    const firstSeedIndex = slotOrder.findIndex((fighter) => fighter?.id === "fighter-1");
+    const secondSeedIndex = slotOrder.findIndex((fighter) => fighter?.id === "fighter-2");
+
+    const half = bracket.size / 2;
+    expect(firstSeedIndex < half).not.toBe(secondSeedIndex < half);
+  });
+
+  it("should never pair two series heads against each other in the first round when there are enough slots", () => {
+    const fighters = makeFighters(16, 4);
+
+    const { bracket } = allFightersInBracket(fighters);
+
+    const seededIds = new Set(fighters.filter((f) => f.isSeeded).map((f) => f.id));
+    const matchesWithTwoSeeds = bracket.rounds[0].matches.filter(
+      (match) => seededIds.has(match.fighter1?.id ?? "") && seededIds.has(match.fighter2?.id ?? ""),
+    );
+
+    expect(matchesWithTwoSeeds).toHaveLength(0);
+  });
+
+  it("should never pair two byes against each other", () => {
+    const fighters = makeFighters(9, 3);
+
+    const { bracket } = allFightersInBracket(fighters);
+
+    const matchesWithNoFighters = bracket.rounds[0].matches.filter(
+      (match) => match.fighter1 === null && match.fighter2 === null,
+    );
+
+    expect(matchesWithNoFighters).toHaveLength(0);
+    expect(bracket.rounds[0].matches.every((match) => match.fighter1 !== null)).toBe(true);
+  });
+
+  it("should not pair two fighters from the same club in the first round", () => {
+    const fighters: FighterEntry[] = [
+      { id: "fighter-1", isSeeded: false, club: "club A" },
+      { id: "fighter-2", isSeeded: false, club: "club A" },
+      { id: "fighter-3", isSeeded: false, club: "club B" },
+      { id: "fighter-4", isSeeded: false, club: "club B" },
+    ];
+
+    const { bracket } = allFightersInBracket(fighters);
+
+    const matchesWithSameClub = bracket.rounds[0].matches.filter(
+      (match) => match.fighter1 && match.fighter2 && match.fighter1.club === match.fighter2.club,
+    );
+
+    expect(matchesWithSameClub).toHaveLength(0);
   });
 
   it("should throw an error when there are fewer than 2 fighters", () => {

@@ -1,24 +1,30 @@
 import type { FighterEntry } from "../../../../shared/fighter.ts";
 import type { Bracket, BracketMatch, BracketRound } from "./bracket.ts";
 
-export function generateBracket(fighters: FighterEntry[]): Bracket {
+export function generateBracket(
+  fighters: FighterEntry[],
+  shouldSeparateClubMembers: boolean = false,
+): Bracket {
   // --- TESTING FOR INCORRECT INPUTS ---
   if (!Number.isInteger(fighters.length) || fighters.length < 2) {
     throw new Error("cannot create a bracket for less than 2 fighters");
   }
 
-  // --- COMPUTING BRACKET SIZE AND BYES ---
+  // --- COMPUTING BRACKET SIZE ---
   const bracketSize = nextPowerOfTwo(fighters.length);
-  const nbByes = bracketSize - fighters.length;
+  const seedOrder = buildSeedOrder(bracketSize);
 
-  const { byeFighters, remainingFighters } = selectByeFighters(fighters, nbByes);
-  const shuffledFighters = shuffle(remainingFighters);
+  // --- RANKING FIGHTERS (SERIES HEADS FIRST) AND PLACING THEM ON STANDARD SEED POSITIONS ---
+  const rankedFighters = shouldSeparateClubMembers
+    ? rankFightersSeparatedByClubs(fighters, seedOrder)
+    : rankFighters(fighters);
+
+  const slots: (FighterEntry | null)[] = seedOrder.map((rank) =>
+    rank <= rankedFighters.length ? rankedFighters[rank - 1] : null,
+  );
 
   // --- BUILDING FIRST ROUND ---
-  const firstRoundMatches: BracketMatch[] = [
-    ...byeFighters.map((fighter) => ({ fighter1: fighter, fighter2: null })),
-    ...pairFighters(shuffledFighters),
-  ];
+  const firstRoundMatches: BracketMatch[] = pairFighters(slots);
 
   const rounds: BracketRound[] = [{ order: 1, matches: firstRoundMatches }];
 
@@ -50,38 +56,109 @@ function nextPowerOfTwo(n: number): number {
   return power;
 }
 
-function selectByeFighters(
-  fighters: FighterEntry[],
-  nbByes: number,
-): { byeFighters: FighterEntry[]; remainingFighters: FighterEntry[] } {
-  if (nbByes === 0) {
-    return { byeFighters: [], remainingFighters: [...fighters] };
-  }
-
-  // --- SERIES HEADS ARE PRIORITIZED FOR BYES ---
+// --- RANKS FIGHTERS FROM 1 TO N, SERIES HEADS FIRST (SO THEY LAND ON THE STRONGEST SEED SLOTS) ---
+function rankFighters(fighters: FighterEntry[]): FighterEntry[] {
   const seededFighters = fighters.filter((fighter) => fighter.isSeeded);
-  const others = fighters.filter((fighter) => !fighter.isSeeded);
+  const others = shuffle(fighters.filter((fighter) => !fighter.isSeeded));
 
-  const byeFighters = seededFighters.slice(0, nbByes);
-  let remainingPool = [...seededFighters.slice(nbByes), ...others];
-
-  // --- NOT ENOUGH SERIES HEADS: COMPLETE BYES RANDOMLY ---
-  if (byeFighters.length < nbByes) {
-    const nbMissingByes = nbByes - byeFighters.length;
-    const shuffledPool = shuffle(remainingPool);
-
-    byeFighters.push(...shuffledPool.slice(0, nbMissingByes));
-    remainingPool = shuffledPool.slice(nbMissingByes);
-  }
-
-  return { byeFighters, remainingFighters: remainingPool };
+  return [...seededFighters, ...others];
 }
 
-function pairFighters(fighters: FighterEntry[]): BracketMatch[] {
+// --- SAME RANKING AS ABOVE, BUT TRIES TO AVOID PAIRING TWO FIGHTERS FROM THE SAME CLUB
+// AGAINST EACH OTHER IN THE FIRST ROUND (BEST EFFORT: FALLS BACK TO A SAME-CLUB MATCH
+// WHEN THERE IS NO OTHER OPTION LEFT). ---
+function rankFightersSeparatedByClubs(
+  fighters: FighterEntry[],
+  seedOrder: number[],
+): FighterEntry[] {
+  const seededFighters = fighters.filter((fighter) => fighter.isSeeded);
+  const others = shuffle(fighters.filter((fighter) => !fighter.isSeeded));
+
+  const seededCount = seededFighters.length;
+  const totalCount = fighters.length;
+
+  // --- RANKS SEEDEDCOUNT+1..TOTALCOUNT ARE THE ONES "OTHERS" WILL OCCUPY ---
+  const isOtherRank = (rank: number) => rank > seededCount && rank <= totalCount;
+
+  // --- ONLY THE MATCHUPS WHERE BOTH SIDES ARE "OTHERS" NEED A CLUB CHECK: A MATCHUP
+  // AGAINST A SERIES HEAD OR A BYE HAS ONLY ONE SIDE TO FILL, SO THERE IS NO CHOICE TO MAKE. ---
+  const otherVsOtherMatchups = buildMatchupPairs(seedOrder).filter(
+    ([rankA, rankB]) => isOtherRank(rankA) && isOtherRank(rankB),
+  );
+
+  const rankToFighter = new Map<number, FighterEntry>();
+  const remainingFighters = [...others];
+
+  for (const [rankA, rankB] of otherVsOtherMatchups) {
+    const fighterForRankA = remainingFighters.shift()!;
+
+    const differentClubIndex = remainingFighters.findIndex(
+      (fighter) => fighter.club !== fighterForRankA.club,
+    );
+    // --- NO FIGHTER FROM ANOTHER CLUB LEFT: FALL BACK TO A SAME-CLUB MATCH ---
+    const fighterForRankB =
+      differentClubIndex === -1
+        ? remainingFighters.shift()!
+        : remainingFighters.splice(differentClubIndex, 1)[0];
+
+    rankToFighter.set(rankA, fighterForRankA);
+    rankToFighter.set(rankB, fighterForRankB);
+  }
+
+  // --- REMAINING "OTHER" RANKS ARE PAIRED WITH A SERIES HEAD OR A BYE: NO CONSTRAINT TO APPLY ---
+  for (let rank = seededCount + 1; rank <= totalCount; rank++) {
+    if (!rankToFighter.has(rank)) {
+      rankToFighter.set(rank, remainingFighters.shift()!);
+    }
+  }
+
+  const orderedOthers = Array.from(
+    { length: others.length },
+    (_, index) => rankToFighter.get(seededCount + 1 + index)!,
+  );
+
+  return [...seededFighters, ...orderedOthers];
+}
+
+// --- STANDARD BRACKET SEEDING ORDER ---
+// Recursively builds the seed-number placed at each physical slot (1-indexed), so that:
+// - the two strongest seeds are always in opposite halves of the bracket (and so on recursively),
+// - byes (seed numbers greater than the number of real fighters) always land on the strongest
+//   remaining seeds first, without ever pairing two byes against each other.
+function buildSeedOrder(bracketSize: number): number[] {
+  let order = [1];
+  let size = 1;
+
+  while (size < bracketSize) {
+    size *= 2;
+    order = order.flatMap((seed) => [seed, size + 1 - seed]);
+  }
+
+  return order;
+}
+
+// --- TURNS A SEED ORDER INTO THE LIST OF RANK-VS-RANK MATCHUPS IT PRODUCES IN THE FIRST ROUND ---
+function buildMatchupPairs(order: number[]): [number, number][] {
+  const pairs: [number, number][] = [];
+
+  for (let i = 0; i < order.length; i += 2) {
+    pairs.push([order[i], order[i + 1]]);
+  }
+
+  return pairs;
+}
+
+function pairFighters(slots: (FighterEntry | null)[]): BracketMatch[] {
   const matches: BracketMatch[] = [];
 
-  for (let i = 0; i < fighters.length; i += 2) {
-    matches.push({ fighter1: fighters[i], fighter2: fighters[i + 1] });
+  for (let i = 0; i < slots.length; i += 2) {
+    const first = slots[i];
+    const second = slots[i + 1];
+
+    // --- A BYE ALWAYS SITS AS fighter2, NEVER AS fighter1 ---
+    matches.push(
+      first === null ? { fighter1: second, fighter2: null } : { fighter1: first, fighter2: second },
+    );
   }
 
   return matches;
