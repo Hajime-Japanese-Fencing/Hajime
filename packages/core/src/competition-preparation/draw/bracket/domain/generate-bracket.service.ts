@@ -48,6 +48,54 @@ export function generateBracket(
   return { size: bracketSize, rounds };
 }
 
+export function advanceWinner(
+  bracket: Bracket,
+  roundOrder: number,
+  matchIndex: number,
+  winner: FighterEntry,
+): Bracket {
+  const currentRound = bracket.rounds.find((round) => round.order === roundOrder);
+  if (!currentRound) {
+    throw new Error("No such round");
+  }
+
+  const match = currentRound.matches[matchIndex];
+  if (winner !== match.fighter1 && winner !== match.fighter2) {
+    throw new Error("Winner must participate in the match");
+  }
+
+  // --- THE FINAL HAS NO NEXT ROUND TO PROPAGATE TO: NOTHING ELSE TO DO ---
+  // TODO: handle what to do with the tournament champion eventually.
+  if (currentRound.matches.length === 1) {
+    return bracket;
+  }
+
+  const nextRoundOrder = roundOrder + 1;
+  const nextMatchIndex = Math.floor(matchIndex / 2);
+  // --- EVEN matchIndex -> fighter1 OF THE NEXT MATCH, ODD -> fighter2 ---
+  const nextMatchSlot = matchIndex % 2 === 0 ? "fighter1" : "fighter2";
+
+  // --- REBUILD ONLY THE PATH THAT CHANGES (BRACKET -> ROUND -> MATCHES -> MATCH), EVERYTHING
+  // ELSE IS REUSED AS-IS SO WE NEVER MUTATE THE BRACKET PASSED IN. ---
+  const rounds = bracket.rounds.map((round) => {
+    if (round.order !== nextRoundOrder) {
+      return round;
+    }
+
+    const matches = round.matches.map((nextMatch, index) => {
+      if (index !== nextMatchIndex) {
+        return nextMatch;
+      }
+
+      return { ...nextMatch, [nextMatchSlot]: winner };
+    });
+
+    return { ...round, matches };
+  });
+
+  return { ...bracket, rounds };
+}
+
 function nextPowerOfTwo(n: number): number {
   let power = 1;
   while (power < n) {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vite-plus/test";
-import { generateBracket } from "./generate-bracket.service.ts";
+import { generateBracket, advanceWinner } from "./generate-bracket.service.ts";
 import type { FighterEntry } from "../../../../shared/fighter.ts";
 
 function makeFighters(count: number, seriesHeadCount = 0): FighterEntry[] {
@@ -149,6 +149,41 @@ describe("Building a direct-elimination bracket", () => {
     expect(matchesWithSameClub).toHaveLength(0);
   });
 
+  // Est-ce un comportement que l'on souhaite conserver ou bien corriger ?
+  it(
+    "should allow a series head to face a fighter from their own club in the first round " +
+      "(known limitation, accepted: club separation only applies between two non-seeded " +
+      "fighters, since seed placement takes priority)",
+    () => {
+      // 8 fighters, no byes: 1 series head (club A) + 7 others (4 club A, 3 club B).
+      // The 3 "other vs other" matchups always consume exactly 1 club A and 1 club B fighter
+      // each (there are exactly enough of both), so the single leftover fighter placed against
+      // the series head is deterministically from club A too, regardless of the shuffle.
+      const fighters: FighterEntry[] = [
+        { id: "series-head", isSeeded: true, club: "club A" },
+        { id: "other-a-1", isSeeded: false, club: "club A" },
+        { id: "other-a-2", isSeeded: false, club: "club A" },
+        { id: "other-a-3", isSeeded: false, club: "club A" },
+        { id: "other-a-4", isSeeded: false, club: "club A" },
+        { id: "other-b-1", isSeeded: false, club: "club B" },
+        { id: "other-b-2", isSeeded: false, club: "club B" },
+        { id: "other-b-3", isSeeded: false, club: "club B" },
+      ];
+
+      const { bracket } = allFightersInBracket(fighters);
+
+      const seriesHeadMatch = bracket.rounds[0].matches.find(
+        (match) => match.fighter1?.id === "series-head" || match.fighter2?.id === "series-head",
+      )!;
+      const opponent =
+        seriesHeadMatch.fighter1?.id === "series-head"
+          ? seriesHeadMatch.fighter2
+          : seriesHeadMatch.fighter1;
+
+      expect(opponent?.club).toBe("club A");
+    },
+  );
+
   it("should throw an error when there are fewer than 2 fighters", () => {
     expect(() => generateBracket(makeFighters(1))).toThrow(
       "cannot create a bracket for less than 2 fighters",
@@ -157,5 +192,67 @@ describe("Building a direct-elimination bracket", () => {
 
   it("should throw an error for an empty fighters list", () => {
     expect(() => generateBracket([])).toThrow("cannot create a bracket for less than 2 fighters");
+  });
+});
+
+describe("Advancing a winner to the next round", () => {
+  it("should place the first match's winner in fighter1 of the next round's first match", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters);
+
+    const firstMatch = bracket.rounds[0].matches[0];
+    const winner = firstMatch.fighter1!;
+
+    const updatedBracket = advanceWinner(bracket, 1, 0, winner);
+
+    expect(updatedBracket.rounds[1].matches[0].fighter1).toEqual(winner);
+    expect(updatedBracket.rounds[1].matches[0].fighter2).toBeNull();
+  });
+
+  it("should place the second match's winner in fighter2 of the next round's first match", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters);
+
+    const secondMatch = bracket.rounds[0].matches[1];
+    const winner = secondMatch.fighter1!;
+
+    const updatedBracket = advanceWinner(bracket, 1, 1, winner);
+
+    expect(updatedBracket.rounds[1].matches[0].fighter2).toEqual(winner);
+    expect(updatedBracket.rounds[1].matches[0].fighter1).toBeNull();
+  });
+
+  it("should throw an error when the given winner did not fight in that match", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters);
+
+    const impostor: FighterEntry = { id: "not-in-this-bracket", isSeeded: false, club: "club A" };
+
+    expect(() => advanceWinner(bracket, 1, 0, impostor)).toThrow();
+  });
+
+  it("should throw an error when the given round does not exist", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters);
+
+    const winner = bracket.rounds[0].matches[0].fighter1!;
+
+    expect(() => advanceWinner(bracket, 42, 0, winner)).toThrow();
+  });
+
+  it("should not mutate the given bracket, returning a new one instead", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters);
+
+    const winner = bracket.rounds[0].matches[0].fighter1!;
+    const originalNextRoundMatch = bracket.rounds[1].matches[0];
+
+    const updatedBracket = advanceWinner(bracket, 1, 0, winner);
+
+    expect(updatedBracket).not.toBe(bracket);
+    expect(updatedBracket.rounds).not.toBe(bracket.rounds);
+    expect(bracket.rounds[1].matches[0]).toBe(originalNextRoundMatch);
+    expect(bracket.rounds[1].matches[0].fighter1).toBeNull();
+    expect(bracket.rounds[1].matches[0].fighter2).toBeNull();
   });
 });
