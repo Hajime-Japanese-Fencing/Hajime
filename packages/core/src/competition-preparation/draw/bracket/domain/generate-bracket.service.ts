@@ -4,6 +4,7 @@ import type { Bracket, BracketMatch, BracketRound } from "./bracket.ts";
 export function generateBracket(
   fighters: FighterEntry[],
   shouldSeparateClubMembers: boolean = false,
+  shouldGenerateThirdPlaceMatch: boolean = false,
 ): Bracket {
   // --- TESTING FOR INCORRECT INPUTS ---
   if (!Number.isInteger(fighters.length) || fighters.length < 2) {
@@ -45,7 +46,13 @@ export function generateBracket(
     order++;
   }
 
-  let bracket: Bracket = { size: bracketSize, rounds };
+  // --- A THIRD-PLACE MATCH NEEDS TWO SEMI-FINAL LOSERS TO EXIST, I.E. AT LEAST A
+  // SEMI-FINAL ROUND: WITH ONLY 2 FIGHTERS THE FINAL IS THE ONLY ROUND, SO THE OPTION
+  // IS SILENTLY IGNORED RATHER THAN PRODUCING A MATCH THAT COULD NEVER BE FILLED. ---
+  const thirdPlaceMatch: BracketMatch | null =
+    shouldGenerateThirdPlaceMatch && rounds.length >= 2 ? { fighter1: null, fighter2: null } : null;
+
+  let bracket: Bracket = { size: bracketSize, rounds, thirdPlaceMatch };
 
   for (let matchIndex = 0; matchIndex < firstRoundMatches.length; matchIndex++) {
     if (firstRoundMatches[matchIndex].fighter2 === null) {
@@ -81,7 +88,7 @@ export function advanceWinner(
 
   // --- THE FINAL HAS NO NEXT ROUND TO PROPAGATE TO: NOTHING ELSE TO DO ---
   // TODO: handle what to do with the tournament champion eventually.
-  if (currentRound.matches.length === 1) {
+  if (roundOrder === bracket.rounds.length) {
     return bracket;
   }
 
@@ -109,6 +116,42 @@ export function advanceWinner(
   });
 
   return { ...bracket, rounds };
+}
+
+// --- ASSIGNS A SEMI-FINAL LOSER TO THE THIRD-PLACE MATCH. semiFinalMatchIndex IS THE INDEX
+// OF THE SEMI-FINAL MATCH THE LOSER CAME FROM (0 OR 1): THE SAME EVEN/ODD -> fighter1/fighter2
+// SLOT RULE USED BY advanceWinner APPLIES HERE. ---
+export function assignThirdPlaceParticipant(
+  bracket: Bracket,
+  semiFinalMatchIndex: number,
+  loser: FighterEntry,
+): Bracket {
+  if (!bracket.thirdPlaceMatch) {
+    throw new Error("This bracket has no third-place match");
+  }
+
+  const semiFinalRoundOrder = bracket.rounds.length - 1;
+  const semiFinalRound = bracket.rounds.find((round) => round.order === semiFinalRoundOrder);
+  if (!semiFinalRound) {
+    throw new Error("No such round");
+  }
+
+  const semiFinalMatch = semiFinalRound.matches[semiFinalMatchIndex];
+  if (!semiFinalMatch) {
+    throw new Error("No such match");
+  }
+
+  if (loser.id !== semiFinalMatch.fighter1?.id && loser.id !== semiFinalMatch.fighter2?.id) {
+    throw new Error("Loser must have fought in that semi-final match");
+  }
+
+  // --- EVEN semiFinalMatchIndex -> fighter1 OF THE THIRD-PLACE MATCH, ODD -> fighter2 ---
+  const thirdPlaceSlot = semiFinalMatchIndex % 2 === 0 ? "fighter1" : "fighter2";
+
+  return {
+    ...bracket,
+    thirdPlaceMatch: { ...bracket.thirdPlaceMatch, [thirdPlaceSlot]: loser },
+  };
 }
 
 function nextPowerOfTwo(n: number): number {
@@ -163,7 +206,6 @@ function rankFightersSeparatedByClubs(
       differentClubIndex === -1
         ? remainingFighters.shift()!
         : remainingFighters.splice(differentClubIndex, 1)[0];
-
     rankToFighter.set(rankA, fighterForRankA);
     rankToFighter.set(rankB, fighterForRankB);
   }

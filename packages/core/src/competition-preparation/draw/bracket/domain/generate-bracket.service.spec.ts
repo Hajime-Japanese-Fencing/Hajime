@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vite-plus/test";
-import { generateBracket, advanceWinner } from "./generate-bracket.service.ts";
+import {
+  generateBracket,
+  advanceWinner,
+  assignThirdPlaceParticipant,
+} from "./generate-bracket.service.ts";
 import type { FighterEntry } from "../../../../shared/fighter.ts";
 import type { BracketMatch } from "./bracket.ts";
 
@@ -361,5 +365,104 @@ describe("Automatically advancing byes at generation time", () => {
     const isFullyEmpty = (match: BracketMatch) =>
       match.fighter1 === null && match.fighter2 === null;
     expect(bracket.rounds[1].matches.every(isFullyEmpty)).toBe(true);
+  });
+});
+
+describe("Optionally generating a third-place match", () => {
+  it("should not generate a third-place match by default", () => {
+    const fighters = makeFighters(8);
+
+    const bracket = generateBracket(fighters);
+
+    expect(bracket.thirdPlaceMatch).toBeNull();
+  });
+
+  it("should generate an empty third-place match when explicitly requested", () => {
+    const fighters = makeFighters(8);
+
+    const bracket = generateBracket(fighters, false, true);
+
+    expect(bracket.thirdPlaceMatch).toEqual({ fighter1: null, fighter2: null });
+  });
+
+  it("should silently ignore the option when there are only 2 fighters (no semi-finals)", () => {
+    const fighters = makeFighters(2);
+
+    const bracket = generateBracket(fighters, false, true);
+
+    expect(bracket.thirdPlaceMatch).toBeNull();
+  });
+});
+
+describe("Assigning a third-place participant", () => {
+  it("should place the first semi-final's loser in fighter1 of the third-place match", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters, false, true);
+
+    const loser = bracket.rounds[0].matches[0].fighter2!;
+
+    const updatedBracket = assignThirdPlaceParticipant(bracket, 0, loser);
+
+    expect(updatedBracket.thirdPlaceMatch?.fighter1?.id).toBe(loser.id);
+    expect(updatedBracket.thirdPlaceMatch?.fighter2).toBeNull();
+  });
+
+  it("should place the second semi-final's loser in fighter2 of the third-place match", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters, false, true);
+
+    const loser = bracket.rounds[0].matches[1].fighter2!;
+
+    const updatedBracket = assignThirdPlaceParticipant(bracket, 1, loser);
+
+    expect(updatedBracket.thirdPlaceMatch?.fighter2?.id).toBe(loser.id);
+    expect(updatedBracket.thirdPlaceMatch?.fighter1).toBeNull();
+  });
+
+  it("should keep both losers when assigning them one after the other", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters, false, true);
+
+    const firstLoser = bracket.rounds[0].matches[0].fighter2!;
+    const secondLoser = bracket.rounds[0].matches[1].fighter2!;
+
+    const afterFirstLoser = assignThirdPlaceParticipant(bracket, 0, firstLoser);
+    const afterBothLosers = assignThirdPlaceParticipant(afterFirstLoser, 1, secondLoser);
+
+    expect(afterBothLosers.thirdPlaceMatch?.fighter1?.id).toBe(firstLoser.id);
+    expect(afterBothLosers.thirdPlaceMatch?.fighter2?.id).toBe(secondLoser.id);
+  });
+
+  it("should throw an error when the bracket has no third-place match", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters); // no third-place match requested
+
+    const loser = bracket.rounds[0].matches[0].fighter2!;
+
+    expect(() => assignThirdPlaceParticipant(bracket, 0, loser)).toThrow(
+      "This bracket has no third-place match",
+    );
+  });
+
+  it("should throw an error when the given fighter did not fight in that semi-final", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters, false, true);
+
+    const impostor: FighterEntry = { id: "not-in-this-bracket", isSeeded: false, club: "club A" };
+
+    expect(() => assignThirdPlaceParticipant(bracket, 0, impostor)).toThrow();
+  });
+
+  it("should not mutate the given bracket, returning a new one instead", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters, false, true);
+
+    const loser = bracket.rounds[0].matches[0].fighter2!;
+
+    const updatedBracket = assignThirdPlaceParticipant(bracket, 0, loser);
+
+    expect(updatedBracket).not.toBe(bracket);
+    expect(updatedBracket.thirdPlaceMatch).not.toBe(bracket.thirdPlaceMatch);
+    expect(bracket.thirdPlaceMatch).toEqual({ fighter1: null, fighter2: null });
   });
 });

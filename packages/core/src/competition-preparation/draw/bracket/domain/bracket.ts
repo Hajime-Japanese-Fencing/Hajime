@@ -3,6 +3,7 @@ import type { FighterEntry } from "../../../../shared/fighter.ts";
 export interface Bracket {
   size: number;
   rounds: BracketRound[];
+  thirdPlaceMatch: BracketMatch | null;
 }
 
 export interface BracketRound {
