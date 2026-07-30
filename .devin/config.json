@@ -1,12 +1,1 @@
-{
-  "mcpServers": {
-    "daisyui-github": {
-      "transport": "http",
-      "url": "https://gitmcp.io/saadeghi/daisyui"
-    },
-    "vue-docs": {
-      "transport": "http",
-      "url": "https://mcp.vue-mcp.org/mcp"
-    }
-  }
-}
+{}
