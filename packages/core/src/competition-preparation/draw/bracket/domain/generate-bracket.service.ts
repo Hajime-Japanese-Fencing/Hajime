@@ -60,7 +60,11 @@ export function advanceWinner(
   }
 
   const match = currentRound.matches[matchIndex];
-  if (winner !== match.fighter1 && winner !== match.fighter2) {
+  if (!match) {
+    throw new Error("No such match");
+  }
+
+  if (winner.id !== match.fighter1?.id && winner.id !== match.fighter2?.id) {
     throw new Error("Winner must participate in the match");
   }
 

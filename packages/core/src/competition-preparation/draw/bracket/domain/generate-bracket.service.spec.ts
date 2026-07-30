@@ -231,6 +231,21 @@ describe("Advancing a winner to the next round", () => {
     expect(() => advanceWinner(bracket, 1, 0, impostor)).toThrow();
   });
 
+  it(
+    "should accept a winner that is a distinct object with the same id as the fighter " +
+      "who actually fought (e.g. reloaded from storage), not just the exact same reference",
+    () => {
+      const fighters = makeFighters(4);
+      const bracket = generateBracket(fighters);
+
+      const actualFighter = bracket.rounds[0].matches[0].fighter1!;
+      // --- SAME DATA, DIFFERENT OBJECT REFERENCE (SIMULATES A ROUND-TRIP THROUGH STORAGE) ---
+      const reloadedWinner: FighterEntry = { ...actualFighter };
+
+      expect(() => advanceWinner(bracket, 1, 0, reloadedWinner)).not.toThrow();
+    },
+  );
+
   it("should throw an error when the given round does not exist", () => {
     const fighters = makeFighters(4);
     const bracket = generateBracket(fighters);
@@ -238,6 +253,25 @@ describe("Advancing a winner to the next round", () => {
     const winner = bracket.rounds[0].matches[0].fighter1!;
 
     expect(() => advanceWinner(bracket, 42, 0, winner)).toThrow();
+  });
+
+  it("should throw a clear error when matchIndex is out of bounds for the round", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters);
+
+    const winner = bracket.rounds[0].matches[0].fighter1!;
+
+    // --- ROUND 1 ONLY HAS 2 MATCHES (INDICES 0 AND 1): 5 IS OUT OF BOUNDS ---
+    expect(() => advanceWinner(bracket, 1, 5, winner)).toThrow("No such match");
+  });
+
+  it("should throw a clear error when matchIndex is negative", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters);
+
+    const winner = bracket.rounds[0].matches[0].fighter1!;
+
+    expect(() => advanceWinner(bracket, 1, -1, winner)).toThrow("No such match");
   });
 
   it("should not mutate the given bracket, returning a new one instead", () => {
@@ -254,5 +288,44 @@ describe("Advancing a winner to the next round", () => {
     expect(bracket.rounds[1].matches[0]).toBe(originalNextRoundMatch);
     expect(bracket.rounds[1].matches[0].fighter1).toBeNull();
     expect(bracket.rounds[1].matches[0].fighter2).toBeNull();
+  });
+
+  it("should keep both winners when advancing two matches that feed the same next match", () => {
+    const fighters = makeFighters(4);
+    const bracket = generateBracket(fighters);
+
+    const winnerOfMatch0 = bracket.rounds[0].matches[0].fighter1!;
+    const winnerOfMatch1 = bracket.rounds[0].matches[1].fighter1!;
+
+    // --- THE SECOND CALL MUST BUILD ON TOP OF THE FIRST CALL'S RESULT, NOT ON THE
+    // ORIGINAL BRACKET, SINCE advanceWinner IS PURE AND RETURNS A NEW BRACKET EACH TIME. ---
+    const bracketAfterFirstWinner = advanceWinner(bracket, 1, 0, winnerOfMatch0);
+    const bracketAfterBothWinners = advanceWinner(bracketAfterFirstWinner, 1, 1, winnerOfMatch1);
+
+    const nextMatch = bracketAfterBothWinners.rounds[1].matches[0];
+
+    expect(nextMatch.fighter1?.id).toBe(winnerOfMatch0.id);
+    expect(nextMatch.fighter2?.id).toBe(winnerOfMatch1.id);
+  });
+
+  it("should propagate a winner all the way to the final across several rounds", () => {
+    const fighters = makeFighters(8);
+    const bracket = generateBracket(fighters);
+
+    // --- ROUND 1 (4 MATCHES) -> ROUND 2 (2 MATCHES) -> ROUND 3, THE FINAL (1 MATCH) ---
+    const winnerOfMatch0 = bracket.rounds[0].matches[0].fighter1!;
+    const winnerOfMatch1 = bracket.rounds[0].matches[1].fighter1!;
+
+    const afterRound1Match0 = advanceWinner(bracket, 1, 0, winnerOfMatch0);
+    const afterRound1Match1 = advanceWinner(afterRound1Match0, 1, 1, winnerOfMatch1);
+
+    // --- ROUND 2's FIRST MATCH NOW OPPOSES winnerOfMatch0 (fighter1) AND winnerOfMatch1
+    // (fighter2): winnerOfMatch0 GOES ON TO WIN THAT MATCH TOO. ---
+    const afterRound2Match0 = advanceWinner(afterRound1Match1, 2, 0, winnerOfMatch0);
+
+    const finalMatch = afterRound2Match0.rounds[2].matches[0];
+
+    expect(finalMatch.fighter1?.id).toBe(winnerOfMatch0.id);
+    expect(finalMatch.fighter2).toBeNull();
   });
 });
