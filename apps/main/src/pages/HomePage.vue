@@ -2,8 +2,8 @@
 import { useRouter } from "vue-router";
 import { AlertError, TablePlaceholder } from "@hajime/ui";
 import { useContainer } from "../bootstrap/container/useContainer.ts";
-import { useCompetitions } from "../competitions/queries/use-competitions.ts";
-import CompetitionList from "../competitions/components/CompetitionList.vue";
+import CompetitionList from "../features/competition-overview/components/CompetitionList.vue";
+import { useCompetitions } from "../features/competition-overview/queries/use-competitions.ts";
 
 const router = useRouter();
 const { retrieveCompetitions } = useContainer();
