@@ -4,8 +4,8 @@ import { FightList } from "@hajime/ui";
 import type { AssignIpponEvent, Fight } from "@hajime/ui";
 import { makeCompetitionId, type FightId, type ScoreEventId, type Side } from "@hajime/core";
 import { useContainer } from "./bootstrap/container/useContainer.ts";
-import { useActiveCompetition } from "./active-competition/composables/use-active-competition.ts";
-import { presentFight } from "./active-competition/presenters/fight-record-to-fight.presenter.ts";
+import { useActiveCompetition } from "./features/active-competition/composables/use-active-competition.ts";
+import { presentFight } from "./features/active-competition/presenters/fight-record-to-fight.presenter.ts";
 
 const container = useContainer();
 const activeCompetition = useActiveCompetition(container.activeCompetition);

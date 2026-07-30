@@ -6,10 +6,10 @@ import {
   type CompetitionId,
   type RetrieveCompetitionsQuery,
 } from "@hajime/core";
-import { DemoRetrieveCompetitionsAdapter } from "../../competitions/adapters/demo-retrieve-competitions.adapter.ts";
-import { DemoLoadCompetitionFightsAdapter } from "../../active-competition/adapters/demo-load-competition-fights.adapter.ts";
-import { DemoSaveFightResultAdapter } from "../../active-competition/adapters/demo-save-fight-result.adapter.ts";
-import { DemoSaveGeneratedFightsAdapter } from "../../active-competition/adapters/demo-save-generated-fights.adapter.ts";
+import { DemoRetrieveCompetitionsAdapter } from "../../features/competition-overview/adapters/demo-retrieve-competitions.adapter.ts";
+import { DemoLoadCompetitionFightsAdapter } from "../../features/active-competition/adapters/demo-load-competition-fights.adapter.ts";
+import { DemoSaveFightResultAdapter } from "../../features/active-competition/adapters/demo-save-fight-result.adapter.ts";
+import { DemoSaveGeneratedFightsAdapter } from "../../features/active-competition/adapters/demo-save-generated-fights.adapter.ts";
 
 export interface AppContainer {
   retrieveCompetitions: RetrieveCompetitionsQuery;
