@@ -45,7 +45,18 @@ export function generateBracket(
     order++;
   }
 
-  return { size: bracketSize, rounds };
+  let bracket: Bracket = { size: bracketSize, rounds };
+
+  for (let matchIndex = 0; matchIndex < firstRoundMatches.length; matchIndex++) {
+    if (firstRoundMatches[matchIndex].fighter2 === null) {
+      if (firstRoundMatches[matchIndex].fighter1 === null) {
+        throw new Error("Should not happen, most likely an issue with pairFighters");
+      }
+      bracket = advanceWinner(bracket, 1, matchIndex, firstRoundMatches[matchIndex].fighter1!);
+    }
+  }
+
+  return bracket;
 }
 
 export function advanceWinner(

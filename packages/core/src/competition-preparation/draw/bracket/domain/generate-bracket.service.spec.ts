@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vite-plus/test";
 import { generateBracket, advanceWinner } from "./generate-bracket.service.ts";
 import type { FighterEntry } from "../../../../shared/fighter.ts";
+import type { BracketMatch } from "./bracket.ts";
 
 function makeFighters(count: number, seriesHeadCount = 0): FighterEntry[] {
   return Array.from({ length: count }, (_, i) => ({
@@ -327,5 +328,38 @@ describe("Advancing a winner to the next round", () => {
 
     expect(finalMatch.fighter1?.id).toBe(winnerOfMatch0.id);
     expect(finalMatch.fighter2).toBeNull();
+  });
+});
+
+describe("Automatically advancing byes at generation time", () => {
+  it("should place every bye fighter into their round 2 match once the bracket is built", () => {
+    const fighters = makeFighters(11); // bracketSize 16, 5 byes in round 1
+
+    const bracket = generateBracket(fighters);
+
+    const byeMatches = bracket.rounds[0].matches
+      .map((match, index) => ({ match, index }))
+      .filter(({ match }) => match.fighter2 === null);
+
+    // --- SANITY CHECK: THIS SCENARIO IS SUPPOSED TO PRODUCE BYES IN THE FIRST PLACE ---
+    expect(byeMatches.length).toBe(5);
+
+    for (const { match, index } of byeMatches) {
+      const nextMatchIndex = Math.floor(index / 2);
+      const nextMatchSlot = index % 2 === 0 ? "fighter1" : "fighter2";
+      const nextMatch = bracket.rounds[1].matches[nextMatchIndex];
+
+      expect(nextMatch[nextMatchSlot]?.id).toBe(match.fighter1!.id);
+    }
+  });
+
+  it("should leave round 2 fully empty when there are no byes to advance", () => {
+    const fighters = makeFighters(8); // bracketSize 8, a power of two: no byes
+
+    const bracket = generateBracket(fighters);
+
+    const isFullyEmpty = (match: BracketMatch) =>
+      match.fighter1 === null && match.fighter2 === null;
+    expect(bracket.rounds[1].matches.every(isFullyEmpty)).toBe(true);
   });
 });
