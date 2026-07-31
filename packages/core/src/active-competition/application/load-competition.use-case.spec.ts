@@ -42,6 +42,7 @@ describe("Loading a competition", () => {
       fightsById: { [fight.id]: fight },
       activeFightId: null,
       nextScoreEventId: 5,
+      nextFightId: fight.id + 1,
     });
   });
 });

@@ -20,6 +20,7 @@ export class FakeActiveCompetitionState implements ActiveCompetitionState {
       fightsById: {},
       activeFightId: null,
       nextScoreEventId: 1,
+      nextFightId: 1,
       ...initial,
     };
   }
@@ -33,6 +34,7 @@ export class FakeActiveCompetitionState implements ActiveCompetitionState {
     bracketRounds?: BracketRoundRecord[];
     fights: FightRecord[];
     nextScoreEventId: number;
+    nextFightId: number;
   }): void {
     this.events.push("state:replace");
     this.state = {
@@ -41,6 +43,7 @@ export class FakeActiveCompetitionState implements ActiveCompetitionState {
       fightsById: toRecord(data.fights),
       activeFightId: null,
       nextScoreEventId: data.nextScoreEventId,
+      nextFightId: data.nextFightId,
     };
   }
 
@@ -57,6 +60,20 @@ export class FakeActiveCompetitionState implements ActiveCompetitionState {
   setActiveFightId(fightId: FightId | null): void {
     this.events.push("state:set-active-fight");
     this.state = { ...this.state, activeFightId: fightId };
+  }
+
+  advanceBracket(input: {
+    bracketRounds: BracketRoundRecord[];
+    newFights: FightRecord[];
+    nextFightId: number;
+  }): void {
+    this.events.push("state:advance-bracket");
+    this.state = {
+      ...this.state,
+      bracketRoundsById: { ...this.state.bracketRoundsById, ...toRecord(input.bracketRounds) },
+      fightsById: { ...this.state.fightsById, ...toRecord(input.newFights) },
+      nextFightId: input.nextFightId,
+    };
   }
 }
 

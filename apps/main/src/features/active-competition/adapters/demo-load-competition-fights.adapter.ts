@@ -21,9 +21,11 @@ const POOL_FIGHTER_NAMES = [
   ["yamaguchi", "matsumoto", "inoue", "kimura"],
 ];
 
-// --- THE BRACKET PHASE DEMO STARTS DIRECTLY AT THE QUARTER-FINALS (8 FIGHTERS), SO THE
-// DEMO DRAW ONLY NEEDS QUARTER + SEMI + FINAL ROUNDS (4 + 2 + 1 FIGHTS) RATHER THAN THE
-// FULL BRACKET GENERATED FROM THE POOL RESULTS. ---
+// --- THE BRACKET PHASE DEMO STARTS DIRECTLY AT THE QUARTER-FINALS (8 FIGHTERS). TWO OF THE
+// FOUR QUARTER-FINALS ARE ALREADY FINISHED, WHICH LETS ONE SEMI-FINAL BE PROMOTED INTO A REAL,
+// PLAYABLE FIGHT (BOTH ITS FIGHTERS ARE NOW KNOWN) WHILE THE OTHER SEMI-FINAL AND THE FINAL
+// STAY AS PENDING MATCHES — THIS IS EXACTLY THE STATE advanceBracket PRODUCES AS RESULTS COME
+// IN, SO THE DEMO DOUBLES AS A FIXTURE FOR IT RATHER THAN SOMETHING HAND-WAVED. ---
 const BRACKET_FIGHTER_NAMES = [
   "hayashi",
   "shimizu",
@@ -59,6 +61,7 @@ export class DemoLoadCompetitionFightsAdapter implements CompetitionDrawLoader {
             id: fightId,
             poolId,
             bracketRoundId: null,
+            bracketMatchIndex: null,
             redFighterId: fighterIds[i],
             whiteFighterId: fighterIds[j],
             status: finished ? FightStatus.Finished : FightStatus.Waiting,
@@ -87,50 +90,68 @@ export class DemoLoadCompetitionFightsAdapter implements CompetitionDrawLoader {
       return { id: poolId, fighterIds, fightIds };
     });
 
-    const bracketFighterIds = BRACKET_FIGHTER_NAMES.map((name) => makeFighterId(name));
+    const [hayashi, shimizu, yamashita, mori, abe, ikeda, hashimoto, ishikawa] =
+      BRACKET_FIGHTER_NAMES.map((name) => makeFighterId(name));
 
     const quarterFinalId = makeBracketRoundId(1);
     const semiFinalId = makeBracketRoundId(2);
     const finalId = makeBracketRoundId(3);
 
-    const quarterFinalFightIds: FightId[] = [];
-    for (let i = 0; i < 4; i++) {
-      const fightId = makeFightId(nextFightId++);
-      quarterFinalFightIds.push(fightId);
+    // --- QUARTER-FINALS: MATCH 0 AND 1 ALREADY PLAYED (SO THEIR WINNERS CAN FEED SEMI-FINAL
+    // MATCH 0), MATCHES 2 AND 3 STILL WAITING. ---
+    const quarterFinalMatchups: [string, string, boolean][] = [
+      [hayashi, shimizu, true],
+      [yamashita, mori, true],
+      [abe, ikeda, false],
+      [hashimoto, ishikawa, false],
+    ];
 
-      fights.push({
-        id: fightId,
-        poolId: null,
-        bracketRoundId: quarterFinalId,
-        redFighterId: bracketFighterIds[i * 2],
-        whiteFighterId: bracketFighterIds[i * 2 + 1],
-        // --- HALF OF THE QUARTER-FINALS ALREADY PLAYED, TO PREVIEW A PARTIALLY-FILLED
-        // PROGRESS BAR ON THE BRACKET PHASE TOO. ---
-        status: i < 2 ? FightStatus.Finished : FightStatus.Waiting,
-        scoreEvents: [],
-      });
-    }
+    const quarterFinalFightIds: FightId[] = quarterFinalMatchups.map(
+      ([redFighterId, whiteFighterId, finished], matchIndex) => {
+        const fightId = makeFightId(nextFightId++);
 
-    const semiFinalFightIds = [makeFightId(nextFightId++), makeFightId(nextFightId++)];
-    semiFinalFightIds.forEach((fightId, index) => {
-      fights.push({
-        id: fightId,
-        poolId: null,
-        bracketRoundId: semiFinalId,
-        redFighterId: bracketFighterIds[index * 4],
-        whiteFighterId: bracketFighterIds[index * 4 + 2],
-        status: FightStatus.Waiting,
-        scoreEvents: [],
-      });
-    });
+        fights.push({
+          id: fightId,
+          poolId: null,
+          bracketRoundId: quarterFinalId,
+          bracketMatchIndex: matchIndex,
+          redFighterId: makeFighterId(redFighterId),
+          whiteFighterId: makeFighterId(whiteFighterId),
+          status: finished ? FightStatus.Finished : FightStatus.Waiting,
+          scoreEvents: finished
+            ? [
+                {
+                  id: makeScoreEventId(nextFightId * 10 + 1),
+                  fighterId: makeFighterId(redFighterId),
+                  type: "ippon",
+                  code: "M",
+                  firstBlood: true,
+                },
+                {
+                  id: makeScoreEventId(nextFightId * 10 + 2),
+                  fighterId: makeFighterId(redFighterId),
+                  type: "ippon",
+                  code: "K",
+                  firstBlood: false,
+                },
+              ]
+            : [],
+        });
 
-    const finalFightId = makeFightId(nextFightId++);
+        return fightId;
+      },
+    );
+
+    // --- SEMI-FINAL MATCH 0 IS ALREADY PROMOTED (hayashi vs yamashita, THE TWO FINISHED
+    // QUARTER-FINALS' WINNERS) — MATCH 1 IS STILL PENDING ON MATCHES 2 AND 3. ---
+    const semiFinalFightId = makeFightId(nextFightId++);
     fights.push({
-      id: finalFightId,
+      id: semiFinalFightId,
       poolId: null,
-      bracketRoundId: finalId,
-      redFighterId: bracketFighterIds[0],
-      whiteFighterId: bracketFighterIds[4],
+      bracketRoundId: semiFinalId,
+      bracketMatchIndex: 0,
+      redFighterId: hayashi,
+      whiteFighterId: yamashita,
       status: FightStatus.Waiting,
       scoreEvents: [],
     });
@@ -138,9 +159,19 @@ export class DemoLoadCompetitionFightsAdapter implements CompetitionDrawLoader {
     return {
       pools,
       bracketRounds: [
-        { id: quarterFinalId, order: 1, fightIds: quarterFinalFightIds },
-        { id: semiFinalId, order: 2, fightIds: semiFinalFightIds },
-        { id: finalId, order: 3, fightIds: [finalFightId] },
+        { id: quarterFinalId, order: 1, fightIds: quarterFinalFightIds, pendingMatches: [] },
+        {
+          id: semiFinalId,
+          order: 2,
+          fightIds: [semiFinalFightId],
+          pendingMatches: [{ matchIndex: 1, fighter1: null, fighter2: null }],
+        },
+        {
+          id: finalId,
+          order: 3,
+          fightIds: [],
+          pendingMatches: [{ matchIndex: 0, fighter1: null, fighter2: null }],
+        },
       ],
       fights,
     };
