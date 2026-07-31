@@ -3,6 +3,7 @@ import {
   makeFightId,
   makeFighterId,
   makePoolId,
+  makeBracketRoundId,
   makeScoreEventId,
   type CompetitionId,
   type CompetitionDraw,
@@ -26,6 +27,14 @@ export class DemoLoadCompetitionFightsAdapter implements CompetitionDrawLoader {
     const fightId2 = makeFightId(2);
     const fightId3 = makeFightId(3);
 
+    // --- DEMO ELIMINATION BRACKET: A SEMI-FINAL ROUND (order 1) FEEDING A FINAL (order 2) ---
+    const semiFinalRoundId = makeBracketRoundId(1);
+    const finalRoundId = makeBracketRoundId(2);
+
+    const fightId4 = makeFightId(4);
+    const fightId5 = makeFightId(5);
+    const fightId6 = makeFightId(6);
+
     return {
       pools: [
         {
@@ -41,10 +50,15 @@ export class DemoLoadCompetitionFightsAdapter implements CompetitionDrawLoader {
           fightIds: [fightId1, fightId2, fightId3],
         },
       ],
+      bracketRounds: [
+        { id: semiFinalRoundId, order: 1, fightIds: [fightId4, fightId5] },
+        { id: finalRoundId, order: 2, fightIds: [fightId6] },
+      ],
       fights: [
         {
           id: fightId1,
           poolId,
+          bracketRoundId: null,
           redFighterId: redFighter,
           whiteFighterId: whiteFighter,
           status: FightStatus.Waiting,
@@ -53,6 +67,7 @@ export class DemoLoadCompetitionFightsAdapter implements CompetitionDrawLoader {
         {
           id: fightId2,
           poolId,
+          bracketRoundId: null,
           redFighterId: makeFighterId("3-yamamoto"),
           whiteFighterId: makeFighterId("9-sato"),
           status: FightStatus.Finished,
@@ -90,8 +105,36 @@ export class DemoLoadCompetitionFightsAdapter implements CompetitionDrawLoader {
         {
           id: fightId3,
           poolId,
+          bracketRoundId: null,
           redFighterId: makeFighterId("ito"),
           whiteFighterId: makeFighterId("kobayashi"),
+          status: FightStatus.Waiting,
+          scoreEvents: [],
+        },
+        {
+          id: fightId4,
+          poolId: null,
+          bracketRoundId: semiFinalRoundId,
+          redFighterId: fighterTanaka,
+          whiteFighterId: fighterSato,
+          status: FightStatus.Waiting,
+          scoreEvents: [],
+        },
+        {
+          id: fightId5,
+          poolId: null,
+          bracketRoundId: semiFinalRoundId,
+          redFighterId: fighterIto,
+          whiteFighterId: fighterKobayashi,
+          status: FightStatus.Waiting,
+          scoreEvents: [],
+        },
+        {
+          id: fightId6,
+          poolId: null,
+          bracketRoundId: finalRoundId,
+          redFighterId: fighterTanaka,
+          whiteFighterId: fighterIto,
           status: FightStatus.Waiting,
           scoreEvents: [],
         },
