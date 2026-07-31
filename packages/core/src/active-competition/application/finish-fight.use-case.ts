@@ -4,6 +4,7 @@ import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 import type { ActiveCompetitionState } from "../state/competition-state.ts";
 import type { FightActionResult } from "./command-result.ts";
 import { toCommandRejection } from "./rejection-to-command-result.ts";
+import { advanceBracket } from "./advance-bracket.use-case.ts";
 
 export interface FinishFightDeps {
   saveFightResult: FightResultRecorder;
@@ -24,6 +25,12 @@ export async function finishFight(
 
   deps.state.commitFight(updatedFight, null, snapshot.nextScoreEventId);
   await deps.saveFightResult.updateStatus(fightId, updatedFight.status);
+
+  // --- IF THIS WAS A BRACKET FIGHT, TRY TO PROGRESS THE BRACKET (SLOT THE WINNER INTO THE
+  // NEXT ROUND, PROMOTE IT INTO A REAL FIGHT IF BOTH SIDES ARE NOW KNOWN). A NO-OP FOR POOL
+  // FIGHTS, AND HARMLESS IF THE RESULT IS CURRENTLY TIED (NOTHING TO ADVANCE YET) — EITHER
+  // WAY finishFight ITSELF STILL SUCCEEDED, SO WE DON'T SURFACE advanceBracket's OUTCOME. ---
+  await advanceBracket({ state: deps.state }, fightId);
 
   return { ok: true };
 }

@@ -224,7 +224,12 @@ function getHansoku(fight: Fight, side: Side): ScoreEvent[] {
           </template>
 
           <template #actions-inactive>
-            <IconButton variant="outline" @click="openFight(fight)" :disabled="isLocked(fight)">
+            <IconButton
+              v-if="!fight.isPlaceholder"
+              variant="outline"
+              @click="openFight(fight)"
+              :disabled="isLocked(fight)"
+            >
               <Eye v-if="fight.status === FightStatus.Finished" />
               <ArchiveRestore v-else />
             </IconButton>

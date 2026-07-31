@@ -3,6 +3,8 @@ import {
   FightStatus,
   getBracketRoundLabel,
   type ActiveCompetitionView,
+  type BracketPendingMatch,
+  type BracketRoundId,
   type FightRecord,
 } from "@hajime/core";
 import type { SelectorItem } from "@hajime/ui";
@@ -23,7 +25,8 @@ function completionRatio(fights: readonly FightRecord[]): number | undefined {
  * Drives the two-level fight group picker used by `FightScreen`: which phase of the
  * competition to look at (pool phase / bracket phase), then which group within that phase
  * (a given pool, or a given bracket round) — and exposes the fights of whichever group is
- * currently selected.
+ * currently selected, plus that group's still-pending bracket matches (both fighters not yet
+ * known) so the screen can show them as placeholder rows instead of hiding them entirely.
  *
  * Group items (not phase items) carry a `progress` ratio (finished fights / total fights in
  * that group), meant to fill a `SelectorList` left-to-right as fights complete.
@@ -121,5 +124,27 @@ export function useFightGroupSelector(view: Ref<ActiveCompetitionView>) {
     return [];
   });
 
-  return { phaseItems, selectedPhase, groupItems, selectedGroupId, groupFights };
+  // --- THE SELECTED BRACKET ROUND'S MATCHES NOT PLAYABLE YET (ONE OR BOTH FIGHTERS STILL
+  // UNKNOWN) — EMPTY FOR A POOL GROUP, SINCE POOL FIGHTS ARE ALL KNOWN UPFRONT. ---
+  const groupPendingMatches = computed<
+    { bracketRoundId: BracketRoundId; match: BracketPendingMatch }[]
+  >(() => {
+    const id = selectedGroupId.value;
+    if (!id || !id.startsWith(ROUND_PREFIX)) return [];
+
+    const bracketRoundId = Number(id.slice(ROUND_PREFIX.length)) as BracketRoundId;
+    const round = view.value.bracketRounds.find((round) => round.id === bracketRoundId);
+    if (!round) return [];
+
+    return round.pendingMatches.map((match) => ({ bracketRoundId, match }));
+  });
+
+  return {
+    phaseItems,
+    selectedPhase,
+    groupItems,
+    selectedGroupId,
+    groupFights,
+    groupPendingMatches,
+  };
 }

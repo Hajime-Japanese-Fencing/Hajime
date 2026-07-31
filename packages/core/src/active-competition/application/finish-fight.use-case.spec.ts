@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vite-plus/test";
 import { FightStatus } from "../../shared/fight-status.ts";
 import type { FightId } from "../../shared/fight-id.ts";
+import { makeFightId } from "../../shared/fight-id.ts";
+import { makeBracketRoundId } from "../../shared/bracket-round-id.ts";
+import { makeFighterId } from "../../shared/fighter-id.ts";
+import { makeScoreEventId } from "../../shared/score-event-id.ts";
 import type { ScoreEvent } from "../domain/score-event.ts";
+import type { BracketRoundRecord } from "../domain/bracket-round-record.ts";
 import { FakeActiveCompetitionState } from "../__test__/fake-active-competition-state.ts";
 import { fightId1, makeFightRecord } from "../__test__/fixtures.ts";
 import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
@@ -48,5 +53,55 @@ describe("Finishing a fight", () => {
       ok: false,
       reason: "illegal_transition",
     });
+  });
+
+  it("should advance the bracket when finishing a bracket fight with a clear winner", async () => {
+    const semiFinalId = makeBracketRoundId(1);
+    const finalId = makeBracketRoundId(2);
+    const hayashi = makeFighterId("hayashi");
+    const shimizu = makeFighterId("shimizu");
+
+    const fight = makeFightRecord({
+      id: fightId1,
+      poolId: null,
+      bracketRoundId: semiFinalId,
+      bracketMatchIndex: 0,
+      redFighterId: hayashi,
+      whiteFighterId: shimizu,
+      status: FightStatus.InProgress,
+      scoreEvents: [
+        { id: makeScoreEventId(1), fighterId: hayashi, type: "ippon", code: "M", firstBlood: true },
+        {
+          id: makeScoreEventId(2),
+          fighterId: hayashi,
+          type: "ippon",
+          code: "K",
+          firstBlood: false,
+        },
+      ],
+    });
+    const rounds: BracketRoundRecord[] = [
+      { id: semiFinalId, order: 1, fightIds: [fightId1], pendingMatches: [] },
+      {
+        id: finalId,
+        order: 2,
+        fightIds: [],
+        pendingMatches: [{ matchIndex: 0, fighter1: null, fighter2: null }],
+      },
+    ];
+    const state = new FakeActiveCompetitionState({
+      fightsById: { [fightId1]: fight },
+      bracketRoundsById: { [semiFinalId]: rounds[0], [finalId]: rounds[1] },
+      activeFightId: fightId1,
+      nextFightId: makeFightId(2),
+    });
+
+    await expect(
+      finishFight({ state, saveFightResult: new SpyFightResultRecorder([]) }, fightId1),
+    ).resolves.toEqual({ ok: true });
+
+    expect(state.snapshot().bracketRoundsById[finalId].pendingMatches).toEqual([
+      { matchIndex: 0, fighter1: hayashi, fighter2: null },
+    ]);
   });
 });

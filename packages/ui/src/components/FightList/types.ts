@@ -16,6 +16,8 @@ export interface Fight {
   status: FightStatus;
   scoreEvents: ScoreEvent[];
   editable: boolean;
+  /** A bracket match not playable yet (one or both fighters still unknown) — shown with "-" placeholders, no action available. */
+  isPlaceholder?: boolean;
 }
 
 // CE QU ON GARDE EN DESSOUS
