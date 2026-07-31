@@ -8,6 +8,7 @@ export function organizePoolFights(pool: Pool): PoolTurn[] {
   let fighters = [...pool.fighters];
   const poolSize = pool.fighters.length;
 
+  // NB OF FIGHTERS = EVEN
   if (poolSize % 2 == 0) {
     const centerFighter: PoolFighter = fighters.pop()!;
     const tableSize = fighters.length;
@@ -39,6 +40,8 @@ export function organizePoolFights(pool: Pool): PoolTurn[] {
 
       fighters = rotateFighters(fighters);
     }
+
+    // NB OF FIGHTERS = ODD
   } else {
     for (let turn = 1; turn <= poolSize; turn++) {
       let turnfights: PoolFight[] = [];
