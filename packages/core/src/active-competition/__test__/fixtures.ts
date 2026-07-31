@@ -19,6 +19,7 @@ export function makeFightRecord(overrides: Partial<FightRecord> = {}): FightReco
   return {
     id: fightId1,
     poolId: poolId1,
+    bracketRoundId: null,
     redFighterId: fighterRed,
     whiteFighterId: fighterWhite,
     status: FightStatus.Waiting,

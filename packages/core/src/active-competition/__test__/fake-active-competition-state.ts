@@ -5,6 +5,7 @@ import type {
 import type { FightId } from "../../shared/fight-id.ts";
 import type { FightRecord } from "../domain/fight-record.ts";
 import type { PoolRecord } from "../domain/pool-record.ts";
+import type { BracketRoundRecord } from "../domain/bracket-round-record.ts";
 
 export class FakeActiveCompetitionState implements ActiveCompetitionState {
   private state: ActiveCompetitionSnapshot;
@@ -15,6 +16,7 @@ export class FakeActiveCompetitionState implements ActiveCompetitionState {
   ) {
     this.state = {
       poolsById: {},
+      bracketRoundsById: {},
       fightsById: {},
       activeFightId: null,
       nextScoreEventId: 1,
@@ -26,10 +28,16 @@ export class FakeActiveCompetitionState implements ActiveCompetitionState {
     return this.state;
   }
 
-  replace(data: { pools: PoolRecord[]; fights: FightRecord[]; nextScoreEventId: number }): void {
+  replace(data: {
+    pools: PoolRecord[];
+    bracketRounds?: BracketRoundRecord[];
+    fights: FightRecord[];
+    nextScoreEventId: number;
+  }): void {
     this.events.push("state:replace");
     this.state = {
       poolsById: toRecord(data.pools),
+      bracketRoundsById: toRecord(data.bracketRounds ?? []),
       fightsById: toRecord(data.fights),
       activeFightId: null,
       nextScoreEventId: data.nextScoreEventId,
