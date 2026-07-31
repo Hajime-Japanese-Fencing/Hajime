@@ -10,11 +10,8 @@ import { presentFight } from "./features/active-competition/presenters/fight-rec
 
 const container = useContainer();
 const activeCompetition = useActiveCompetition(container.activeCompetition);
-const {
-  items: groupItems,
-  selectedGroupId,
-  groupFights,
-} = useFightGroupSelector(activeCompetition.view);
+const { phaseItems, selectedPhase, groupItems, selectedGroupId, groupFights } =
+  useFightGroupSelector(activeCompetition.view);
 
 onMounted(async () => {
   await container.loadCompetition(makeCompetitionId("demo"));
@@ -64,6 +61,13 @@ function onRemoveHansoku(_fightId: FightId, scoreEventId: ScoreEventId) {
 
 <template>
   <div class="flex gap-4">
+    <SelectorList
+      v-if="phaseItems.length > 1"
+      v-model="selectedPhase"
+      :items="phaseItems"
+      class="w-40 shrink-0"
+    />
+
     <SelectorList
       v-if="groupItems.length > 1"
       v-model="selectedGroupId"

@@ -8,137 +8,141 @@ import {
   type CompetitionId,
   type CompetitionDraw,
   type CompetitionDrawLoader,
+  type FightId,
+  type FightRecord,
+  type PoolRecord,
 } from "@hajime/core";
+
+// --- 4 POOLS OF 4 FIGHTERS EACH (ROUND-ROBIN, 6 FIGHTS PER POOL) ---
+const POOL_FIGHTER_NAMES = [
+  ["tanaka", "suzuki", "yamamoto", "sato"],
+  ["ito", "kobayashi", "watanabe", "nakamura"],
+  ["kato", "yoshida", "yamada", "sasaki"],
+  ["yamaguchi", "matsumoto", "inoue", "kimura"],
+];
+
+// --- THE BRACKET PHASE DEMO STARTS DIRECTLY AT THE QUARTER-FINALS (8 FIGHTERS), SO THE
+// DEMO DRAW ONLY NEEDS QUARTER + SEMI + FINAL ROUNDS (4 + 2 + 1 FIGHTS) RATHER THAN THE
+// FULL BRACKET GENERATED FROM THE POOL RESULTS. ---
+const BRACKET_FIGHTER_NAMES = [
+  "hayashi",
+  "shimizu",
+  "yamashita",
+  "mori",
+  "abe",
+  "ikeda",
+  "hashimoto",
+  "ishikawa",
+];
 
 export class DemoLoadCompetitionFightsAdapter implements CompetitionDrawLoader {
   async load(_competitionId: CompetitionId): Promise<CompetitionDraw> {
-    const poolId = makePoolId(1);
+    let nextFightId = 1;
+    const fights: FightRecord[] = [];
 
-    const redFighter = makeFighterId("3");
-    const whiteFighter = makeFighterId("9");
-    const fighterTanaka = makeFighterId("tanaka");
-    const fighterSuzuki = makeFighterId("suzuki");
-    const fighterYamamoto = makeFighterId("yamamoto");
-    const fighterSato = makeFighterId("sato");
-    const fighterIto = makeFighterId("ito");
-    const fighterKobayashi = makeFighterId("kobayashi");
+    const pools: PoolRecord[] = POOL_FIGHTER_NAMES.map((names, poolIndex) => {
+      const poolId = makePoolId(poolIndex + 1);
+      const fighterIds = names.map((name) => makeFighterId(name));
+      const fightIds: FightId[] = [];
 
-    const fightId1 = makeFightId(1);
-    const fightId2 = makeFightId(2);
-    const fightId3 = makeFightId(3);
+      // --- ROUND-ROBIN: EVERY FIGHTER MEETS EVERY OTHER FIGHTER OF THE POOL ONCE ---
+      for (let i = 0; i < fighterIds.length; i++) {
+        for (let j = i + 1; j < fighterIds.length; j++) {
+          const fightId = makeFightId(nextFightId++);
+          fightIds.push(fightId);
 
-    // --- DEMO ELIMINATION BRACKET: A SEMI-FINAL ROUND (order 1) FEEDING A FINAL (order 2) ---
-    const semiFinalRoundId = makeBracketRoundId(1);
-    const finalRoundId = makeBracketRoundId(2);
+          // --- ONLY POOL 1's FIGHTS ARE FINISHED, TO PREVIEW A PARTIALLY-FILLED PROGRESS
+          // BAR ON THE OTHER POOLS AND A FULLY-FILLED ONE HERE. ---
+          const finished = poolIndex === 0;
 
-    const fightId4 = makeFightId(4);
-    const fightId5 = makeFightId(5);
-    const fightId6 = makeFightId(6);
+          fights.push({
+            id: fightId,
+            poolId,
+            bracketRoundId: null,
+            redFighterId: fighterIds[i],
+            whiteFighterId: fighterIds[j],
+            status: finished ? FightStatus.Finished : FightStatus.Waiting,
+            scoreEvents: finished
+              ? [
+                  {
+                    id: makeScoreEventId(nextFightId * 10 + 1),
+                    fighterId: fighterIds[i],
+                    type: "ippon",
+                    code: "M",
+                    firstBlood: true,
+                  },
+                  {
+                    id: makeScoreEventId(nextFightId * 10 + 2),
+                    fighterId: fighterIds[i],
+                    type: "ippon",
+                    code: "K",
+                    firstBlood: false,
+                  },
+                ]
+              : [],
+          });
+        }
+      }
+
+      return { id: poolId, fighterIds, fightIds };
+    });
+
+    const bracketFighterIds = BRACKET_FIGHTER_NAMES.map((name) => makeFighterId(name));
+
+    const quarterFinalId = makeBracketRoundId(1);
+    const semiFinalId = makeBracketRoundId(2);
+    const finalId = makeBracketRoundId(3);
+
+    const quarterFinalFightIds: FightId[] = [];
+    for (let i = 0; i < 4; i++) {
+      const fightId = makeFightId(nextFightId++);
+      quarterFinalFightIds.push(fightId);
+
+      fights.push({
+        id: fightId,
+        poolId: null,
+        bracketRoundId: quarterFinalId,
+        redFighterId: bracketFighterIds[i * 2],
+        whiteFighterId: bracketFighterIds[i * 2 + 1],
+        // --- HALF OF THE QUARTER-FINALS ALREADY PLAYED, TO PREVIEW A PARTIALLY-FILLED
+        // PROGRESS BAR ON THE BRACKET PHASE TOO. ---
+        status: i < 2 ? FightStatus.Finished : FightStatus.Waiting,
+        scoreEvents: [],
+      });
+    }
+
+    const semiFinalFightIds = [makeFightId(nextFightId++), makeFightId(nextFightId++)];
+    semiFinalFightIds.forEach((fightId, index) => {
+      fights.push({
+        id: fightId,
+        poolId: null,
+        bracketRoundId: semiFinalId,
+        redFighterId: bracketFighterIds[index * 4],
+        whiteFighterId: bracketFighterIds[index * 4 + 2],
+        status: FightStatus.Waiting,
+        scoreEvents: [],
+      });
+    });
+
+    const finalFightId = makeFightId(nextFightId++);
+    fights.push({
+      id: finalFightId,
+      poolId: null,
+      bracketRoundId: finalId,
+      redFighterId: bracketFighterIds[0],
+      whiteFighterId: bracketFighterIds[4],
+      status: FightStatus.Waiting,
+      scoreEvents: [],
+    });
 
     return {
-      pools: [
-        {
-          id: poolId,
-          fighterIds: [
-            fighterTanaka,
-            fighterSuzuki,
-            fighterYamamoto,
-            fighterSato,
-            fighterIto,
-            fighterKobayashi,
-          ],
-          fightIds: [fightId1, fightId2, fightId3],
-        },
-      ],
+      pools,
       bracketRounds: [
-        { id: semiFinalRoundId, order: 1, fightIds: [fightId4, fightId5] },
-        { id: finalRoundId, order: 2, fightIds: [fightId6] },
+        { id: quarterFinalId, order: 1, fightIds: quarterFinalFightIds },
+        { id: semiFinalId, order: 2, fightIds: semiFinalFightIds },
+        { id: finalId, order: 3, fightIds: [finalFightId] },
       ],
-      fights: [
-        {
-          id: fightId1,
-          poolId,
-          bracketRoundId: null,
-          redFighterId: redFighter,
-          whiteFighterId: whiteFighter,
-          status: FightStatus.Waiting,
-          scoreEvents: [],
-        },
-        {
-          id: fightId2,
-          poolId,
-          bracketRoundId: null,
-          redFighterId: makeFighterId("3-yamamoto"),
-          whiteFighterId: makeFighterId("9-sato"),
-          status: FightStatus.Finished,
-          scoreEvents: [
-            {
-              id: makeScoreEventId(1),
-              fighterId: makeFighterId("3-yamamoto"),
-              type: "ippon",
-              code: "M",
-              firstBlood: true,
-            },
-            {
-              id: makeScoreEventId(2),
-              fighterId: makeFighterId("9-sato"),
-              type: "hansoku",
-              code: "Δ",
-              firstBlood: false,
-            },
-            {
-              id: makeScoreEventId(3),
-              fighterId: makeFighterId("9-sato"),
-              type: "ippon",
-              code: "D",
-              firstBlood: false,
-            },
-            {
-              id: makeScoreEventId(4),
-              fighterId: makeFighterId("3-yamamoto"),
-              type: "ippon",
-              code: "K",
-              firstBlood: false,
-            },
-          ],
-        },
-        {
-          id: fightId3,
-          poolId,
-          bracketRoundId: null,
-          redFighterId: makeFighterId("ito"),
-          whiteFighterId: makeFighterId("kobayashi"),
-          status: FightStatus.Waiting,
-          scoreEvents: [],
-        },
-        {
-          id: fightId4,
-          poolId: null,
-          bracketRoundId: semiFinalRoundId,
-          redFighterId: fighterTanaka,
-          whiteFighterId: fighterSato,
-          status: FightStatus.Waiting,
-          scoreEvents: [],
-        },
-        {
-          id: fightId5,
-          poolId: null,
-          bracketRoundId: semiFinalRoundId,
-          redFighterId: fighterIto,
-          whiteFighterId: fighterKobayashi,
-          status: FightStatus.Waiting,
-          scoreEvents: [],
-        },
-        {
-          id: fightId6,
-          poolId: null,
-          bracketRoundId: finalRoundId,
-          redFighterId: fighterTanaka,
-          whiteFighterId: fighterIto,
-          status: FightStatus.Waiting,
-          scoreEvents: [],
-        },
-      ],
+      fights,
     };
   }
 }
