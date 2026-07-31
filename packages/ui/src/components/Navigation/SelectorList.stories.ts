@@ -18,6 +18,13 @@ const bracketPhaseItems: SelectorItem[] = [
   { id: "final", label: "Final" },
 ];
 
+const poolItemsWithProgress: SelectorItem[] = [
+  { id: "pool-1", label: "Pool A", progress: 1 },
+  { id: "pool-2", label: "Pool B", progress: 0.6 },
+  { id: "pool-3", label: "Pool C", progress: 0.2 },
+  { id: "pool-4", label: "Pool D", progress: 0 },
+];
+
 const meta = {
   title: "Navigation/SelectorList",
   component: SelectorList,
@@ -54,11 +61,15 @@ export const BracketPhases: Story = {
   args: { items: bracketPhaseItems, modelValue: "quarter" },
 };
 
+export const WithProgress: Story = {
+  args: { items: poolItemsWithProgress, modelValue: "pool-2" },
+};
+
 export const WithDisabledItem: Story = {
   args: {
     items: [
       { id: "pool-1", label: "Pool 1" },
-      { id: "pool-2", label: "Pool 2 (fermée)", disabled: true },
+      { id: "pool-2", label: "Pool 2 (closed)", disabled: true },
       { id: "pool-3", label: "Pool 3" },
     ],
     modelValue: "pool-1",
