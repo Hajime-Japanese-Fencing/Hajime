@@ -24,6 +24,9 @@ export async function cancelFight(
 
   deps.state.commitFight(updatedFight, null, snapshot.nextScoreEventId);
   await deps.saveFightResult.updateStatus(fightId, updatedFight.status);
+  // --- applyCancelFight ALSO WIPES scoreEvents (SEE fight-rules.ts) — PERSIST THAT SO A
+  // REFRESH / RELOAD DOESN'T BRING BACK THE DISCARDED IPPONS/HANSOKU. ---
+  await deps.saveFightResult.saveScoreEvents(fightId, updatedFight.scoreEvents);
 
   return { ok: true };
 }
