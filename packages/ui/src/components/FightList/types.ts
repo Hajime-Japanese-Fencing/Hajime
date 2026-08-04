@@ -18,8 +18,6 @@ export interface Fight {
   editable: boolean;
   /** A bracket match not playable yet (one or both fighters still unknown) — shown with "-" placeholders, no action available. */
   isPlaceholder?: boolean;
-  /** Whether the open/detail icon can be used. Undefined/true = enabled; explicit false disables (but still shows) the icon — e.g. a pending match, or a bracket fight whose previous round isn't fully concluded yet. */
-  canOpen?: boolean;
 }
 
 // CE QU ON GARDE EN DESSOUS

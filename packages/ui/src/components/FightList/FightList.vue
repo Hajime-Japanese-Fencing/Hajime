@@ -130,7 +130,7 @@ function getHansoku(fight: Fight, side: Side): ScoreEvent[] {
     <table class="table table-zebra">
       <thead>
         <tr>
-          <th class="text-right p-0 min-w-50" :class="leftSide.class">
+          <th class="text-right p-0" :class="leftSide.class">
             {{ leftSide.label }}
           </th>
           <th class="text-center w-40 relative p-0">
@@ -140,7 +140,7 @@ function getHansoku(fight: Fight, side: Side): ScoreEvent[] {
               </span>
             </div>
           </th>
-          <th class="text-left p-0 min-w-50" :class="rightSide.class">
+          <th class="text-left p-0" :class="rightSide.class">
             <div>
               {{ rightSide.label }}
             </div>
@@ -225,9 +225,10 @@ function getHansoku(fight: Fight, side: Side): ScoreEvent[] {
 
           <template #actions-inactive>
             <IconButton
+              v-if="!fight.isPlaceholder"
               variant="outline"
               @click="openFight(fight)"
-              :disabled="isLocked(fight) || fight.canOpen === false"
+              :disabled="isLocked(fight)"
             >
               <Eye v-if="fight.status === FightStatus.Finished" />
               <ArchiveRestore v-else />
