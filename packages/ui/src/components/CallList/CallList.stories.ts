@@ -2,11 +2,11 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import CallList from "./CallList.vue";
 import { CallListFighter, CallListFighterBuilder } from "./CallListFighter.ts";
 
-const fighterBuilder = new CallListFighterBuilder();
 const CallFighters: CallListFighter[] = [
-  fighterBuilder.build(),
-  fighterBuilder.build(),
-  fighterBuilder.build(),
+  new CallListFighterBuilder().build(),
+  new CallListFighterBuilder().build(),
+  new CallListFighterBuilder().withPresent(false).build(),
+  new CallListFighterBuilder().build(),
 ];
 
 const meta = {

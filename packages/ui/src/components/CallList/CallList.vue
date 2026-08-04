@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Badge from "../DataDisplay/Badge.vue";
-import { LockKeyhole } from "lucide-vue-next";
+import { LockKeyhole, Check, X } from "lucide-vue-next";
 import type { CallListFighter } from "./CallListFighter.ts";
 
 const props = defineProps<{
@@ -19,7 +19,7 @@ const isAllPresent = absentFighters.length == 0;
     <div><LockKeyhole class="inline h-4 w-4" /> Readonly</div>
   </div>
 
-  <table class="table">
+  <table class="table table-zebra">
     <thead class="table-header-group">
       <tr>
         <td>Presence</td>
@@ -31,8 +31,11 @@ const isAllPresent = absentFighters.length == 0;
       </tr>
     </thead>
     <tbody>
-      <tr v-for="fighter in fighters">
-        <td>{{ fighter.isPresent }}</td>
+      <tr v-for="fighter in [...presentFighters, ...absentFighters]">
+        <td>
+          <Check v-if="fighter.isPresent" color="green"></Check>
+          <X v-else color="red"></X>
+        </td>
         <td>{{ fighter.name }}</td>
         <td>{{ fighter.licenseNumber }}</td>
         <td>{{ fighter.birthdate }}</td>
