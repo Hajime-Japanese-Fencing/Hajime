@@ -4,6 +4,7 @@ export * from "./application/publish-draw.use-case.ts";
 export * from "./domain/competition-draw.ts";
 export * from "./domain/fight-record.ts";
 export * from "./domain/pool-record.ts";
+export * from "./domain/bracket-round-record.ts";
 export * from "./domain/score-event.ts";
 export * from "./ports/apply-draw.port.ts";
 export * from "./ports/load-competition-fights.port.ts";

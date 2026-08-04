@@ -38,9 +38,11 @@ describe("Loading a competition", () => {
 
     expect(state.snapshot()).toEqual({
       poolsById: { [data.pools[0].id]: data.pools[0] },
+      bracketRoundsById: {},
       fightsById: { [fight.id]: fight },
       activeFightId: null,
       nextScoreEventId: 5,
+      nextFightId: fight.id + 1,
     });
   });
 });

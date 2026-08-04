@@ -6,6 +6,7 @@ export * from "./shared/competition-id.ts";
 export * from "./shared/fight-id.ts";
 export * from "./shared/fighter-id.ts";
 export * from "./shared/pool-id.ts";
+export * from "./shared/bracket-round-id.ts";
 export * from "./shared/score-event-id.ts";
 export * from "./competition-overview/domain/competition-status.ts";
 export * from "./competition-overview/domain/competition-date.ts";

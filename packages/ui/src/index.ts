@@ -1,6 +1,8 @@
 export { default as Button } from "./components/Actions/Button/Button.vue";
 export { default as IconButton } from "./components/Actions/Button/IconButton.vue";
 export { default as BackButton } from "./components/Navigation/BackButton.vue";
+export { default as SelectorList } from "./components/Navigation/SelectorList.vue";
+export type { SelectorItem } from "./components/Navigation/selector-item.interface.ts";
 export { default as CloseButton } from "./components/Overlay/CloseButton.vue";
 export { default as ValidateButton } from "./components/Actions/Button/ValidateButton.vue";
 export { default as DangerButton } from "./components/Actions/Button/DangerButton.vue";

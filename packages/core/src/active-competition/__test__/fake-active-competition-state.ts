@@ -5,6 +5,7 @@ import type {
 import type { FightId } from "../../shared/fight-id.ts";
 import type { FightRecord } from "../domain/fight-record.ts";
 import type { PoolRecord } from "../domain/pool-record.ts";
+import type { BracketRoundRecord } from "../domain/bracket-round-record.ts";
 
 export class FakeActiveCompetitionState implements ActiveCompetitionState {
   private state: ActiveCompetitionSnapshot;
@@ -15,9 +16,11 @@ export class FakeActiveCompetitionState implements ActiveCompetitionState {
   ) {
     this.state = {
       poolsById: {},
+      bracketRoundsById: {},
       fightsById: {},
       activeFightId: null,
       nextScoreEventId: 1,
+      nextFightId: 1,
       ...initial,
     };
   }
@@ -26,13 +29,21 @@ export class FakeActiveCompetitionState implements ActiveCompetitionState {
     return this.state;
   }
 
-  replace(data: { pools: PoolRecord[]; fights: FightRecord[]; nextScoreEventId: number }): void {
+  replace(data: {
+    pools: PoolRecord[];
+    bracketRounds?: BracketRoundRecord[];
+    fights: FightRecord[];
+    nextScoreEventId: number;
+    nextFightId: number;
+  }): void {
     this.events.push("state:replace");
     this.state = {
       poolsById: toRecord(data.pools),
+      bracketRoundsById: toRecord(data.bracketRounds ?? []),
       fightsById: toRecord(data.fights),
       activeFightId: null,
       nextScoreEventId: data.nextScoreEventId,
+      nextFightId: data.nextFightId,
     };
   }
 
@@ -49,6 +60,20 @@ export class FakeActiveCompetitionState implements ActiveCompetitionState {
   setActiveFightId(fightId: FightId | null): void {
     this.events.push("state:set-active-fight");
     this.state = { ...this.state, activeFightId: fightId };
+  }
+
+  advanceBracket(input: {
+    bracketRounds: BracketRoundRecord[];
+    newFights: FightRecord[];
+    nextFightId: number;
+  }): void {
+    this.events.push("state:advance-bracket");
+    this.state = {
+      ...this.state,
+      bracketRoundsById: { ...this.state.bracketRoundsById, ...toRecord(input.bracketRounds) },
+      fightsById: { ...this.state.fightsById, ...toRecord(input.newFights) },
+      nextFightId: input.nextFightId,
+    };
   }
 }
 
