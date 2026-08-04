@@ -6,12 +6,15 @@ import type { CallListFighter } from "./CallListFighter.ts";
 const props = defineProps<{
   fighters: CallListFighter[];
 }>();
+const presentFighters = props.fighters.filter((fighter) => fighter.isPresent);
+const absentFighters = props.fighters.filter((fighter) => !fighter.isPresent);
+const isAllPresent = absentFighters.length == 0;
 </script>
 
 <template>
   <div class="flex flex-row justify-between">
     <div>
-      Total of Fighters <Badge shape="round">{{ props.fighters.length }}</Badge>
+      Total of Fighters <Badge shape="round" color="info">{{ props.fighters.length }}</Badge>
     </div>
     <div><LockKeyhole class="inline h-4 w-4" /> Readonly</div>
   </div>
@@ -38,6 +41,21 @@ const props = defineProps<{
       </tr>
     </tbody>
   </table>
+
+  <div>
+    <span class="mr-2"
+      >Present
+      <Badge shape="round" :color="isAllPresent ? 'success' : 'info'">
+        {{ presentFighters.length }}/{{ props.fighters.length }}
+      </Badge>
+    </span>
+    <span v-if="!isAllPresent"
+      >Absent
+      <Badge shape="round" color="error">
+        {{ absentFighters.length }}/{{ props.fighters.length }}
+      </Badge>
+    </span>
+  </div>
 </template>
 
 <style scoped></style>
