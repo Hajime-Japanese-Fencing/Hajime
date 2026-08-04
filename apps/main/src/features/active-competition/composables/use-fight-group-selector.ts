@@ -11,6 +11,7 @@ import type { SelectorItem } from "@hajime/ui";
 
 const POOL_PREFIX = "pool:";
 const ROUND_PREFIX = "round:";
+const THIRD_PLACE_LABEL = "3rd place match";
 
 type CompetitionPhase = "pool" | "bracket";
 
@@ -24,9 +25,10 @@ function completionRatio(fights: readonly FightRecord[]): number | undefined {
 /**
  * Drives the two-level fight group picker used by `FightScreen`: which phase of the
  * competition to look at (pool phase / bracket phase), then which group within that phase
- * (a given pool, or a given bracket round) — and exposes the fights of whichever group is
- * currently selected, plus that group's still-pending bracket matches (both fighters not yet
- * known) so the screen can show them as placeholder rows instead of hiding them entirely.
+ * (a given pool, a given bracket round, or the third-place match) — and exposes the fights of
+ * whichever group is currently selected, plus that group's still-pending bracket matches (both
+ * fighters not yet known) so the screen can show them as placeholder rows instead of hiding
+ * them entirely.
  *
  * Group items (not phase items) carry a `progress` ratio (finished fights / total fights in
  * that group), meant to fill a `SelectorList` left-to-right as fights complete.
@@ -70,12 +72,21 @@ export function useFightGroupSelector(view: Ref<ActiveCompetitionView>) {
     }
 
     if (selectedPhase.value === "bracket") {
-      const totalRounds = view.value.bracketRounds.length;
+      // --- ONLY "main" ROUNDS COUNT TOWARDS THE TOTAL USED TO LABEL A ROUND BY ITS DISTANCE
+      // FROM THE FINAL — THE THIRD-PLACE ROUND ISN'T PART OF THAT LADDER, IT GETS ITS OWN
+      // FIXED LABEL BELOW. ---
+      const totalMainRounds = view.value.bracketRounds.filter(
+        (round) => (round.kind ?? "main") === "main",
+      ).length;
+
       return [...view.value.bracketRounds]
         .sort((a, b) => a.order - b.order)
         .map((round) => ({
           id: `${ROUND_PREFIX}${round.id}`,
-          label: getBracketRoundLabel(round.order, totalRounds),
+          label:
+            round.kind === "thirdPlace"
+              ? THIRD_PLACE_LABEL
+              : getBracketRoundLabel(round.order, totalMainRounds),
           progress: completionRatio(view.value.bracketRoundFights(round.id)),
         }));
     }
@@ -140,26 +151,28 @@ export function useFightGroupSelector(view: Ref<ActiveCompetitionView>) {
   });
 
   // --- WHETHER THE CURRENTLY SELECTED GROUP'S FIGHTS CAN BE OPENED. TRUE FOR THE POOL PHASE
-  // (POOL FIGHTS DON'T DEPEND ON ONE ANOTHER) AND FOR A BRACKET ROUND WITH NO PREDECESSOR (THE
-  // FIRST ROUND PLAYED). FOR ANY LATER BRACKET ROUND, ONLY TRUE ONCE THE PREVIOUS ROUND IS
-  // FULLY CONCLUDED: NO MORE PENDING MATCHES, AND EVERY REAL FIGHT OF THAT ROUND FINISHED. ---
+  // AND FOR ANY BRACKET ROUND WITH NO DEPENDENCY (THE FIRST ROUND PLAYED). OTHERWISE, ONLY
+  // TRUE ONCE THE ROUND IT dependsOnRoundId POINTS AT IS FULLY CONCLUDED: NO MORE PENDING
+  // MATCHES, AND EVERY REAL FIGHT OF THAT ROUND FINISHED. THE FINAL AND THE THIRD-PLACE MATCH
+  // BOTH POINT AT THE SEMI-FINALS HERE, SO EITHER CAN OPEN AS SOON AS THE SEMI-FINALS ARE
+  // DONE, INDEPENDENTLY OF ONE ANOTHER. ---
   const isSelectedGroupUnlocked = computed<boolean>(() => {
     const id = selectedGroupId.value;
     if (!id || !id.startsWith(ROUND_PREFIX)) return true;
 
     const bracketRoundId = Number(id.slice(ROUND_PREFIX.length)) as BracketRoundId;
     const round = view.value.bracketRounds.find((round) => round.id === bracketRoundId);
-    if (!round) return true;
+    if (!round || !round.dependsOnRoundId) return true;
 
-    const previousRound = [...view.value.bracketRounds]
-      .filter((candidate) => candidate.order < round.order)
-      .sort((a, b) => b.order - a.order)[0];
-    if (!previousRound) return true;
+    const dependsOn = view.value.bracketRounds.find(
+      (candidate) => candidate.id === round.dependsOnRoundId,
+    );
+    if (!dependsOn) return true;
 
-    if (previousRound.pendingMatches.length > 0) return false;
+    if (dependsOn.pendingMatches.length > 0) return false;
 
     return view.value
-      .bracketRoundFights(previousRound.id)
+      .bracketRoundFights(dependsOn.id)
       .every((fight) => fight.status === FightStatus.Finished);
   });
 

@@ -23,9 +23,10 @@ const POOL_FIGHTER_NAMES = [
 
 // --- THE BRACKET PHASE DEMO STARTS DIRECTLY AT THE QUARTER-FINALS (8 FIGHTERS). TWO OF THE
 // FOUR QUARTER-FINALS ARE ALREADY FINISHED, WHICH LETS ONE SEMI-FINAL BE PROMOTED INTO A REAL,
-// PLAYABLE FIGHT (BOTH ITS FIGHTERS ARE NOW KNOWN) WHILE THE OTHER SEMI-FINAL AND THE FINAL
-// STAY AS PENDING MATCHES — THIS IS EXACTLY THE STATE advanceBracket PRODUCES AS RESULTS COME
-// IN, SO THE DEMO DOUBLES AS A FIXTURE FOR IT RATHER THAN SOMETHING HAND-WAVED. ---
+// PLAYABLE FIGHT (BOTH ITS FIGHTERS ARE NOW KNOWN) WHILE THE OTHER SEMI-FINAL, THE FINAL AND
+// THE THIRD-PLACE MATCH STAY AS PENDING MATCHES — THIS IS EXACTLY THE STATE advanceBracket
+// PRODUCES AS RESULTS COME IN, SO THE DEMO DOUBLES AS A FIXTURE FOR IT RATHER THAN SOMETHING
+// HAND-WAVED. ---
 const BRACKET_FIGHTER_NAMES = [
   "hayashi",
   "shimizu",
@@ -96,6 +97,7 @@ export class DemoLoadCompetitionFightsAdapter implements CompetitionDrawLoader {
     const quarterFinalId = makeBracketRoundId(1);
     const semiFinalId = makeBracketRoundId(2);
     const finalId = makeBracketRoundId(3);
+    const thirdPlaceId = makeBracketRoundId(4);
 
     // --- QUARTER-FINALS: MATCH 0 AND 1 ALREADY PLAYED (SO THEIR WINNERS CAN FEED SEMI-FINAL
     // MATCH 0), MATCHES 2 AND 3 STILL WAITING. ---
@@ -159,16 +161,47 @@ export class DemoLoadCompetitionFightsAdapter implements CompetitionDrawLoader {
     return {
       pools,
       bracketRounds: [
-        { id: quarterFinalId, order: 1, fightIds: quarterFinalFightIds, pendingMatches: [] },
+        {
+          id: quarterFinalId,
+          order: 1,
+          feedsRoundId: semiFinalId,
+          loserFeedsRoundId: null,
+          dependsOnRoundId: null,
+          fightIds: quarterFinalFightIds,
+          pendingMatches: [],
+        },
         {
           id: semiFinalId,
           order: 2,
+          feedsRoundId: finalId,
+          // --- SEMI-FINAL LOSERS FEED THE THIRD-PLACE MATCH ---
+          loserFeedsRoundId: thirdPlaceId,
+          dependsOnRoundId: quarterFinalId,
           fightIds: [semiFinalFightId],
           pendingMatches: [{ matchIndex: 1, fighter1: null, fighter2: null }],
         },
         {
           id: finalId,
           order: 3,
+          feedsRoundId: null,
+          loserFeedsRoundId: null,
+          // --- CAN BE OPENED AS SOON AS THE SEMI-FINALS ARE DONE, REGARDLESS OF WHETHER THE
+          // THIRD-PLACE MATCH HAS BEEN PLAYED YET OR NOT. ---
+          dependsOnRoundId: semiFinalId,
+          fightIds: [],
+          pendingMatches: [{ matchIndex: 0, fighter1: null, fighter2: null }],
+        },
+        {
+          id: thirdPlaceId,
+          // --- SITS BETWEEN THE SEMI-FINALS (order 2) AND THE FINAL (order 3) AS A TAB, BUT
+          // ISN'T COUNTED AS A "MAIN" ROUND FOR LABELING PURPOSES. ---
+          order: 2.5,
+          kind: "thirdPlace",
+          feedsRoundId: null,
+          loserFeedsRoundId: null,
+          // --- SAME DEPENDENCY AS THE FINAL: PLAYABLE AS SOON AS THE SEMI-FINALS CONCLUDE,
+          // INDEPENDENTLY OF THE FINAL. ---
+          dependsOnRoundId: semiFinalId,
           fightIds: [],
           pendingMatches: [{ matchIndex: 0, fighter1: null, fighter2: null }],
         },

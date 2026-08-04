@@ -81,10 +81,19 @@ describe("Finishing a fight", () => {
       ],
     });
     const rounds: BracketRoundRecord[] = [
-      { id: semiFinalId, order: 1, fightIds: [fightId1], pendingMatches: [] },
+      {
+        id: semiFinalId,
+        order: 1,
+        feedsRoundId: finalId,
+        dependsOnRoundId: null,
+        fightIds: [fightId1],
+        pendingMatches: [],
+      },
       {
         id: finalId,
         order: 2,
+        feedsRoundId: null,
+        dependsOnRoundId: semiFinalId,
         fightIds: [],
         pendingMatches: [{ matchIndex: 0, fighter1: null, fighter2: null }],
       },

@@ -18,9 +18,9 @@ export interface AdvanceBracketDeps {
 }
 
 /**
- * Progresses the bracket after one of its fights has finished: works out the winner, slots
- * it into the next round's match, and — once both sides of that match are known — mints the
- * FightRecord for it so it becomes playable.
+ * Progresses the bracket after one of its fights has finished: works out the winner (and
+ * loser), slots each into their respective next match, and — once both sides of a match are
+ * known — mints the FightRecord for it so it becomes playable.
  *
  * Pure orchestration: the winner rule lives in `determineFightWinner`, the slotting logic in
  * `fillNextRoundSlot`. Only the "turn a ready pending match into a real fight" part (needs a
@@ -46,11 +46,13 @@ export async function advanceBracket(
 
   const winnerId = determineFightWinner(fight);
   if (!winnerId) return { ok: false, reason: "no_winner_yet" };
+  const loserId = winnerId === fight.redFighterId ? fight.whiteFighterId : fight.redFighterId;
 
   const bracketRounds = fillNextRoundSlot(
     Object.values(snapshot.bracketRoundsById),
     fight,
     winnerId,
+    loserId,
   );
 
   const { updatedRounds, newFights, nextFightId, promotedFightIds } = promoteReadyMatches(

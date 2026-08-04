@@ -38,10 +38,19 @@ describe("advanceBracket", () => {
   it("fills the next round's pending match but doesn't promote it while the other slot is still unknown", async () => {
     const fight = makeFinishedSemiFinal();
     const rounds: BracketRoundRecord[] = [
-      { id: semiFinalId, order: 1, fightIds: [fight.id], pendingMatches: [] },
+      {
+        id: semiFinalId,
+        order: 1,
+        feedsRoundId: finalId,
+        dependsOnRoundId: null,
+        fightIds: [fight.id],
+        pendingMatches: [],
+      },
       {
         id: finalId,
         order: 2,
+        feedsRoundId: null,
+        dependsOnRoundId: semiFinalId,
         fightIds: [],
         pendingMatches: [{ matchIndex: 0, fighter1: null, fighter2: null }],
       },
@@ -84,10 +93,19 @@ describe("advanceBracket", () => {
       ],
     });
     const rounds: BracketRoundRecord[] = [
-      { id: semiFinalId, order: 1, fightIds: [fight.id], pendingMatches: [] },
+      {
+        id: semiFinalId,
+        order: 1,
+        feedsRoundId: finalId,
+        dependsOnRoundId: null,
+        fightIds: [fight.id],
+        pendingMatches: [],
+      },
       {
         id: finalId,
         order: 2,
+        feedsRoundId: null,
+        dependsOnRoundId: semiFinalId,
         fightIds: [],
         // --- THE OTHER SEMI-FINAL (matchIndex 0) HAS ALREADY BEEN WON BY hayashi ---
         pendingMatches: [{ matchIndex: 0, fighter1: hayashi, fighter2: null }],
