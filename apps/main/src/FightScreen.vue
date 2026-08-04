@@ -6,18 +6,33 @@ import { makeCompetitionId, type FightId, type ScoreEventId, type Side } from "@
 import { useContainer } from "./bootstrap/container/useContainer.ts";
 import { useActiveCompetition } from "./features/active-competition/composables/use-active-competition.ts";
 import { useFightGroupSelector } from "./features/active-competition/composables/use-fight-group-selector.ts";
-import { presentFight } from "./features/active-competition/presenters/fight-record-to-fight.presenter.ts";
+import {
+  presentFight,
+  presentPendingMatch,
+} from "./features/active-competition/presenters/fight-record-to-fight.presenter.ts";
 
 const container = useContainer();
 const activeCompetition = useActiveCompetition(container.activeCompetition);
-const { phaseItems, selectedPhase, groupItems, selectedGroupId, groupFights } =
-  useFightGroupSelector(activeCompetition.view);
+const {
+  phaseItems,
+  selectedPhase,
+  groupItems,
+  selectedGroupId,
+  groupFights,
+  groupPendingMatches,
+  isSelectedGroupUnlocked,
+} = useFightGroupSelector(activeCompetition.view);
 
 onMounted(async () => {
   await container.loadCompetition(makeCompetitionId("demo"));
 });
 
-const fights = computed<Fight[]>(() => groupFights.value.map(presentFight));
+const fights = computed<Fight[]>(() => [
+  ...groupFights.value.map((record) => presentFight(record, isSelectedGroupUnlocked.value)),
+  ...groupPendingMatches.value.map(({ bracketRoundId, match }) =>
+    presentPendingMatch(bracketRoundId, match),
+  ),
+]);
 const activeFightId = computed(() => activeCompetition.view.value.activeFight?.id ?? null);
 
 function onOpenFight(id: FightId) {
