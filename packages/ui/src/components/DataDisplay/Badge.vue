@@ -13,11 +13,13 @@ const props = withDefaults(
       | "warning"
       | "error";
     variant?: "outline" | "soft" | "dash";
+    shape?: "squircle" | "round";
     size?: "xs" | "sm" | "md" | "lg";
   }>(),
   {
     color: "primary",
     size: "md",
+    shape: "squircle",
   },
 );
 
@@ -26,6 +28,7 @@ const classes = computed(() => [
   `badge-${props.color}`,
   props.size !== "md" && `badge-${props.size}`,
   props.variant && `badge-${props.variant}`,
+  props.shape,
 ]);
 </script>
 
@@ -35,4 +38,8 @@ const classes = computed(() => [
   </span>
 </template>
 
-<style scoped></style>
+<style scoped>
+.round {
+  border-radius: 50px;
+}
+</style>

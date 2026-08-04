@@ -18,6 +18,10 @@ const meta = {
       control: "select",
       options: ["xs", "sm", "md", "lg"],
     },
+    shape: {
+      control: "select",
+      options: ["squircle", "round"],
+    },
     default: { control: "text" },
   },
   args: {
@@ -89,6 +93,18 @@ export const AllSizes: Story = {
         <Badge size="sm">SM</Badge>
         <Badge size="md">MD</Badge>
         <Badge size="lg">LG</Badge>
+      </div>
+    `,
+  }),
+};
+
+export const AllShapes: Story = {
+  render: () => ({
+    components: { Badge },
+    template: `
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <Badge shape="squircle">Squircle</Badge>
+        <Badge shape="round">Round</Badge>
       </div>
     `,
   }),
