@@ -8,7 +8,7 @@ import {
 } from "@hajime/core";
 import type { Fight } from "@hajime/ui";
 
-export function presentFight(record: FightRecord): Fight {
+export function presentFight(record: FightRecord, canOpen = true): Fight {
   const ipponsRed = record.scoreEvents.filter(
     (event) => event.type === "ippon" && event.fighterId === record.redFighterId,
   );
@@ -33,6 +33,7 @@ export function presentFight(record: FightRecord): Fight {
         : `${ipponsRed.length} - ${ipponsWhite.length}`,
     scoreEvents: record.scoreEvents,
     editable: record.status !== FightStatus.Finished,
+    canOpen,
   };
 }
 
@@ -62,6 +63,7 @@ export function presentPendingMatch(
     scoreEvents: [],
     editable: false,
     isPlaceholder: true,
+    canOpen: false,
   };
 }
 

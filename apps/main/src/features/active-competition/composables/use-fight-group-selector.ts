@@ -139,6 +139,30 @@ export function useFightGroupSelector(view: Ref<ActiveCompetitionView>) {
     return round.pendingMatches.map((match) => ({ bracketRoundId, match }));
   });
 
+  // --- WHETHER THE CURRENTLY SELECTED GROUP'S FIGHTS CAN BE OPENED. TRUE FOR THE POOL PHASE
+  // (POOL FIGHTS DON'T DEPEND ON ONE ANOTHER) AND FOR A BRACKET ROUND WITH NO PREDECESSOR (THE
+  // FIRST ROUND PLAYED). FOR ANY LATER BRACKET ROUND, ONLY TRUE ONCE THE PREVIOUS ROUND IS
+  // FULLY CONCLUDED: NO MORE PENDING MATCHES, AND EVERY REAL FIGHT OF THAT ROUND FINISHED. ---
+  const isSelectedGroupUnlocked = computed<boolean>(() => {
+    const id = selectedGroupId.value;
+    if (!id || !id.startsWith(ROUND_PREFIX)) return true;
+
+    const bracketRoundId = Number(id.slice(ROUND_PREFIX.length)) as BracketRoundId;
+    const round = view.value.bracketRounds.find((round) => round.id === bracketRoundId);
+    if (!round) return true;
+
+    const previousRound = [...view.value.bracketRounds]
+      .filter((candidate) => candidate.order < round.order)
+      .sort((a, b) => b.order - a.order)[0];
+    if (!previousRound) return true;
+
+    if (previousRound.pendingMatches.length > 0) return false;
+
+    return view.value
+      .bracketRoundFights(previousRound.id)
+      .every((fight) => fight.status === FightStatus.Finished);
+  });
+
   return {
     phaseItems,
     selectedPhase,
@@ -146,5 +170,6 @@ export function useFightGroupSelector(view: Ref<ActiveCompetitionView>) {
     selectedGroupId,
     groupFights,
     groupPendingMatches,
+    isSelectedGroupUnlocked,
   };
 }

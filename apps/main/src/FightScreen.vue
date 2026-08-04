@@ -13,15 +13,22 @@ import {
 
 const container = useContainer();
 const activeCompetition = useActiveCompetition(container.activeCompetition);
-const { phaseItems, selectedPhase, groupItems, selectedGroupId, groupFights, groupPendingMatches } =
-  useFightGroupSelector(activeCompetition.view);
+const {
+  phaseItems,
+  selectedPhase,
+  groupItems,
+  selectedGroupId,
+  groupFights,
+  groupPendingMatches,
+  isSelectedGroupUnlocked,
+} = useFightGroupSelector(activeCompetition.view);
 
 onMounted(async () => {
   await container.loadCompetition(makeCompetitionId("demo"));
 });
 
 const fights = computed<Fight[]>(() => [
-  ...groupFights.value.map(presentFight),
+  ...groupFights.value.map((record) => presentFight(record, isSelectedGroupUnlocked.value)),
   ...groupPendingMatches.value.map(({ bracketRoundId, match }) =>
     presentPendingMatch(bracketRoundId, match),
   ),
