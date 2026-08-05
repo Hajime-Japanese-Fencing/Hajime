@@ -217,9 +217,8 @@ function rankFightersSeparatedByClubs(
     }
   }
 
-  const orderedOthers = Array.from(
-    { length: others.length },
-    (_, index) => rankToFighter.get(seededCount + 1 + index)!,
+  const orderedOthers = Array.from({ length: others.length }, (_, index) =>
+    rankToFighter.get(seededCount + 1 + index)!,
   );
 
   return [...seededFighters, ...orderedOthers];
