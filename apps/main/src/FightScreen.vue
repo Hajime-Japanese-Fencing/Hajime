@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
-import { FightList, SelectorList } from "@hajime/ui";
+import { Button, FightList, SelectorList } from "@hajime/ui";
 import type { AssignIpponEvent, Fight } from "@hajime/ui";
-import { makeCompetitionId, type FightId, type ScoreEventId, type Side } from "@hajime/core";
+import {
+  buildBracketExport,
+  buildPoolExport,
+  makeCompetitionId,
+  type FightId,
+  type ScoreEventId,
+  type Side,
+} from "@hajime/core";
 import { useContainer } from "./bootstrap/container/useContainer.ts";
 import { useActiveCompetition } from "./features/active-competition/composables/use-active-competition.ts";
 import { useFightGroupSelector } from "./features/active-competition/composables/use-fight-group-selector.ts";
@@ -10,6 +17,8 @@ import {
   presentFight,
   presentPendingMatch,
 } from "./features/active-competition/presenters/fight-record-to-fight.presenter.ts";
+import { exportBracketToPdf } from "./features/active-competition/adapters/export-bracket-to-pdf.ts";
+import { exportPoolToPdf } from "./features/active-competition/adapters/export-pool-to-pdf.ts";
 
 const container = useContainer();
 const activeCompetition = useActiveCompetition(container.activeCompetition);
@@ -72,9 +81,23 @@ function onAssignHansoku(_fightId: FightId, side: Side) {
 function onRemoveHansoku(_fightId: FightId, scoreEventId: ScoreEventId) {
   void activeCompetition.removeScoreEvent({ scoreEventId, type: "hansoku" });
 }
+
+function onExport() {
+  if (selectedPhase.value === "pool") {
+    const poolExport = buildPoolExport(activeCompetition.view.value);
+    exportPoolToPdf(poolExport, "pools.pdf");
+    return;
+  }
+
+  const bracketExport = buildBracketExport(activeCompetition.view.value);
+  exportBracketToPdf(bracketExport, "bracket.pdf");
+}
 </script>
 
 <template>
+  <div class="mb-4">
+    <Button @click="onExport">Export to PDF</Button>
+  </div>
   <div class="flex gap-4">
     <SelectorList
       v-if="phaseItems.length > 1"
