@@ -12,6 +12,10 @@
     "test:core": "vp run --filter @hajime/core test:watch",
     "test:core:ui": "vp run --filter @hajime/core test:ui"
   },
+  "dependencies": {
+    "jspdf": "catalog:",
+    "jspdf-autotable": "catalog:"
+  },
   "devDependencies": {
     "@commitlint/cli": "^21.2.0",
     "@commitlint/config-conventional": "^21.2.0",
