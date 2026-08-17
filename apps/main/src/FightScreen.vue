@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, ref, watch } from "vue";
 import { Button, FightList, SelectorList } from "@hajime/ui";
 import type { AssignIpponEvent, Fight } from "@hajime/ui";
 import {
@@ -7,6 +7,7 @@ import {
   buildPoolExport,
   makeCompetitionId,
   type FightId,
+  type FighterEntry,
   type ScoreEventId,
   type Side,
 } from "@hajime/core";
@@ -20,6 +21,10 @@ import {
 import { exportBracketToPdf } from "./features/active-competition/adapters/export-bracket-to-pdf.ts";
 import { exportPoolToPdf } from "./features/active-competition/adapters/export-pool-to-pdf.ts";
 
+const props = defineProps<{
+  competitionId: string;
+}>();
+
 const container = useContainer();
 const activeCompetition = useActiveCompetition(container.activeCompetition);
 const {
@@ -32,16 +37,61 @@ const {
   isSelectedGroupUnlocked,
 } = useFightGroupSelector(activeCompetition.view);
 
-onMounted(async () => {
-  await container.loadCompetition(makeCompetitionId("demo"));
-});
+watch(
+  () => props.competitionId,
+  async (competitionId) => {
+    await container.loadCompetition(makeCompetitionId(competitionId));
+  },
+  { immediate: true },
+);
 
-const fights = computed<Fight[]>(() => [
-  ...groupFights.value.map((record) => presentFight(record, isSelectedGroupUnlocked.value)),
-  ...groupPendingMatches.value.map(({ bracketRoundId, match }) =>
-    presentPendingMatch(bracketRoundId, match),
-  ),
-]);
+// --- TEMPORARY: NO FIGHTER REGISTRATION SCREEN YET, SO THIS IS A FIXED ROSTER JUST TO EXERCISE
+// THE REAL generateBracketUseCase -> buildBracketDraw PIPELINE END TO END. 5 FIGHTERS (NOT A
+// POWER OF TWO) SO THE GENERATED BRACKET HAS BYES TO MAP, NOT JUST STRAIGHTFORWARD FIRST-ROUND
+// FIGHTS. TO REPLACE ONCE FIGHTER REGISTRATION EXISTS. ---
+const DEMO_BRACKET_FIGHTERS: FighterEntry[] = [
+  { id: "kondo", isSeeded: false, club: "Demo Dojo" },
+  { id: "fujita", isSeeded: false, club: "Demo Dojo" },
+  { id: "saito", isSeeded: false, club: "Demo Dojo" },
+  { id: "aoki", isSeeded: false, club: "Demo Dojo" },
+  { id: "endo", isSeeded: false, club: "Demo Dojo" },
+];
+
+const isGeneratingBracket = ref(false);
+
+async function onGenerateBracketDraft() {
+  isGeneratingBracket.value = true;
+  try {
+    await container.generateBracketDraw(
+      makeCompetitionId(props.competitionId),
+      DEMO_BRACKET_FIGHTERS,
+    );
+  } finally {
+    isGeneratingBracket.value = false;
+  }
+}
+
+// --- BRACKET ROWS ARE ORDERED BY THEIR POSITION IN THE ROUND (bracketMatchIndex / matchIndex),
+// SAME AS THE PDF EXPORT — NOT "EVERY PLAYABLE FIGHT FIRST, THEN EVERY STILL-PENDING MATCH".
+// A BYE (OR ANY EARLY RESULT) CAN MAKE A LATER-POSITION MATCH PLAYABLE BEFORE AN EARLIER ONE
+// (E.G. BOTH SEMI-FINAL SLOT-2 FIGHTERS ALREADY KNOWN VIA BYES WHILE SLOT-1 STILL WAITS ON A
+// QUARTER-FINAL RESULT), SO SORTING PLAYABLE-FIRST WOULD SHOW IT ABOVE SLOT-1 EVEN THOUGH IT
+// SITS BELOW IT IN THE BRACKET. POOL FIGHTS HAVE NO bracketMatchIndex (ALWAYS null), SO THIS
+// SORT IS A NO-OP FOR THEM AND THEY KEEP THEIR ORIGINAL (CREATION) ORDER. ---
+const fights = computed<Fight[]>(() => {
+  const fightRows = groupFights.value.map((record) => ({
+    matchIndex: record.bracketMatchIndex,
+    fight: presentFight(record, isSelectedGroupUnlocked.value),
+  }));
+  const pendingRows = groupPendingMatches.value.map(({ bracketRoundId, match }) => ({
+    matchIndex: match.matchIndex as number | null,
+    fight: presentPendingMatch(bracketRoundId, match),
+  }));
+
+  return [...fightRows, ...pendingRows]
+    .sort((a, b) => (a.matchIndex ?? 0) - (b.matchIndex ?? 0))
+    .map((row) => row.fight);
+});
 const activeFightId = computed(() => activeCompetition.view.value.activeFight?.id ?? null);
 
 function onOpenFight(id: FightId) {
@@ -95,8 +145,11 @@ function onExport() {
 </script>
 
 <template>
-  <div class="mb-4">
+  <div class="mb-4 flex gap-2">
     <Button @click="onExport">Export to PDF</Button>
+    <Button :disabled="isGeneratingBracket" @click="onGenerateBracketDraft">
+      Générer un tableau (démo)
+    </Button>
   </div>
   <div class="flex gap-4">
     <SelectorList

@@ -1,7 +1,7 @@
 import type { FighterId } from "../../shared/fighter-id.ts";
-import type { FightRecord } from "./fight-record.ts";
+import type { FightRecord } from "../../shared/fight-record.ts";
 import type { BracketRoundId } from "../../shared/bracket-round-id.ts";
-import type { BracketRoundRecord } from "./bracket-round-record.ts";
+import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
 
 /**
  * Slots a finished bracket fight's winner (and, when the round has one, its loser) into their

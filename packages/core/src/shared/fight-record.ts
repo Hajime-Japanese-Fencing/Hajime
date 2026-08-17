@@ -1,8 +1,8 @@
-import type { FightStatus } from "../../shared/fight-status.ts";
-import type { FighterId } from "../../shared/fighter-id.ts";
-import type { FightId } from "../../shared/fight-id.ts";
-import type { PoolId } from "../../shared/pool-id.ts";
-import type { BracketRoundId } from "../../shared/bracket-round-id.ts";
+import type { FightStatus } from "./fight-status.ts";
+import type { FighterId } from "./fighter-id.ts";
+import type { FightId } from "./fight-id.ts";
+import type { PoolId } from "./pool-id.ts";
+import type { BracketRoundId } from "./bracket-round-id.ts";
 import type { ScoreEvent } from "./score-event.ts";
 
 export interface FightRecord {
@@ -17,7 +17,10 @@ export interface FightRecord {
   // `fillNextRoundSlot` IN `domain/bracket-progression.ts`. ---
   readonly bracketMatchIndex: number | null;
   readonly redFighterId: FighterId;
-  readonly whiteFighterId: FighterId;
+  // --- null ONLY FOR A BRACKET FIRST-ROUND BYE (SEE buildBracketDraw): redFighterId IS THE
+  // ONLY REAL PARTICIPANT AND AUTOMATICALLY WINS (SEE determineFightWinner). NEVER null FOR A
+  // POOL FIGHT OR A REAL BRACKET MATCHUP — BOTH SIDES ARE ALWAYS KNOWN THERE. ---
+  readonly whiteFighterId: FighterId | null;
   readonly status: FightStatus;
   readonly scoreEvents: ScoreEvent[];
 }

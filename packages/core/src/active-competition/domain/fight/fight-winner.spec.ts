@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { makeFightRecord, fighterRed, fighterWhite } from "../../__test__/fixtures.ts";
 import { makeScoreEventId } from "../../../shared/score-event-id.ts";
+import { FightStatus } from "../../../shared/fight-status.ts";
 import { determineFightWinner } from "./fight-winner.ts";
 
 describe("determineFightWinner", () => {
@@ -72,5 +73,15 @@ describe("determineFightWinner", () => {
     });
 
     expect(determineFightWinner(fight)).toBeNull();
+  });
+
+  it("declares the red fighter the automatic winner of a bye (no opponent, no score events needed)", () => {
+    const bye = makeFightRecord({
+      whiteFighterId: null,
+      status: FightStatus.Finished,
+      scoreEvents: [],
+    });
+
+    expect(determineFightWinner(bye)).toBe(fighterRed);
   });
 });

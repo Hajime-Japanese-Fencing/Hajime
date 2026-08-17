@@ -2,7 +2,7 @@ import type { FighterId } from "../../shared/fighter-id.ts";
 import type { FightId } from "../../shared/fight-id.ts";
 import type { IpponCode } from "../../shared/ippons.ts";
 import { makeScoreEventId, type ScoreEventId } from "../../shared/score-event-id.ts";
-import type { FightRecord } from "../domain/fight-record.ts";
+import type { FightRecord } from "../../shared/fight-record.ts";
 import {
   recordHansoku as applyHansoku,
   recordIppon as applyIppon,

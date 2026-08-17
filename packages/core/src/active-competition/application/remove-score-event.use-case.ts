@@ -2,7 +2,7 @@ import type { FightId } from "../../shared/fight-id.ts";
 import type { ScoreEventId } from "../../shared/score-event-id.ts";
 import { removeScoreEvent as applyRemoveScoreEvent } from "../domain/fight/score-event-rules.ts";
 import { isRejection } from "../domain/fight/fight-rules.ts";
-import type { ScoreEventType } from "../domain/score-event.ts";
+import type { ScoreEventType } from "../../shared/score-event.ts";
 import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 import type { ActiveCompetitionState } from "../state/competition-state.ts";
 import type { FightActionResult } from "./command-result.ts";

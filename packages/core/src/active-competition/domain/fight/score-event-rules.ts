@@ -1,8 +1,8 @@
 import type { FighterId } from "../../../shared/fighter-id.ts";
 import { IpponCode } from "../../../shared/ippons.ts";
 import { makeScoreEventId, type ScoreEventId } from "../../../shared/score-event-id.ts";
-import type { FightRecord } from "../fight-record.ts";
-import type { ScoreEvent, ScoreEventType } from "../score-event.ts";
+import type { FightRecord } from "../../../shared/fight-record.ts";
+import type { ScoreEvent, ScoreEventType } from "../../../shared/score-event.ts";
 import { canScore, type FightRuleResult, type Rejection } from "./fight-rules.ts";
 
 export function recordIppon(
@@ -116,7 +116,10 @@ function countHansoku(scoreEvents: readonly ScoreEvent[], fighterId: FighterId):
 }
 
 function opponentOf(fight: FightRecord, fighterId: FighterId): FighterId {
-  return fight.redFighterId === fighterId ? fight.whiteFighterId : fight.redFighterId;
+  // --- ONLY EVER CALLED WHILE THE FIGHT IS IN PROGRESS (GUARDED BY canScore ABOVE), WHICH A
+  // BYE (WHOSE STATUS IS "finished" FROM CREATION AND NEVER TRANSITIONS THROUGH
+  // "in_progress") CAN NEVER BE — SAFE TO ASSERT whiteFighterId NON-null HERE. ---
+  return (fight.redFighterId === fighterId ? fight.whiteFighterId : fight.redFighterId)!;
 }
 
 function recalculateFirstBlood(scoreEvents: readonly ScoreEvent[]): ScoreEvent[] {

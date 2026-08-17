@@ -1,5 +1,5 @@
 import { FightStatus } from "../../../shared/fight-status.ts";
-import type { FightRecord } from "../fight-record.ts";
+import type { FightRecord } from "../../../shared/fight-record.ts";
 
 export type RejectionReason =
   | "illegal_transition"

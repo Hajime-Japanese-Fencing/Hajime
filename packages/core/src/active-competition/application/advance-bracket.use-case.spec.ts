@@ -5,8 +5,8 @@ import { makeFightId } from "../../shared/fight-id.ts";
 import { FightStatus } from "../../shared/fight-status.ts";
 import { makeScoreEventId } from "../../shared/score-event-id.ts";
 import { FakeActiveCompetitionState } from "../__test__/fake-active-competition-state.ts";
-import type { FightRecord } from "../domain/fight-record.ts";
-import type { BracketRoundRecord } from "../domain/bracket-round-record.ts";
+import type { FightRecord } from "../../shared/fight-record.ts";
+import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
 import { advanceBracket } from "./advance-bracket.use-case.ts";
 
 const semiFinalId = makeBracketRoundId(1);

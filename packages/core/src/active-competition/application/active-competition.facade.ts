@@ -12,8 +12,8 @@ import { loadCompetition } from "./load-competition.use-case.ts";
 import { recordHansoku, recordIppon } from "./record-score-event.use-case.ts";
 import { removeScoreEvent } from "./remove-score-event.use-case.ts";
 import { startFight } from "./start-fight.use-case.ts";
-import type { CompetitionDraw } from "../domain/competition-draw.ts";
-import type { ScoreEventType } from "../domain/score-event.ts";
+import type { CompetitionDraw } from "../../shared/competition-draw.ts";
+import type { ScoreEventType } from "../../shared/score-event.ts";
 import type { CompetitionDrawReceiver } from "../ports/apply-draw.port.ts";
 import type { CompetitionDrawLoader } from "../ports/load-competition-fights.port.ts";
 import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
@@ -95,6 +95,11 @@ export function createActiveCompetition(deps: ActiveCompetitionDeps): ActiveComp
     if (!fight) return { ok: false, reason: "fight_not_found" };
 
     const fighterId = input.side === "RED" ? fight.redFighterId : fight.whiteFighterId;
+    // --- fighterId IS ONLY EVER null FOR A BYE'S "WHITE" SIDE, AND A BYE CAN NEVER BE THE
+    // ACTIVE FIGHT (IT'S CREATED DIRECTLY AS "finished", SO startFight ALWAYS REJECTS IT) —
+    // THIS IS PURE TYPE-SAFETY DEFENCE, NOT A REACHABLE PATH. ---
+    if (!fighterId) return { ok: false, reason: "scoring_not_allowed" };
+
     return record(fightId, fighterId);
   }
 

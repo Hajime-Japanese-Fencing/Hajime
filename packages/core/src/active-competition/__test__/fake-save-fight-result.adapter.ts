@@ -1,6 +1,6 @@
 import type { FightStatus } from "../../shared/fight-status.ts";
 import type { FightId } from "../../shared/fight-id.ts";
-import type { ScoreEvent } from "../domain/score-event.ts";
+import type { ScoreEvent } from "../../shared/score-event.ts";
 import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 
 export interface SavedFightState {

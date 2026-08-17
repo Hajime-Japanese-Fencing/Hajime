@@ -3,9 +3,9 @@ import type {
   ActiveCompetitionState,
 } from "../state/competition-state.ts";
 import type { FightId } from "../../shared/fight-id.ts";
-import type { FightRecord } from "../domain/fight-record.ts";
-import type { PoolRecord } from "../domain/pool-record.ts";
-import type { BracketRoundRecord } from "../domain/bracket-round-record.ts";
+import type { FightRecord } from "../../shared/fight-record.ts";
+import type { PoolRecord } from "../../shared/pool-record.ts";
+import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
 
 export class FakeActiveCompetitionState implements ActiveCompetitionState {
   private state: ActiveCompetitionSnapshot;

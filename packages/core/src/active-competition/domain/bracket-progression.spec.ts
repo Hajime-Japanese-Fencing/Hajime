@@ -3,8 +3,8 @@ import { makeBracketRoundId } from "../../shared/bracket-round-id.ts";
 import { makeFighterId } from "../../shared/fighter-id.ts";
 import { makeFightId } from "../../shared/fight-id.ts";
 import { FightStatus } from "../../shared/fight-status.ts";
-import type { FightRecord } from "./fight-record.ts";
-import type { BracketRoundRecord } from "./bracket-round-record.ts";
+import type { FightRecord } from "../../shared/fight-record.ts";
+import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
 import { fillNextRoundSlot } from "./bracket-progression.ts";
 
 const semiFinalId = makeBracketRoundId(1);
