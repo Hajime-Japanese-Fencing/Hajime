@@ -16,7 +16,7 @@ const competitionId = route.params.id as string;
       <BackButton @click="router.push({ name: 'home' })" />
     </div>
     <h1 class="text-2xl font-bold mb-6">Competition {{ competitionId }}</h1>
-    <FightScreen />
+    <FightScreen :competitionId="competitionId" />
     <PreCompetitionScreen />
   </main>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, watch } from "vue";
 import { Button, FightList, SelectorList } from "@hajime/ui";
 import type { AssignIpponEvent, Fight } from "@hajime/ui";
 import {
@@ -20,6 +20,10 @@ import {
 import { exportBracketToPdf } from "./features/active-competition/adapters/export-bracket-to-pdf.ts";
 import { exportPoolToPdf } from "./features/active-competition/adapters/export-pool-to-pdf.ts";
 
+const props = defineProps<{
+  competitionId: string;
+}>();
+
 const container = useContainer();
 const activeCompetition = useActiveCompetition(container.activeCompetition);
 const {
@@ -32,9 +36,13 @@ const {
   isSelectedGroupUnlocked,
 } = useFightGroupSelector(activeCompetition.view);
 
-onMounted(async () => {
-  await container.loadCompetition(makeCompetitionId("demo"));
-});
+watch(
+  () => props.competitionId,
+  async (competitionId) => {
+    await container.loadCompetition(makeCompetitionId(competitionId));
+  },
+  { immediate: true },
+);
 
 const fights = computed<Fight[]>(() => [
   ...groupFights.value.map((record) => presentFight(record, isSelectedGroupUnlocked.value)),
