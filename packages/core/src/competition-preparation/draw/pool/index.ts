@@ -5,3 +5,5 @@ export * from "./domain/fight/pool-fight.ts";
 export * from "./domain/fight/pool-fight.service.ts";
 export * from "./domain/setup/pool-setup.ts";
 export * from "./domain/setup/pool-setup.service.ts";
+export * from "./application/generate-pool-draft.use-case.ts";
+export * from "./ports/save-pool-draft.port.ts";
