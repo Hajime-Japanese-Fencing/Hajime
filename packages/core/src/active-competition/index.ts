@@ -10,3 +10,5 @@ export * from "./ports/apply-draw.port.ts";
 export * from "./ports/load-competition-fights.port.ts";
 export * from "./ports/save-fight-result.port.ts";
 export * from "./ports/save-generated-fights.port.ts";
+export * from "./domain/build-bracket-export.ts";
+export * from "./domain/build-pool-export.ts";

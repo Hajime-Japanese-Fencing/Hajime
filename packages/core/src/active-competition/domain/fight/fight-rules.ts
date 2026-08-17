@@ -23,7 +23,10 @@ export function startFight(fight: FightRecord): FightRuleResult {
 export function cancelFight(fight: FightRecord): FightRuleResult {
   if (fight.status !== FightStatus.InProgress) return reject("illegal_transition");
 
-  return { ...fight, status: FightStatus.Waiting };
+  // --- CANCELLING SENDS THE FIGHT BACK TO "WAITING" AS IF IT HAD NEVER STARTED, SO ANY
+  // IPPON/HANSOKU RECORDED DURING THIS ATTEMPT (INCLUDING AUTO-AWARDED IPPONS) IS DISCARDED
+  // RATHER THAN CARRIED OVER TO THE NEXT TIME THIS FIGHT IS STARTED. ---
+  return { ...fight, status: FightStatus.Waiting, scoreEvents: [] };
 }
 
 export function finishFight(fight: FightRecord): FightRuleResult {

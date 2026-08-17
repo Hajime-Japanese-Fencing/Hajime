@@ -52,7 +52,14 @@ async function recordScoreEvent(
   const updatedFight = apply(fight, makeScoreEventId(snapshot.nextScoreEventId));
   if (isRejection(updatedFight)) return toCommandRejection(updatedFight.reason);
 
-  deps.state.commitFight(updatedFight, snapshot.activeFightId, snapshot.nextScoreEventId + 1);
+  // --- recordHansoku CAN ADD TWO SCORE EVENTS IN ONE GO (THE HANSOKU ITSELF, PLUS AN
+  // AUTO-AWARDED IPPON ONCE A FIGHTER REACHES THEIR 2ND/4TH/... HANSOKU) — SO nextScoreEventId
+  // MUST ADVANCE BY HOW MANY EVENTS WERE ACTUALLY ADDED, NOT ALWAYS BY 1, OR THE NEXT SCORE
+  // EVENT RECORDED WOULD REUSE AN ID THAT'S ALREADY TAKEN. ---
+  const addedEventCount = updatedFight.scoreEvents.length - fight.scoreEvents.length;
+  const nextScoreEventId = snapshot.nextScoreEventId + addedEventCount;
+
+  deps.state.commitFight(updatedFight, snapshot.activeFightId, nextScoreEventId);
   await deps.saveFightResult.saveScoreEvents(fightId, updatedFight.scoreEvents);
 
   return { ok: true };

@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vite-plus/test";
 import { FightStatus } from "../../../shared/fight-status.ts";
-import { makeFightRecord } from "../../__test__/fixtures.ts";
+import { IpponCode } from "../../../shared/ippons.ts";
+import { makeScoreEventId } from "../../../shared/score-event-id.ts";
+import { fighterRed, makeFightRecord } from "../../__test__/fixtures.ts";
 import { cancelFight, finishFight, startFight } from "./fight-rules.ts";
 
 describe("Fight state transitions", () => {
@@ -30,6 +32,26 @@ describe("Fight state transitions", () => {
 
       expect(cancelFight(fight)).toEqual({ ...fight, status: FightStatus.Waiting });
       expect(fight.status).toBe(FightStatus.InProgress);
+    });
+
+    it("should discard any score events recorded so far", () => {
+      const fight = makeFightRecord({
+        status: FightStatus.InProgress,
+        scoreEvents: [
+          {
+            id: makeScoreEventId(1),
+            fighterId: fighterRed,
+            type: "ippon",
+            code: IpponCode.Men,
+            firstBlood: true,
+          },
+        ],
+      });
+
+      const result = cancelFight(fight);
+
+      expect(result).toEqual({ ...fight, status: FightStatus.Waiting, scoreEvents: [] });
+      expect(fight.scoreEvents).toHaveLength(1);
     });
 
     it("should reject a waiting or finished fight", () => {

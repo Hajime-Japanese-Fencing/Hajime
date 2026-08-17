@@ -23,6 +23,8 @@ catalog:
   vite-plus: latest
   "@tsdown/css": ^0.22.3
   lucide-vue-next: ^1.0.0
+  jspdf: ^4.2.1
+  jspdf-autotable: ^5.0.8
 overrides:
   vite: "catalog:"
   vitest: "catalog:"
@@ -34,5 +36,6 @@ peerDependencyRules:
     vite: "*"
     vitest: "*"
 allowBuilds:
+  core-js: true
   esbuild: true
   vue-demi: true
