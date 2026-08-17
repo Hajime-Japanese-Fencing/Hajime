@@ -7,7 +7,7 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-  select: [id: string];
+  select: [select: DropdownOption];
 }>();
 </script>
 
@@ -21,10 +21,15 @@ const emit = defineEmits<{
     id="popover-1"
     style="position-anchor: --anchor-1"
   >
-    <li v-for="option in options">
-      <div @select="emit('select', option.return)">
+    <li v-for="option in options" :key="option.label">
+      <button
+        type="button"
+        popovertarget="popover-1"
+        popovertargetaction="hide"
+        @click="emit('select', option)"
+      >
         {{ option.label }}
-      </div>
+      </button>
     </li>
   </ul>
 </template>

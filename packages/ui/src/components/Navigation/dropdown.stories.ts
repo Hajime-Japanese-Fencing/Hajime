@@ -1,21 +1,22 @@
 import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import Dropdown from "./Dropdown.vue";
-import { DropdownOption } from "./dropdown-option.interface.ts";
+import type { DropdownOption } from "./dropdown-option.interface.ts";
 
 const title: string = "Menu dropdown";
 
+function testFunc() {}
 const options: DropdownOption[] = [
   {
     label: "option 1",
-    return: undefined,
+    return: testFunc,
   },
   {
     label: "option 2",
-    return: undefined,
+    return: testFunc,
   },
   {
     label: "option 3",
-    return: undefined,
+    return: testFunc,
   },
 ];
 

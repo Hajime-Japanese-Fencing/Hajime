@@ -8,6 +8,7 @@ export { default as ValidateButton } from "./components/Actions/Button/ValidateB
 export { default as DangerButton } from "./components/Actions/Button/DangerButton.vue";
 export { default as AssignButton } from "./components/FightList/AssignButton.vue";
 export { default as Dropdown } from "./components/Navigation/Dropdown.vue";
+export type { DropdownOption } from "./components/Navigation/dropdown-option.interface.ts";
 
 export { default as AlertError } from "./components/DataDisplay/AlertError.vue";
 export { default as Badge } from "./components/DataDisplay/Badge.vue";
