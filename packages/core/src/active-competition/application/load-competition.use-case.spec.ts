@@ -3,7 +3,7 @@ import { makeCompetitionId, type CompetitionId } from "../../shared/competition-
 import { makeScoreEventId } from "../../shared/score-event-id.ts";
 import { FakeActiveCompetitionState } from "../__test__/fake-active-competition-state.ts";
 import { makeFightRecord, makePoolRecord } from "../__test__/fixtures.ts";
-import type { CompetitionDraw } from "../domain/competition-draw.ts";
+import type { CompetitionDraw } from "../../shared/competition-draw.ts";
 import type { CompetitionDrawLoader } from "../ports/load-competition-fights.port.ts";
 import { loadCompetition } from "./load-competition.use-case.ts";
 

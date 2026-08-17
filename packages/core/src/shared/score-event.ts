@@ -1,6 +1,6 @@
-import type { IpponCode } from "../../shared/ippons.ts";
-import type { FighterId } from "../../shared/fighter-id.ts";
-import type { ScoreEventId } from "../../shared/score-event-id.ts";
+import type { IpponCode } from "./ippons.ts";
+import type { FighterId } from "./fighter-id.ts";
+import type { ScoreEventId } from "./score-event-id.ts";
 
 export type ScoreEventType = "ippon" | "hansoku";
 

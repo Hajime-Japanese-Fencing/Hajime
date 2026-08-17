@@ -2,8 +2,8 @@ import { FightStatus } from "../../shared/fight-status.ts";
 import type { FighterId } from "../../shared/fighter-id.ts";
 import { getBracketRoundLabel } from "../../competition-preparation/draw/bracket/domain/bracket-round-label.ts";
 import { determineFightWinner } from "./fight/fight-winner.ts";
-import type { FightRecord } from "./fight-record.ts";
-import type { BracketRoundRecord } from "./bracket-round-record.ts";
+import type { FightRecord } from "../../shared/fight-record.ts";
+import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
 import type { ActiveCompetitionView } from "../state/active-competition-view.ts";
 
 const THIRD_PLACE_LABEL = "3rd place match";

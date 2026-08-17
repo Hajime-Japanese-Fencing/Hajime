@@ -3,7 +3,7 @@ import { FightStatus } from "../../shared/fight-status.ts";
 import type { FightId } from "../../shared/fight-id.ts";
 import { IpponCode } from "../../shared/ippons.ts";
 import { makeScoreEventId } from "../../shared/score-event-id.ts";
-import type { ScoreEvent } from "../domain/score-event.ts";
+import type { ScoreEvent } from "../../shared/score-event.ts";
 import { FakeActiveCompetitionState } from "../__test__/fake-active-competition-state.ts";
 import { fighterRed, fightId1, makeFightRecord } from "../__test__/fixtures.ts";
 import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";

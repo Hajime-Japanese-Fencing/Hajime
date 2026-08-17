@@ -11,7 +11,7 @@ import {
   makePoolRecord,
   poolId1,
 } from "../__test__/fixtures.ts";
-import type { CompetitionDraw } from "../domain/competition-draw.ts";
+import type { CompetitionDraw } from "../../shared/competition-draw.ts";
 import type { CompetitionDrawLoader } from "../ports/load-competition-fights.port.ts";
 import { createActiveCompetition } from "./active-competition.facade.ts";
 

@@ -1,6 +1,6 @@
-import type { FightId } from "../../shared/fight-id.ts";
-import type { FighterId } from "../../shared/fighter-id.ts";
-import type { BracketRoundId } from "../../shared/bracket-round-id.ts";
+import type { FightId } from "./fight-id.ts";
+import type { FighterId } from "./fighter-id.ts";
+import type { BracketRoundId } from "./bracket-round-id.ts";
 
 // --- A MATCH OF THIS ROUND THAT ISN'T PLAYABLE YET BECAUSE ONE OR BOTH OF ITS FIGHTERS ARE
 // STILL UNKNOWN (WAITING ON A PREVIOUS ROUND'S RESULT). ONCE BOTH SLOTS ARE FILLED IT GETS

@@ -1,8 +1,8 @@
-import type { FightStatus } from "../../shared/fight-status.ts";
-import type { FighterId } from "../../shared/fighter-id.ts";
-import type { FightId } from "../../shared/fight-id.ts";
-import type { PoolId } from "../../shared/pool-id.ts";
-import type { BracketRoundId } from "../../shared/bracket-round-id.ts";
+import type { FightStatus } from "./fight-status.ts";
+import type { FighterId } from "./fighter-id.ts";
+import type { FightId } from "./fight-id.ts";
+import type { PoolId } from "./pool-id.ts";
+import type { BracketRoundId } from "./bracket-round-id.ts";
 import type { ScoreEvent } from "./score-event.ts";
 
 export interface FightRecord {

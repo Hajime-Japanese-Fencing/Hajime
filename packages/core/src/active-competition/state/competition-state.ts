@@ -2,9 +2,9 @@ import { createStore } from "@tanstack/store";
 import type { FightId } from "../../shared/fight-id.ts";
 import type { PoolId } from "../../shared/pool-id.ts";
 import type { BracketRoundId } from "../../shared/bracket-round-id.ts";
-import type { FightRecord } from "../domain/fight-record.ts";
-import type { PoolRecord } from "../domain/pool-record.ts";
-import type { BracketRoundRecord } from "../domain/bracket-round-record.ts";
+import type { FightRecord } from "../../shared/fight-record.ts";
+import type { PoolRecord } from "../../shared/pool-record.ts";
+import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
 
 export interface ActiveCompetitionSnapshot {
   readonly poolsById: Readonly<Record<PoolId, PoolRecord>>;

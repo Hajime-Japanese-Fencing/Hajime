@@ -1,5 +1,5 @@
 import type { FighterId } from "../../../shared/fighter-id.ts";
-import type { FightRecord } from "../fight-record.ts";
+import type { FightRecord } from "../../../shared/fight-record.ts";
 
 // --- COUNTS IPPON-TYPE SCORE EVENTS PER FIGHTER; WHOEVER HAS MORE WINS. RETURNS null WHEN
 // TIED (INCLUDING 0-0): NEITHER A HANTEI NOR A FORFEIT DECISION IS MODELLED AS A SCORE EVENT

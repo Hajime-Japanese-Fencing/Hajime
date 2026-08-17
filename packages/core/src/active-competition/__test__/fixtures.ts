@@ -2,8 +2,8 @@ import { FightStatus } from "../../shared/fight-status.ts";
 import { makeFightId } from "../../shared/fight-id.ts";
 import { makeFighterId } from "../../shared/fighter-id.ts";
 import { makePoolId } from "../../shared/pool-id.ts";
-import type { FightRecord } from "../domain/fight-record.ts";
-import type { PoolRecord } from "../domain/pool-record.ts";
+import type { FightRecord } from "../../shared/fight-record.ts";
+import type { PoolRecord } from "../../shared/pool-record.ts";
 
 export const poolId1 = makePoolId(1);
 

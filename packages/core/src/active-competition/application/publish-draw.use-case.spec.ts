@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 import { makeCompetitionId, type CompetitionId } from "../../shared/competition-id.ts";
 import { makeFightRecord, makePoolRecord } from "../__test__/fixtures.ts";
-import type { CompetitionDraw } from "../domain/competition-draw.ts";
+import type { CompetitionDraw } from "../../shared/competition-draw.ts";
 import type { CompetitionDrawReceiver } from "../ports/apply-draw.port.ts";
 import type { CompetitionDrawRepository } from "../ports/save-generated-fights.port.ts";
 import { publishDraw } from "./publish-draw.use-case.ts";

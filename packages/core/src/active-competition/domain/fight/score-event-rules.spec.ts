@@ -3,7 +3,7 @@ import { FightStatus } from "../../../shared/fight-status.ts";
 import { makeFighterId } from "../../../shared/fighter-id.ts";
 import { IpponCode } from "../../../shared/ippons.ts";
 import { makeScoreEventId } from "../../../shared/score-event-id.ts";
-import type { ScoreEvent } from "../score-event.ts";
+import type { ScoreEvent } from "../../../shared/score-event.ts";
 import { fighterRed, fighterWhite, makeFightRecord } from "../../__test__/fixtures.ts";
 import { recordHansoku, recordIppon, removeScoreEvent } from "./score-event-rules.ts";
 

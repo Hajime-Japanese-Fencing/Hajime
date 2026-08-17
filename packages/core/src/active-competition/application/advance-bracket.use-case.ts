@@ -2,8 +2,8 @@ import { FightStatus } from "../../shared/fight-status.ts";
 import { makeFightId, type FightId } from "../../shared/fight-id.ts";
 import { determineFightWinner } from "../domain/fight/fight-winner.ts";
 import { fillNextRoundSlot } from "../domain/bracket-progression.ts";
-import type { BracketRoundRecord } from "../domain/bracket-round-record.ts";
-import type { FightRecord } from "../domain/fight-record.ts";
+import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
+import type { FightRecord } from "../../shared/fight-record.ts";
 import type { ActiveCompetitionState } from "../state/competition-state.ts";
 
 export type AdvanceBracketResult =
