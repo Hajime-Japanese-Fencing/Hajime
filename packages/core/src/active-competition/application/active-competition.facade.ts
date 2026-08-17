@@ -95,6 +95,11 @@ export function createActiveCompetition(deps: ActiveCompetitionDeps): ActiveComp
     if (!fight) return { ok: false, reason: "fight_not_found" };
 
     const fighterId = input.side === "RED" ? fight.redFighterId : fight.whiteFighterId;
+    // --- fighterId IS ONLY EVER null FOR A BYE'S "WHITE" SIDE, AND A BYE CAN NEVER BE THE
+    // ACTIVE FIGHT (IT'S CREATED DIRECTLY AS "finished", SO startFight ALWAYS REJECTS IT) —
+    // THIS IS PURE TYPE-SAFETY DEFENCE, NOT A REACHABLE PATH. ---
+    if (!fighterId) return { ok: false, reason: "scoring_not_allowed" };
+
     return record(fightId, fighterId);
   }
 

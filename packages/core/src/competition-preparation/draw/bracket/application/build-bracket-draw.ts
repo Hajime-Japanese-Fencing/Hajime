@@ -57,13 +57,26 @@ export function buildBracketDraw(bracket: Bracket, startingFightId: number = 1):
 
       // --- A FIRST-ROUND MATCH WITH ONLY fighter1 SET IS A BYE THAT generateBracket ALREADY
       // RESOLVED: IT PROPAGATED fighter1 INTO THE NEXT ROUND VIA advanceWinner BEFORE EVEN
-      // RETURNING THE BRACKET. IT ISN'T A REAL FIGHT (NO OPPONENT) NOR SOMETHING STILL WAITING
-      // ON A RESULT, SO IT'S DROPPED HERE RATHER THAN TURNED INTO A FightRecord (WHICH REQUIRES
-      // BOTH FIGHTERS) OR A BracketPendingMatch (WHICH WOULD WRONGLY SUGGEST IT'S UNRESOLVED).
-      // THIS CAN ONLY HAPPEN AT ROUND INDEX 0 — LATER ROUNDS WITH ONLY fighter1 KNOWN ARE
-      // GENUINELY PENDING (WAITING ON AN ADJACENT MATCH'S WINNER), SO THEY FALL THROUGH TO THE
-      // pendingMatches CASE BELOW INSTEAD. ---
+      // RETURNING THE BRACKET. IT'S SURFACED AS A REAL, ALREADY-Finished FightRecord (RATHER
+      // THAN SILENTLY DROPPED) SO IT'S VISIBLE IN THE QUARTER/ROUND LIST LIKE ANY OTHER MATCH —
+      // whiteFighterId IS null SINCE THERE'S NO REAL OPPONENT, AND fighter1 IS THE AUTOMATIC
+      // WINNER (SEE determineFightWinner). THIS CAN ONLY HAPPEN AT ROUND INDEX 0 — LATER
+      // ROUNDS WITH ONLY fighter1 KNOWN ARE GENUINELY PENDING (WAITING ON AN ADJACENT MATCH'S
+      // WINNER), SO THEY FALL THROUGH TO THE pendingMatches CASE BELOW INSTEAD. ---
       if (roundIndex === 0 && match.fighter1 !== null && match.fighter2 === null) {
+        const fightId = makeFightId(nextFightId++);
+
+        fights.push({
+          id: fightId,
+          poolId: null,
+          bracketRoundId: roundIds[roundIndex],
+          bracketMatchIndex: matchIndex,
+          redFighterId: makeFighterId(match.fighter1.id),
+          whiteFighterId: null,
+          status: FightStatus.Finished,
+          scoreEvents: [],
+        });
+        fightIds.push(fightId);
         return;
       }
 

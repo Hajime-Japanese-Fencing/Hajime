@@ -66,25 +66,39 @@ describe("buildBracketDraw", () => {
     });
   });
 
-  it("drops a resolved first-round bye instead of turning it into a fight or a pending match", () => {
+  it("turns a resolved first-round bye into an already-Finished fight the seeded fighter automatically wins", () => {
     // --- 3 SEEDED FIGHTERS -> BRACKET SIZE 4 -> ONE BYE IN THE FIRST ROUND. "a" (RANK 1)
     // GETS THE BYE AND generateBracket ALREADY PROPAGATES IT INTO THE FINAL. ---
     const bracket = generateBracket(makeSeededFighters(["a", "b", "c"]));
 
     const draw = buildBracketDraw(bracket);
 
-    // --- ONLY b VS c IS A REAL FIRST-ROUND FIGHT — a'S BYE MATCH ISN'T TURNED INTO ANYTHING. ---
-    expect(draw.fights).toHaveLength(1);
-    expect(draw.fights[0]).toMatchObject({
+    // --- BOTH THE BYE AND THE REAL b VS c MATCH BECOME FightRecords — NOTHING IS DROPPED. ---
+    expect(draw.fights).toHaveLength(2);
+
+    const [byeFight, realFight] = draw.fights;
+    expect(byeFight).toEqual({
+      id: makeFightId(1),
+      poolId: null,
+      bracketRoundId: draw.bracketRounds[0].id,
+      bracketMatchIndex: 0,
+      redFighterId: makeFighterId("a"),
+      whiteFighterId: null,
+      status: FightStatus.Finished,
+      scoreEvents: [],
+    });
+    expect(realFight).toMatchObject({
+      bracketMatchIndex: 1,
       redFighterId: makeFighterId("b"),
       whiteFighterId: makeFighterId("c"),
+      status: FightStatus.Waiting,
     });
 
     const [firstRound, finalRound] = draw.bracketRounds;
-    expect(firstRound.fightIds).toEqual([draw.fights[0].id]);
+    expect(firstRound.fightIds).toEqual([byeFight.id, realFight.id]);
     expect(firstRound.pendingMatches).toEqual([]);
 
-    // --- a'S BYE ADVANCEMENT MUST SURVIVE AS A PENDING MATCH ON THE FINAL, NOT BE LOST. ---
+    // --- a'S BYE ADVANCEMENT MUST STILL SURVIVE AS A PENDING MATCH ON THE FINAL, NOT BE LOST. ---
     expect(finalRound.pendingMatches).toEqual([
       { matchIndex: 0, fighter1: makeFighterId("a"), fighter2: null },
     ]);

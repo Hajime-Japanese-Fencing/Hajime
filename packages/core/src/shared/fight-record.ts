@@ -17,7 +17,10 @@ export interface FightRecord {
   // `fillNextRoundSlot` IN `domain/bracket-progression.ts`. ---
   readonly bracketMatchIndex: number | null;
   readonly redFighterId: FighterId;
-  readonly whiteFighterId: FighterId;
+  // --- null ONLY FOR A BRACKET FIRST-ROUND BYE (SEE buildBracketDraw): redFighterId IS THE
+  // ONLY REAL PARTICIPANT AND AUTOMATICALLY WINS (SEE determineFightWinner). NEVER null FOR A
+  // POOL FIGHT OR A REAL BRACKET MATCHUP — BOTH SIDES ARE ALWAYS KNOWN THERE. ---
+  readonly whiteFighterId: FighterId | null;
   readonly status: FightStatus;
   readonly scoreEvents: ScoreEvent[];
 }

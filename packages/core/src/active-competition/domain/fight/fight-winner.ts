@@ -6,6 +6,10 @@ import type { FightRecord } from "../../../shared/fight-record.ts";
 // YET, SO A TIE HERE MEANS "NO DECISION RECORDED", NOT "DRAW" — THE FIGHT SHOULDN'T ADVANCE
 // A BRACKET UNTIL A REFEREE DECISION BREAKS IT. ---
 export function determineFightWinner(fight: FightRecord): FighterId | null {
+  // --- A BYE (NO whiteFighterId) HAS NO REAL OPPONENT: redFighterId WINS AUTOMATICALLY,
+  // WITHOUT NEEDING ANY SCORE EVENT TO DECIDE IT. ---
+  if (fight.whiteFighterId === null) return fight.redFighterId;
+
   const redIppons = countIppons(fight, fight.redFighterId);
   const whiteIppons = countIppons(fight, fight.whiteFighterId);
 

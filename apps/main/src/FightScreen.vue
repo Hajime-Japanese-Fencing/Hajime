@@ -71,12 +71,27 @@ async function onGenerateBracketDraft() {
   }
 }
 
-const fights = computed<Fight[]>(() => [
-  ...groupFights.value.map((record) => presentFight(record, isSelectedGroupUnlocked.value)),
-  ...groupPendingMatches.value.map(({ bracketRoundId, match }) =>
-    presentPendingMatch(bracketRoundId, match),
-  ),
-]);
+// --- BRACKET ROWS ARE ORDERED BY THEIR POSITION IN THE ROUND (bracketMatchIndex / matchIndex),
+// SAME AS THE PDF EXPORT — NOT "EVERY PLAYABLE FIGHT FIRST, THEN EVERY STILL-PENDING MATCH".
+// A BYE (OR ANY EARLY RESULT) CAN MAKE A LATER-POSITION MATCH PLAYABLE BEFORE AN EARLIER ONE
+// (E.G. BOTH SEMI-FINAL SLOT-2 FIGHTERS ALREADY KNOWN VIA BYES WHILE SLOT-1 STILL WAITS ON A
+// QUARTER-FINAL RESULT), SO SORTING PLAYABLE-FIRST WOULD SHOW IT ABOVE SLOT-1 EVEN THOUGH IT
+// SITS BELOW IT IN THE BRACKET. POOL FIGHTS HAVE NO bracketMatchIndex (ALWAYS null), SO THIS
+// SORT IS A NO-OP FOR THEM AND THEY KEEP THEIR ORIGINAL (CREATION) ORDER. ---
+const fights = computed<Fight[]>(() => {
+  const fightRows = groupFights.value.map((record) => ({
+    matchIndex: record.bracketMatchIndex,
+    fight: presentFight(record, isSelectedGroupUnlocked.value),
+  }));
+  const pendingRows = groupPendingMatches.value.map(({ bracketRoundId, match }) => ({
+    matchIndex: match.matchIndex as number | null,
+    fight: presentPendingMatch(bracketRoundId, match),
+  }));
+
+  return [...fightRows, ...pendingRows]
+    .sort((a, b) => (a.matchIndex ?? 0) - (b.matchIndex ?? 0))
+    .map((row) => row.fight);
+});
 const activeFightId = computed(() => activeCompetition.view.value.activeFight?.id ?? null);
 
 function onOpenFight(id: FightId) {

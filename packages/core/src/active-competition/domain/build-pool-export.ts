@@ -45,7 +45,9 @@ export function buildPoolExport(view: ActiveCompetitionView): PoolExport {
         fighterIds: pool.fighterIds,
         fights: view.poolFights(pool.id).map((fight) => ({
           fighter1: fight.redFighterId,
-          fighter2: fight.whiteFighterId,
+          // --- POOL FIGHTS NEVER HAVE A BYE (whiteFighterId IS ONLY EVER null FOR A BRACKET
+          // FIRST-ROUND BYE, SEE FightRecord) — SAFE TO ASSERT NON-null HERE. ---
+          fighter2: fight.whiteFighterId!,
           winner: fight.status === FightStatus.Finished ? determineFightWinner(fight) : null,
           status: fight.status,
         })),

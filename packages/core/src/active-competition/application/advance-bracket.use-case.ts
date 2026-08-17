@@ -46,6 +46,14 @@ export async function advanceBracket(
 
   const winnerId = determineFightWinner(fight);
   if (!winnerId) return { ok: false, reason: "no_winner_yet" };
+
+  // --- A BYE (whiteFighterId === null) HAS NO REAL LOSER TO PROPAGATE, AND ITS ADVANCEMENT
+  // INTO THE NEXT ROUND WAS ALREADY BAKED IN AT GENERATION TIME (SEE buildBracketDraw) — SO
+  // THERE'S NOTHING LEFT TO DO HERE. THIS IS UNREACHABLE IN PRACTICE (A BYE IS CREATED
+  // DIRECTLY AS "finished" AND CAN NEVER BECOME THE ACTIVE FIGHT), BUT KEEPS loserId BELOW
+  // SOUNDLY TYPED AS A REAL FighterId RATHER THAN FighterId | null. ---
+  if (fight.whiteFighterId === null) return { ok: true, promotedFightIds: [] };
+
   const loserId = winnerId === fight.redFighterId ? fight.whiteFighterId : fight.redFighterId;
 
   const bracketRounds = fillNextRoundSlot(

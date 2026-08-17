@@ -8,13 +8,22 @@ import {
 } from "@hajime/core";
 import type { Fight } from "@hajime/ui";
 
+// --- SHOWN AS THE OPPONENT NAME FOR A BRACKET FIRST-ROUND BYE (record.whiteFighterId === null):
+// THE FIGHTER AUTOMATICALLY ADVANCES WITHOUT A REAL OPPONENT (SEE buildBracketDraw /
+// determineFightWinner). REUSES THE SAME SENTINEL-FighterId TRICK AS presentPendingMatch's
+// "-" PLACEHOLDER SINCE Fight/SideFighter DON'T MODEL A MISSING FIGHTER. ---
+const BYE_LABEL = "Bye";
+
 export function presentFight(record: FightRecord, canOpen = true): Fight {
   const ipponsRed = record.scoreEvents.filter(
     (event) => event.type === "ippon" && event.fighterId === record.redFighterId,
   );
-  const ipponsWhite = record.scoreEvents.filter(
-    (event) => event.type === "ippon" && event.fighterId === record.whiteFighterId,
-  );
+  const ipponsWhite =
+    record.whiteFighterId === null
+      ? []
+      : record.scoreEvents.filter(
+          (event) => event.type === "ippon" && event.fighterId === record.whiteFighterId,
+        );
 
   return {
     id: record.id,
@@ -22,10 +31,10 @@ export function presentFight(record: FightRecord, canOpen = true): Fight {
       fighterId: record.redFighterId,
       fighterName: String(record.redFighterId),
     },
-    fighter2: {
-      fighterId: record.whiteFighterId,
-      fighterName: String(record.whiteFighterId),
-    },
+    fighter2:
+      record.whiteFighterId === null
+        ? { fighterId: makeFighterId(""), fighterName: BYE_LABEL }
+        : { fighterId: record.whiteFighterId, fighterName: String(record.whiteFighterId) },
     status: record.status,
     score:
       ipponsRed.length === 0 && ipponsWhite.length === 0
@@ -33,7 +42,9 @@ export function presentFight(record: FightRecord, canOpen = true): Fight {
         : `${ipponsRed.length} - ${ipponsWhite.length}`,
     scoreEvents: record.scoreEvents,
     editable: record.status !== FightStatus.Finished,
-    canOpen,
+    // --- A BYE HAS NO REAL OPPONENT TO REFEREE — NEVER OPENABLE, REGARDLESS OF WHAT THE
+    // CALLER PASSED FOR canOpen (E.G. "GROUP UNLOCKED"). ---
+    canOpen: record.whiteFighterId === null ? false : canOpen,
   };
 }
 
