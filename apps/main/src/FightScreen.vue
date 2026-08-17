@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { Button, FightList, SelectorList } from "@hajime/ui";
 import type { AssignIpponEvent, Fight } from "@hajime/ui";
 import {
@@ -7,6 +7,7 @@ import {
   buildPoolExport,
   makeCompetitionId,
   type FightId,
+  type FighterEntry,
   type ScoreEventId,
   type Side,
 } from "@hajime/core";
@@ -43,6 +44,32 @@ watch(
   },
   { immediate: true },
 );
+
+// --- TEMPORARY: NO FIGHTER REGISTRATION SCREEN YET, SO THIS IS A FIXED ROSTER JUST TO EXERCISE
+// THE REAL generateBracketUseCase -> buildBracketDraw PIPELINE END TO END. 5 FIGHTERS (NOT A
+// POWER OF TWO) SO THE GENERATED BRACKET HAS BYES TO MAP, NOT JUST STRAIGHTFORWARD FIRST-ROUND
+// FIGHTS. TO REPLACE ONCE FIGHTER REGISTRATION EXISTS. ---
+const DEMO_BRACKET_FIGHTERS: FighterEntry[] = [
+  { id: "kondo", isSeeded: false, club: "Demo Dojo" },
+  { id: "fujita", isSeeded: false, club: "Demo Dojo" },
+  { id: "saito", isSeeded: false, club: "Demo Dojo" },
+  { id: "aoki", isSeeded: false, club: "Demo Dojo" },
+  { id: "endo", isSeeded: false, club: "Demo Dojo" },
+];
+
+const isGeneratingBracket = ref(false);
+
+async function onGenerateBracketDraft() {
+  isGeneratingBracket.value = true;
+  try {
+    await container.generateBracketDraw(
+      makeCompetitionId(props.competitionId),
+      DEMO_BRACKET_FIGHTERS,
+    );
+  } finally {
+    isGeneratingBracket.value = false;
+  }
+}
 
 const fights = computed<Fight[]>(() => [
   ...groupFights.value.map((record) => presentFight(record, isSelectedGroupUnlocked.value)),
@@ -103,8 +130,11 @@ function onExport() {
 </script>
 
 <template>
-  <div class="mb-4">
+  <div class="mb-4 flex gap-2">
     <Button @click="onExport">Export to PDF</Button>
+    <Button :disabled="isGeneratingBracket" @click="onGenerateBracketDraft">
+      Générer un tableau (démo)
+    </Button>
   </div>
   <div class="flex gap-4">
     <SelectorList
