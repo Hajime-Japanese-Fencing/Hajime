@@ -21,7 +21,7 @@ describe("buildBracketDraw", () => {
 
     expect(draw.fights).toEqual([
       {
-        id: makeFightId(1),
+        id: makeFightId("1"),
         poolId: null,
         bracketRoundId: draw.bracketRounds[0].id,
         bracketMatchIndex: 0,
@@ -31,7 +31,7 @@ describe("buildBracketDraw", () => {
         scoreEvents: [],
       },
       {
-        id: makeFightId(2),
+        id: makeFightId("2"),
         poolId: null,
         bracketRoundId: draw.bracketRounds[0].id,
         bracketMatchIndex: 1,
@@ -51,7 +51,7 @@ describe("buildBracketDraw", () => {
       feedsRoundId: finalRound.id,
       loserFeedsRoundId: undefined,
       dependsOnRoundId: null,
-      fightIds: [makeFightId(1), makeFightId(2)],
+      fightIds: [makeFightId("1"), makeFightId("2")],
       pendingMatches: [],
     });
 
@@ -78,7 +78,7 @@ describe("buildBracketDraw", () => {
 
     const [byeFight, realFight] = draw.fights;
     expect(byeFight).toEqual({
-      id: makeFightId(1),
+      id: makeFightId("1"),
       poolId: null,
       bracketRoundId: draw.bracketRounds[0].id,
       bracketMatchIndex: 0,
@@ -150,13 +150,5 @@ describe("buildBracketDraw", () => {
 
     expect(draw.bracketRounds.every((round) => round.kind !== "thirdPlace")).toBe(true);
     expect(draw.bracketRounds.every((round) => round.loserFeedsRoundId === undefined)).toBe(true);
-  });
-
-  it("mints fight ids starting from the given startingFightId", () => {
-    const bracket = generateBracket(makeSeededFighters(["w", "x", "y", "z"]));
-
-    const draw = buildBracketDraw(bracket, 50);
-
-    expect(draw.fights.map((fight) => fight.id)).toEqual([makeFightId(50), makeFightId(51)]);
   });
 });

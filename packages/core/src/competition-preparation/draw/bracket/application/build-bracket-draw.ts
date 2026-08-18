@@ -24,13 +24,12 @@ export interface BracketDraw {
  * 1 since a caller loading this draw alone (via `applyDraw`/`loadCompetition`) recomputes
  * `nextFightId` from the fights themselves anyway.
  */
-export function buildBracketDraw(bracket: Bracket, startingFightId: number = 1): BracketDraw {
+export function buildBracketDraw(bracket: Bracket): BracketDraw {
   const roundIds = bracket.rounds.map((_, index) => makeBracketRoundId(index + 1));
   const thirdPlaceRoundId = bracket.thirdPlaceMatch
     ? makeBracketRoundId(roundIds.length + 1)
     : null;
 
-  let nextFightId = startingFightId;
   const fights: FightRecord[] = [];
 
   const bracketRounds: BracketRoundRecord[] = bracket.rounds.map((round, roundIndex) => {
@@ -39,7 +38,7 @@ export function buildBracketDraw(bracket: Bracket, startingFightId: number = 1):
 
     round.matches.forEach((match, matchIndex) => {
       if (match.fighter1 !== null && match.fighter2 !== null) {
-        const fightId = makeFightId(nextFightId++);
+        const fightId = makeFightId(crypto.randomUUID());
 
         fights.push({
           id: fightId,
@@ -64,7 +63,7 @@ export function buildBracketDraw(bracket: Bracket, startingFightId: number = 1):
       // ROUNDS WITH ONLY fighter1 KNOWN ARE GENUINELY PENDING (WAITING ON AN ADJACENT MATCH'S
       // WINNER), SO THEY FALL THROUGH TO THE pendingMatches CASE BELOW INSTEAD. ---
       if (roundIndex === 0 && match.fighter1 !== null && match.fighter2 === null) {
-        const fightId = makeFightId(nextFightId++);
+        const fightId = makeFightId(crypto.randomUUID());
 
         fights.push({
           id: fightId,
