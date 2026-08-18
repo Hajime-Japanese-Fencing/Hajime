@@ -2,6 +2,7 @@ import type { FighterEntry } from "../../../../../shared/fighter.ts";
 import type { PoolSetup } from "../setup/pool-setup.ts";
 import type { Pool } from "../pool.ts";
 import { toPoolFighter } from "./pool-fighter.ts";
+import { shuffle } from "../../../../../shared/utilitary.ts";
 
 export function distributeFightersInPools(
   fighters: FighterEntry[],
@@ -33,6 +34,7 @@ export function distributeFightersInPools(
     fighters,
     shouldSeparateSeededCompetitors,
     shouldSeparateClubMembers,
+    shuffle,
   );
 
   for (let fighter of sortedFighters) {
@@ -85,13 +87,14 @@ function sortFighters(
   fighters: FighterEntry[],
   sortBySeededCompetitors: boolean,
   sortByClub: boolean,
+  randomizer: (entries: FighterEntry[]) => FighterEntry[],
 ): FighterEntry[] {
   let headFighters: FighterEntry[] = [];
-  let regularFighters: FighterEntry[] = fighters;
+  let regularFighters: FighterEntry[] = randomizer(fighters);
 
   if (sortBySeededCompetitors) {
-    headFighters = fighters.filter((fighter) => fighter.isSeeded);
-    regularFighters = fighters.filter((fighter) => !fighter.isSeeded);
+    headFighters = randomizer(fighters.filter((fighter) => fighter.isSeeded));
+    regularFighters = randomizer(fighters.filter((fighter) => !fighter.isSeeded));
   }
 
   if (sortByClub) {
