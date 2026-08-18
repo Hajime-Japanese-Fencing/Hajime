@@ -50,15 +50,10 @@ const pools = ref<Pool[]>([]);
 
 // TO ISOLATE IN AN "ADAPTER" TYPE FILE PROBABLY ?
 function poolSetupToDropdownOption(setup: PoolSetup): DropdownOption {
-  const poolSize = setup.poolGroups[0].poolSize;
-  const nbPools = setup.poolGroups[0].amount;
-  let label = `${nbPools} Pools of ${poolSize} Fighters`;
-
-  if (setup.poolGroups.length > 1) {
-    const poolSize2 = setup.poolGroups[1].poolSize;
-    const nbPools2 = setup.poolGroups[1].amount;
-    label += ` & ${nbPools2} Pools of ${poolSize2} Fighters`;
-  }
+  let label = "";
+  setup.poolGroups.forEach((pool, index) => {
+    label += `${index > 1 ? " &" : ""} ${pool.amount} Pools of ${pool.poolSize} Fighters`;
+  });
 
   return {
     label: label + ` (${setup.fightCount} Fights)`,
