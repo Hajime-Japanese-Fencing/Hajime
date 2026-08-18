@@ -63,12 +63,9 @@ export async function advanceBracket(
     loserId,
   );
 
-  const { updatedRounds, newFights, nextFightId, promotedFightIds } = promoteReadyMatches(
-    bracketRounds,
-    snapshot.nextFightId,
-  );
+  const { updatedRounds, newFights, promotedFightIds } = promoteReadyMatches(bracketRounds);
 
-  deps.state.advanceBracket({ bracketRounds: updatedRounds, newFights, nextFightId });
+  deps.state.advanceBracket({ bracketRounds: updatedRounds, newFights });
 
   return { ok: true, promotedFightIds };
 }
@@ -76,16 +73,11 @@ export async function advanceBracket(
 // --- TURNS ANY PENDING MATCH THAT NOW HAS BOTH FIGHTERS KNOWN INTO A REAL, PLAYABLE
 // FightRecord, MINTING FRESH FIGHT IDS AS IT GOES. LEAVES ROUNDS WITH NOTHING TO PROMOTE
 // UNTOUCHED (SAME OBJECT REFERENCE) SO CALLERS CAN CHEAPLY TELL WHAT CHANGED. ---
-function promoteReadyMatches(
-  bracketRounds: BracketRoundRecord[],
-  startingNextFightId: number,
-): {
+function promoteReadyMatches(bracketRounds: BracketRoundRecord[]): {
   updatedRounds: BracketRoundRecord[];
   newFights: FightRecord[];
-  nextFightId: number;
   promotedFightIds: FightId[];
 } {
-  let nextFightId = startingNextFightId;
   const newFights: FightRecord[] = [];
   const promotedFightIds: FightId[] = [];
 
@@ -102,7 +94,7 @@ function promoteReadyMatches(
 
     const fightIds = [...round.fightIds];
     for (const match of readyMatches) {
-      const newFightId = makeFightId(nextFightId++);
+      const newFightId = makeFightId(crypto.randomUUID());
 
       newFights.push({
         id: newFightId,
@@ -121,5 +113,5 @@ function promoteReadyMatches(
     return { ...round, fightIds, pendingMatches: stillPending };
   });
 
-  return { updatedRounds, newFights, nextFightId, promotedFightIds };
+  return { updatedRounds, newFights, promotedFightIds };
 }

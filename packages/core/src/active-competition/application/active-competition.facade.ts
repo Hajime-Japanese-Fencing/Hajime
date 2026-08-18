@@ -57,12 +57,10 @@ export function createActiveCompetition(deps: ActiveCompetitionDeps): ActiveComp
     const maxScoreEventId = data.fights
       .flatMap((fight) => fight.scoreEvents)
       .reduce((max, scoreEvent) => Math.max(max, scoreEvent.id), 0);
-    const maxFightId = data.fights.reduce((max, fight) => Math.max(max, fight.id), 0);
 
     state.replace({
       ...data,
       nextScoreEventId: maxScoreEventId + 1,
-      nextFightId: maxFightId + 1,
     });
   }
 

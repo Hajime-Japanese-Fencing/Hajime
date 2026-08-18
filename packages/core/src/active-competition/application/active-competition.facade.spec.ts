@@ -98,7 +98,7 @@ describe("Managing an active competition", () => {
       ok: false,
       reason: "illegal_transition",
     });
-    await expect(facade.openFight(makeFightId(999))).resolves.toEqual({
+    await expect(facade.openFight(makeFightId("999"))).resolves.toEqual({
       ok: false,
       reason: "fight_not_found",
     });

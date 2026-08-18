@@ -12,9 +12,6 @@ export interface ActiveCompetitionSnapshot {
   readonly fightsById: Readonly<Record<FightId, FightRecord>>;
   readonly activeFightId: FightId | null;
   readonly nextScoreEventId: number;
-  // --- NEXT FightId TO MINT WHEN PROMOTING A BRACKET PENDING MATCH INTO A REAL FIGHT.
-  // SAME "CALLER COMPUTES IT, STATE JUST STORES IT" PATTERN AS nextScoreEventId. ---
-  readonly nextFightId: number;
 }
 
 export interface ActiveCompetitionState {
@@ -24,17 +21,12 @@ export interface ActiveCompetitionState {
     bracketRounds?: BracketRoundRecord[];
     fights: FightRecord[];
     nextScoreEventId: number;
-    nextFightId: number;
   }): void;
   commitFight(fight: FightRecord, activeFightId: FightId | null, nextScoreEventId: number): void;
   setActiveFightId(fightId: FightId | null): void;
   // --- MERGES UPDATED BRACKET ROUNDS (E.G. A ROUND'S pendingMatches OR fightIds CHANGING)
   // AND ADDS NEWLY-PROMOTED FIGHTS, AS PART OF ADVANCING A BRACKET AFTER A FIGHT FINISHES. ---
-  advanceBracket(input: {
-    bracketRounds: BracketRoundRecord[];
-    newFights: FightRecord[];
-    nextFightId: number;
-  }): void;
+  advanceBracket(input: { bracketRounds: BracketRoundRecord[]; newFights: FightRecord[] }): void;
 }
 
 export function createCompetitionState(): ActiveCompetitionState & {
@@ -46,7 +38,6 @@ export function createCompetitionState(): ActiveCompetitionState & {
     fightsById: {},
     activeFightId: null,
     nextScoreEventId: 1,
-    nextFightId: 1,
   });
 
   function snapshot(): ActiveCompetitionSnapshot {
@@ -58,7 +49,6 @@ export function createCompetitionState(): ActiveCompetitionState & {
     bracketRounds?: BracketRoundRecord[];
     fights: FightRecord[];
     nextScoreEventId: number;
-    nextFightId: number;
   }): void {
     store.setState(() => ({
       poolsById: indexById(data.pools),
@@ -66,7 +56,6 @@ export function createCompetitionState(): ActiveCompetitionState & {
       fightsById: indexById(data.fights),
       activeFightId: null,
       nextScoreEventId: data.nextScoreEventId,
-      nextFightId: data.nextFightId,
     }));
   }
 
@@ -90,13 +79,11 @@ export function createCompetitionState(): ActiveCompetitionState & {
   function advanceBracket(input: {
     bracketRounds: BracketRoundRecord[];
     newFights: FightRecord[];
-    nextFightId: number;
   }): void {
     store.setState((state) => ({
       ...state,
       bracketRoundsById: { ...state.bracketRoundsById, ...indexById(input.bracketRounds) },
       fightsById: { ...state.fightsById, ...indexById(input.newFights) },
-      nextFightId: input.nextFightId,
     }));
   }
 

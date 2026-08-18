@@ -172,7 +172,7 @@ function onExport() {
   </div>
   <div class="flex gap-4">
     <SelectorList
-      v-if="phaseItems.length > 1"
+      v-if="phaseItems.length > 0"
       v-model="selectedPhase"
       :items="phaseItems"
       class="w-40 shrink-0"

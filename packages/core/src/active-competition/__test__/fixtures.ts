@@ -12,8 +12,8 @@ export const fighterWhite = makeFighterId("fighter-white");
 export const fighterA = makeFighterId("fighter-a");
 export const fighterB = makeFighterId("fighter-b");
 
-export const fightId1 = makeFightId(1);
-export const fightId2 = makeFightId(2);
+export const fightId1 = makeFightId("1");
+export const fightId2 = makeFightId("2");
 
 export function makeFightRecord(overrides: Partial<FightRecord> = {}): FightRecord {
   return {

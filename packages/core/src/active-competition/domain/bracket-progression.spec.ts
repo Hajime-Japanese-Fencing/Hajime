@@ -15,7 +15,7 @@ const loser = makeFighterId("loser");
 
 function makeFight(overrides: Partial<FightRecord> = {}): FightRecord {
   return {
-    id: makeFightId(1),
+    id: makeFightId("1"),
     poolId: null,
     bracketRoundId: semiFinalId,
     bracketMatchIndex: 0,

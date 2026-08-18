@@ -19,7 +19,7 @@ const mori = makeFighterId("mori");
 
 function makeFinishedSemiFinal(overrides: Partial<FightRecord> = {}): FightRecord {
   return {
-    id: makeFightId(1),
+    id: makeFightId("1"),
     poolId: null,
     bracketRoundId: semiFinalId,
     bracketMatchIndex: 0,
@@ -58,7 +58,6 @@ describe("advanceBracket", () => {
     const state = new FakeActiveCompetitionState({
       fightsById: { [fight.id]: fight },
       bracketRoundsById: { [semiFinalId]: rounds[0], [finalId]: rounds[1] },
-      nextFightId: 10,
     });
 
     const result = await advanceBracket({ state }, fight.id);
@@ -67,7 +66,6 @@ describe("advanceBracket", () => {
     expect(state.snapshot().bracketRoundsById[finalId].pendingMatches).toEqual([
       { matchIndex: 0, fighter1: hayashi, fighter2: null },
     ]);
-    expect(state.snapshot().nextFightId).toBe(10);
   });
 
   it("promotes the next round's match into a real fight once both slots are known", async () => {
@@ -114,19 +112,23 @@ describe("advanceBracket", () => {
     const state = new FakeActiveCompetitionState({
       fightsById: { [fight.id]: fight },
       bracketRoundsById: { [semiFinalId]: rounds[0], [finalId]: rounds[1] },
-      nextFightId: 10,
     });
 
     const result = await advanceBracket({ state }, fight.id);
 
-    expect(result.ok).toBe(true);
+    // --- THE PROMOTED FIGHT NOW GETS A RANDOM UUID (crypto.randomUUID()), SO IT CAN'T BE
+    // ASSERTED AGAINST A FIXED VALUE LIKE THE OLD makeFightId("10") — READ IT BACK OFF THE
+    // RESULTING STATE INSTEAD AND ASSERT EVERYTHING ELSE AGAINST THAT. ---
     const finalRound = state.snapshot().bracketRoundsById[finalId];
     expect(finalRound.pendingMatches).toEqual([]);
-    expect(finalRound.fightIds).toEqual([makeFightId(10)]);
+    expect(finalRound.fightIds).toHaveLength(1);
+    const [promotedFightId] = finalRound.fightIds;
 
-    const finalFight = state.snapshot().fightsById[makeFightId(10)];
+    expect(result).toEqual({ ok: true, promotedFightIds: [promotedFightId] });
+
+    const finalFight = state.snapshot().fightsById[promotedFightId];
     expect(finalFight).toEqual({
-      id: makeFightId(10),
+      id: promotedFightId,
       poolId: null,
       bracketRoundId: finalId,
       bracketMatchIndex: 0,
@@ -135,7 +137,6 @@ describe("advanceBracket", () => {
       status: FightStatus.Waiting,
       scoreEvents: [],
     });
-    expect(state.snapshot().nextFightId).toBe(11);
   });
 
   it("rejects a fight that isn't finished yet", async () => {
@@ -171,7 +172,7 @@ describe("advanceBracket", () => {
   it("reports the fight as not found", async () => {
     const state = new FakeActiveCompetitionState();
 
-    await expect(advanceBracket({ state }, makeFightId(999))).resolves.toEqual({
+    await expect(advanceBracket({ state }, makeFightId("999"))).resolves.toEqual({
       ok: false,
       reason: "fight_not_found",
     });

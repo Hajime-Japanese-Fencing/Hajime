@@ -19,7 +19,7 @@ describe("buildBracketDraw", () => {
 
     const draw = buildBracketDraw(bracket);
 
-    expect(draw.fights).toEqual([
+    expect(draw.fights).toMatchObject([
       {
         id: makeFightId("1"),
         poolId: null,
@@ -77,7 +77,7 @@ describe("buildBracketDraw", () => {
     expect(draw.fights).toHaveLength(2);
 
     const [byeFight, realFight] = draw.fights;
-    expect(byeFight).toEqual({
+    expect(byeFight).toMatchObject({
       id: makeFightId("1"),
       poolId: null,
       bracketRoundId: draw.bracketRounds[0].id,

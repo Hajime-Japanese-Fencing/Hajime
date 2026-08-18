@@ -19,10 +19,9 @@ export interface BracketDraw {
  * objects) into the runtime shape the rest of the app consumes: `BracketRoundRecord[]` +
  * `FightRecord[]`, as used by `CompetitionDraw` / `ActiveCompetitionState`.
  *
- * `startingFightId` lets a caller avoid id collisions when this draw's fights are combined with
- * fights minted elsewhere (e.g. a pool phase draw published alongside this bracket). Defaults to
- * 1 since a caller loading this draw alone (via `applyDraw`/`loadCompetition`) recomputes
- * `nextFightId` from the fights themselves anyway.
+ * Each fight gets a fresh UUID (`crypto.randomUUID()`), so there's no id-collision risk to manage
+ * across combined draws (e.g. a pool phase draw published alongside this bracket) — unlike the
+ * old incrementing-counter scheme, no `startingFightId` is needed here.
  */
 export function buildBracketDraw(bracket: Bracket): BracketDraw {
   const roundIds = bracket.rounds.map((_, index) => makeBracketRoundId(index + 1));
