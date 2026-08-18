@@ -1,8 +1,10 @@
 import type { Bracket, BracketMatch } from "../domain/bracket.ts";
+import { makeFightId } from "../../../../shared/fight-id.ts";
 import { makeBracketRoundId } from "../../../../shared/bracket-round-id.ts";
-import { makeFightId, type FightId } from "../../../../shared/fight-id.ts";
 import { makeFighterId } from "../../../../shared/fighter-id.ts";
 import { FightStatus } from "../../../../shared/fight-status.ts";
+import type { IdGenerator } from "../../../../shared/id-generator.ts";
+import type { FightId } from "../../../../shared/fight-id.ts";
 import type {
   BracketPendingMatch,
   BracketRoundRecord,
@@ -23,7 +25,7 @@ export interface BracketDraw {
  * across combined draws (e.g. a pool phase draw published alongside this bracket) — unlike the
  * old incrementing-counter scheme, no `startingFightId` is needed here.
  */
-export function buildBracketDraw(bracket: Bracket): BracketDraw {
+export function buildBracketDraw(bracket: Bracket, idGenerator: IdGenerator): BracketDraw {
   const roundIds = bracket.rounds.map((_, index) => makeBracketRoundId(index + 1));
   const thirdPlaceRoundId = bracket.thirdPlaceMatch
     ? makeBracketRoundId(roundIds.length + 1)
@@ -37,7 +39,7 @@ export function buildBracketDraw(bracket: Bracket): BracketDraw {
 
     round.matches.forEach((match, matchIndex) => {
       if (match.fighter1 !== null && match.fighter2 !== null) {
-        const fightId = makeFightId(crypto.randomUUID());
+        const fightId = makeFightId(idGenerator());
 
         fights.push({
           id: fightId,
@@ -62,7 +64,7 @@ export function buildBracketDraw(bracket: Bracket): BracketDraw {
       // ROUNDS WITH ONLY fighter1 KNOWN ARE GENUINELY PENDING (WAITING ON AN ADJACENT MATCH'S
       // WINNER), SO THEY FALL THROUGH TO THE pendingMatches CASE BELOW INSTEAD. ---
       if (roundIndex === 0 && match.fighter1 !== null && match.fighter2 === null) {
-        const fightId = makeFightId(crypto.randomUUID());
+        const fightId = makeFightId(idGenerator());
 
         fights.push({
           id: fightId,

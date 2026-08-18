@@ -14,6 +14,7 @@ export * from "./shared/fight-record.ts";
 export * from "./shared/pool-record.ts";
 export * from "./shared/bracket-round-record.ts";
 export * from "./shared/competition-draw.ts";
+export * from "./shared/id-generator.ts";
 export * from "./competition-overview/domain/competition-status.ts";
 export * from "./competition-overview/domain/competition-date.ts";
 export * from "./competition-overview/domain/competition-overview.ts";
