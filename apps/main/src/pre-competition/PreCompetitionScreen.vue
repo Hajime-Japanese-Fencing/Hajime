@@ -2,7 +2,7 @@
 import { type SelectorItem, SelectorList } from "@hajime/ui";
 import { Dropdown } from "@hajime/ui";
 import type { DropdownOption } from "@hajime/ui";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { PoolSetup } from "@hajime/core";
 import { calculatePossiblePoolSetups } from "@hajime/core";
 import { distributeFightersInPools, type FighterEntry } from "@hajime/core";
@@ -11,17 +11,24 @@ import type { Pool } from "@hajime/core";
 import { RankingDetailBuilder } from "@hajime/ui";
 import { PoolCard } from "@hajime/ui";
 import { poolSetupToDropdownOption } from "./poolSetupToDropdownOption.mapper.ts";
+import { Button } from "@hajime/ui";
 
 // -------------------------------------------
 // INPUTS
 // -------------------------------------------
 
-const selectors: SelectorItem[] = [
-  { id: "1", label: "Pools" },
-  { id: "2", label: "Bracket", disabled: true },
-];
+const selectedSetup = ref<PoolSetup>({ poolGroups: [], fightCount: 0 });
+const pools = ref<Pool[]>([]);
 const shouldSeparateClubMembers = false;
 const shouldSeparateSeededCompetitors = false;
+
+const poolsValidated = ref(false);
+
+const selectors = computed<SelectorItem[]>(() => [
+  { id: "pools", label: "Pools" },
+  { id: "bracket", label: "Bracket", disabled: !poolsValidated.value },
+]);
+const selectedView = ref<string>("pools");
 
 const fighters: FighterEntry[] = [
   { id: "1", isSeeded: true, club: "Paris Kendo Club" },
@@ -42,9 +49,6 @@ const options: DropdownOption[] = calculatePossiblePoolSetups(nbFighters).map(
   (poolSetup: PoolSetup) => poolSetupToDropdownOption(poolSetup),
 );
 
-const selectedSetup = ref<PoolSetup>({ poolGroups: [], fightCount: 0 });
-const pools = ref<Pool[]>([]);
-
 // -------------------------------------------
 // FUNCTIONS
 // -------------------------------------------
@@ -64,10 +68,16 @@ function onDropdownSelect(option: DropdownOption) {
 <!--TODO: need to add name to fighter entry data format-->
 <template>
   <div class="flex gap-4">
-    <SelectorList :items="selectors" />
-    <div class="flex flex-1 flex-col justify-between">
+    <SelectorList :items="selectors" v-model="selectedView" />
+
+    <section v-if="selectedView === 'pools'" class="flex flex-1 flex-col gap-1 justify-between">
       <div>Pool Repartition</div>
-      <Dropdown :title="title" :options="options" @select="onDropdownSelect" />
+      <Dropdown
+        v-if="!poolsValidated"
+        :title="title"
+        :options="options"
+        @select="onDropdownSelect"
+      />
       <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
         <PoolCard
           v-for="pool of pools"
@@ -78,7 +88,14 @@ function onDropdownSelect(option: DropdownOption) {
           "
         />
       </div>
-    </div>
+      <div v-if="!poolsValidated" class="flex justify-end">
+        <Button :disabled="pools.length == 0" @click="poolsValidated = true">
+          Validate Pools
+        </Button>
+      </div>
+    </section>
+
+    <section v-if="selectedView === 'bracket'">BRACKET</section>
   </div>
 </template>
 
