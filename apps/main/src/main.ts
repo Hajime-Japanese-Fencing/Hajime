@@ -6,6 +6,7 @@ import { bootstrapContainer } from "./bootstrap/container/container.factory.ts";
 import { createContainerPlugin } from "./bootstrap/container/container.plugin.ts";
 
 import "@hajime/ui/theme.css";
+import "@hajime/ui/style.css";
 
 const container = bootstrapContainer(import.meta.env);
 

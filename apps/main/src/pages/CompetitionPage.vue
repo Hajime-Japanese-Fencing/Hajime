@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from "vue-router";
 import FightScreen from "../FightScreen.vue";
 import { BackButton } from "@hajime/ui";
-import PreCompetitionScreen from "../PreCompetitionScreen.vue";
+import PreCompetitionScreen from "../pre-competition/PreCompetitionScreen.vue";
 
 const route = useRoute();
 const router = useRouter();

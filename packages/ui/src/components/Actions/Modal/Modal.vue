@@ -12,7 +12,7 @@ defineProps<{ title: string }>();
   </Button>
 
   <dialog id="modal1" class="modal">
-    <div class="modal-box bg-black text-neutral-300 p-10 min-w-max">
+    <div class="modal-box p-10 min-w-max">
       <form method="dialog" class="flex justify-end">
         <CloseButton />
       </form>

@@ -17,7 +17,10 @@ export * from "./components/DataDisplay/types.ts";
 
 export { default as Modal } from "./components/Actions/Modal/Modal.vue";
 export { default as RankingDetails } from "./components/RankingDetails/RankingDetails.vue";
-export type { RankingDetail } from "./components/RankingDetails/ranking-detail.interface.ts";
+export {
+  type RankingDetail,
+  RankingDetailBuilder,
+} from "./components/RankingDetails/ranking-detail.interface.ts";
 
 export { default as PoolCard } from "./components/PoolCard/PoolCard.vue";
 export type { FighterDetails } from "./components/PoolCard/fighter-details.interface.ts";
