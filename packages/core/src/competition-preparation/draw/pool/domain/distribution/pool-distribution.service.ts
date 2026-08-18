@@ -29,7 +29,11 @@ export function distributeFightersInPools(
   }
 
   // --- FIGHTERS DISTRIBUTION ---
-  const sortedFighters = sortFighters(fighters, true, true);
+  const sortedFighters = sortFighters(
+    fighters,
+    shouldSeparateSeededCompetitors,
+    shouldSeparateClubMembers,
+  );
 
   for (let fighter of sortedFighters) {
     const poolFighter = toPoolFighter(fighter);
