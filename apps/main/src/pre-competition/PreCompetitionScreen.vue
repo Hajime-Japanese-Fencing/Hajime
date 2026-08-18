@@ -10,6 +10,7 @@ import { poolToPoolDetails } from "./poolToPoolDetails.mapper.ts";
 import type { Pool } from "@hajime/core";
 import { RankingDetailBuilder } from "@hajime/ui";
 import { PoolCard } from "@hajime/ui";
+import { poolSetupToDropdownOption } from "./poolSetupToDropdownOption.mapper.ts";
 
 // -------------------------------------------
 // INPUTS
@@ -49,19 +50,6 @@ const pools = ref<Pool[]>([]);
 // -------------------------------------------
 
 // TO ISOLATE IN AN "ADAPTER" TYPE FILE PROBABLY ?
-function poolSetupToDropdownOption(setup: PoolSetup): DropdownOption {
-  let label = "";
-  setup.poolGroups.forEach((pool, index) => {
-    label += `${index > 1 ? " &" : ""} ${pool.amount} Pools of ${pool.poolSize} Fighters`;
-  });
-
-  return {
-    label: label + ` (${setup.fightCount} Fights)`,
-    return: () => {
-      return setup;
-    },
-  };
-}
 
 function onDropdownSelect(option: DropdownOption) {
   title.value = option.label;
