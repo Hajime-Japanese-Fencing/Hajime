@@ -9,7 +9,7 @@ import {
   type FighterEntry,
   type RetrieveCompetitionsQuery,
 } from "@hajime/core";
-import { DemoRetrieveCompetitionsAdapter } from "../../features/competition-overview/adapters/demo-retrieve-competitions.adapter.ts";
+import { DemoRetrieveCompetitionsQuery } from "../../features/competition-overview/adapters/demo-retrieve-competitions.query.ts";
 import { LocalStorageLoadCompetitionFightsAdapter } from "../../features/active-competition/adapters/local-storage-load-competition-fights.adapter.ts";
 import { NoopFightResultAdapter } from "../../features/active-competition/adapters/noop-fight-result.adapter.ts";
 import { NoopSaveGeneratedFightsAdapter } from "../../features/active-competition/adapters/noop-save-generated-fights.adapter.ts";
@@ -22,11 +22,6 @@ export interface AppContainer {
   activeCompetition: ActiveCompetition;
   loadCompetition(competitionId: CompetitionId): Promise<void>;
   publishDraw(competitionId: CompetitionId, draw: CompetitionDraw): Promise<void>;
-  // --- GENERATES A DIRECT-ELIMINATION BRACKET FOR THE GIVEN FIGHTERS AND PUBLISHES IT AS THE
-  // COMPETITION'S DRAW (REPLACING WHATEVER WAS PREVIOUSLY LOADED/PUBLISHED). CHAINS THE DOMAIN
-  // GENERATION (generateBracketUseCase) WITH THE RUNTIME MAPPING (buildBracketDraw) SO CALLERS
-  // NEVER HANDLE THE INTERMEDIATE Bracket SHAPE. POOLS ARE ALWAYS EMPTY HERE SINCE POOL DRAW
-  // GENERATION ISN'T WIRED UP YET. ---
   generateBracketDraw(competitionId: CompetitionId, fighters: FighterEntry[]): Promise<void>;
 }
 
@@ -105,7 +100,7 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
   }
 
   return {
-    retrieveCompetitions: new DemoRetrieveCompetitionsAdapter(),
+    retrieveCompetitions: new DemoRetrieveCompetitionsQuery(),
     activeCompetition,
     loadCompetition,
     publishDraw: publishCompetitionDraw,
