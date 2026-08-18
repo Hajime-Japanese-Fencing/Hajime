@@ -19,21 +19,16 @@ const options: DropdownOption[] = calculatePossiblePoolSetups(nbFighters).map(
   (poolSetup: PoolSetup) => poolSetupToDropdownOption(poolSetup),
 );
 
-const selectedSetup: PoolSetup | null = ref(null);
+const selectedSetup = ref<PoolSetup | null>(null);
 
 // -------------------------------------------
 // FUNCTIONS
 // -------------------------------------------
 function poolSetupToDropdownOption(setup: PoolSetup): DropdownOption {
-  const poolSize = setup.poolGroups[0].poolSize;
-  const nbPools = setup.poolGroups[0].amount;
-  let label = `${nbPools} Pools of ${poolSize} Fighters`;
-
-  if (setup.poolGroups.length > 1) {
-    const poolSize2 = setup.poolGroups[1].poolSize;
-    const nbPools2 = setup.poolGroups[1].amount;
-    label += ` & ${nbPools2} Pools of ${poolSize2} Fighters`;
-  }
+  let label = "";
+  setup.poolGroups.forEach((pool, index) => {
+    label += `${index > 1 ? " &" : ""} ${pool.amount} Pools of ${pool.poolSize} Fighters`;
+  });
 
   return {
     label: label + ` (${setup.fightCount} Fights)`,
