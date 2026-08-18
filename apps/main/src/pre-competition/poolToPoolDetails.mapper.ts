@@ -5,6 +5,6 @@ import { poolFighterToFighterDetails } from "./poolFighterToFighterDetails.mappe
 export function poolToPoolDetails(pool: Pool): PoolDetails {
   return {
     poolId: pool.number,
-    fighters: pool.fighters.map((f) => poolFighterToFighterDetails(f)),
+    fighters: pool.fighters.map((f, index) => poolFighterToFighterDetails(f, index + 1)),
   };
 }

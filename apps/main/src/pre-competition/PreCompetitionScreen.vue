@@ -48,9 +48,6 @@ const pools = ref<Pool[]>([]);
 // -------------------------------------------
 // FUNCTIONS
 // -------------------------------------------
-
-// TO ISOLATE IN AN "ADAPTER" TYPE FILE PROBABLY ?
-
 function onDropdownSelect(option: DropdownOption) {
   title.value = option.label;
   selectedSetup.value = option.return();
@@ -68,12 +65,13 @@ function onDropdownSelect(option: DropdownOption) {
 <template>
   <div class="flex gap-4">
     <SelectorList :items="selectors" />
-    <div class="flex-column justify-between">
+    <div class="flex flex-1 flex-col justify-between">
       <div>Pool Repartition</div>
       <Dropdown :title="title" :options="options" @select="onDropdownSelect" />
-      <div class="grid">
+      <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
         <PoolCard
           v-for="pool of pools"
+          :key="pool.number"
           :pool-details="poolToPoolDetails(pool)"
           :ranking-details="
             pool.fighters.map((f) => new RankingDetailBuilder().withName(f.fighter.id).build())
