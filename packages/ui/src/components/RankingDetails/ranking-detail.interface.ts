@@ -13,7 +13,7 @@ export class RankingDetailBuilder implements RankingDetail {
   nbReceivedIppons: number = 0;
   nbVictories: number = 0;
   points: number = 0;
-  poolRank: number = 0;
+  poolRank: number = 1;
 
   public build(): RankingDetail {
     return {

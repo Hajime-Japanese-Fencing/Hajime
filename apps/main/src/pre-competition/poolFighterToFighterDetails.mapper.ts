@@ -10,7 +10,7 @@ export function poolFighterToFighterDetails(
     // ----------------------------------------------
     fighterName: poolFighter.fighter.id,
     // ----------------------------------------------
-    poolRank: 0,
+    poolRank: 1,
     number: number,
   };
 }

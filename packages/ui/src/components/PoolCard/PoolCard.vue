@@ -15,27 +15,11 @@ const sortedFighters = computed(() => {
   if (!props.poolDetails) throw new Error("No pool data");
   return [...props.poolDetails.fighters].sort((a, b) => a.number - b.number);
 });
-
-// const poolDetails = defineModel<PoolDetails>()
-//
-// // A refactor dans un service/mapper ?
-// const poolRankingDetails = computed<FighterPoints[]>(() => {
-//   if (!poolDetails.value) throw new Error("Aucune donnée de pool")
-//
-//   return poolDetails.value.fighters.map(fighter => ({
-//           fighterName: fighter.fighterName,
-//           points: fighter.points,
-//           nbVictories: fighter.nbVictories,
-//           nbGivenIppons: fighter.nbGivenIppons,
-//           nbReceivedIppons: fighter.nbReceivedIppons,
-//           poolRank: fighter.poolRank,
-//         }))
-// })
 </script>
 
 <template>
-  <div class="card bg-black">
-    <div class="card-body text-white">
+  <div class="card">
+    <div class="card-body">
       <!--HEADLINE-->
       <div class="flex justify-between">
         <h2 class="card-title">Pool n°{{ props.poolDetails.poolId }}</h2>
@@ -46,13 +30,19 @@ const sortedFighters = computed(() => {
         </div>
       </div>
 
-      <div v-for="fighter in sortedFighters" class="flex justify-between">
-        <span>{{ props.poolDetails.poolId }}.{{ fighter.number }}</span>
-        <span>{{ fighter.fighterName }}</span>
-        <span class="badge" :class="getRankBadgeClass(fighter.poolRank)">
-          #{{ fighter.poolRank }}
-        </span>
-      </div>
+      <table class="table table-zebra">
+        <tbody>
+          <tr v-for="fighter in sortedFighters" :key="fighter.number">
+            <td>{{ props.poolDetails.poolId }}.{{ fighter.number }}</td>
+            <td>{{ fighter.fighterName }}</td>
+            <td class="text-right">
+              <span class="badge" :class="getRankBadgeClass(fighter.poolRank)">
+                #{{ fighter.poolRank }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -61,17 +51,21 @@ const sortedFighters = computed(() => {
 span.badge {
   border-color: dimgray;
   background-color: dimgray;
+  color: white;
   &.first {
     border-color: goldenrod;
     background-color: goldenrod;
+    color: black;
   }
   &.second {
     border-color: silver;
     background-color: silver;
+    color: black;
   }
   &.third {
     border-color: #8f6642;
     background-color: #8f6642;
+    color: white;
   }
 }
 </style>
