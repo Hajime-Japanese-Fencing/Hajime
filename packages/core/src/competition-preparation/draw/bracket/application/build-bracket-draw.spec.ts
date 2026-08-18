@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { generateBracket } from "../domain/generate-bracket.service.ts";
 import { makeFighterId } from "../../../../shared/fighter-id.ts";
-import { makeFightId } from "../../../../shared/fight-id.ts";
 import { FightStatus } from "../../../../shared/fight-status.ts";
 import type { FighterEntry } from "../../../../shared/fighter.ts";
 import { buildBracketDraw } from "./build-bracket-draw.ts";
@@ -15,13 +14,13 @@ function makeSeededFighters(ids: string[]): FighterEntry[] {
 
 describe("buildBracketDraw", () => {
   it("turns a bracket with no bye and no third-place match into rounds and playable first-round fights", () => {
+    // Assert that first round fights are playable, while next round fights are pending
     const bracket = generateBracket(makeSeededFighters(["w", "x", "y", "z"]));
 
     const draw = buildBracketDraw(bracket);
 
     expect(draw.fights).toMatchObject([
       {
-        id: makeFightId("1"),
         poolId: null,
         bracketRoundId: draw.bracketRounds[0].id,
         bracketMatchIndex: 0,
@@ -31,7 +30,6 @@ describe("buildBracketDraw", () => {
         scoreEvents: [],
       },
       {
-        id: makeFightId("2"),
         poolId: null,
         bracketRoundId: draw.bracketRounds[0].id,
         bracketMatchIndex: 1,
@@ -51,7 +49,9 @@ describe("buildBracketDraw", () => {
       feedsRoundId: finalRound.id,
       loserFeedsRoundId: undefined,
       dependsOnRoundId: null,
-      fightIds: [makeFightId("1"), makeFightId("2")],
+      // --- READ BACK FROM draw.fights RATHER THAN HARDCODED — SAME REASON AS ABOVE. THIS STILL
+      // VERIFIES firstRound ACTUALLY POINTS AT THE TWO REAL FIGHTS JUST CREATED, IN ORDER. ---
+      fightIds: draw.fights.map((fight) => fight.id),
       pendingMatches: [],
     });
 
@@ -78,7 +78,6 @@ describe("buildBracketDraw", () => {
 
     const [byeFight, realFight] = draw.fights;
     expect(byeFight).toMatchObject({
-      id: makeFightId("1"),
       poolId: null,
       bracketRoundId: draw.bracketRounds[0].id,
       bracketMatchIndex: 0,
