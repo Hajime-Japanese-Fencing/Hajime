@@ -14,6 +14,7 @@ import {
 import type { CompetitionDraw } from "../../shared/competition-draw.ts";
 import type { CompetitionDrawLoader } from "../ports/load-competition-fights.port.ts";
 import { createActiveCompetition } from "./active-competition.facade.ts";
+import { makeFighterId } from "../../shared/fighter-id.ts";
 
 class StubCompetitionDrawLoader implements CompetitionDrawLoader {
   constructor(private readonly data: CompetitionDraw) {}
@@ -53,11 +54,13 @@ describe("Managing an active competition", () => {
     await facade.loadCompetition(makeCompetitionId("competition-1"));
 
     await expect(facade.openFight(fightId1)).resolves.toEqual({ ok: true });
-    await expect(facade.recordIppon({ side: "RED", code: IpponCode.Men })).resolves.toEqual({
+    await expect(
+      facade.recordIppon({ fighterId: fighterRed, code: IpponCode.Men }),
+    ).resolves.toEqual({
       ok: true,
     });
 
-    expect(facade.view.state.activeFight?.scoreEvents).toEqual([
+    expect(facade.view.state.activeFight?.scoreEvents).toMatchObject([
       {
         id: 1,
         fighterId: fighterRed,
@@ -81,7 +84,7 @@ describe("Managing an active competition", () => {
       reason: "not_active",
     });
     await expect(facade.forfeitActiveFight()).resolves.toEqual({ ok: false, reason: "not_active" });
-    await expect(facade.recordHansoku({ side: "WHITE" })).resolves.toEqual({
+    await expect(facade.recordHansoku({ fighterId: makeFighterId("1") })).resolves.toEqual({
       ok: false,
       reason: "not_active",
     });
@@ -108,7 +111,7 @@ describe("Managing an active competition", () => {
     const { facade } = createFacade({ pools: [makePoolRecord()], fights: [makeFightRecord()] });
     await facade.loadCompetition(makeCompetitionId("competition-1"));
     await facade.openFight(fightId1);
-    await facade.recordHansoku({ side: "WHITE" });
+    await facade.recordHansoku({ fighterId: fighterRed });
 
     await expect(
       facade.removeScoreEvent({ scoreEventId: makeScoreEventId(1), type: "ippon" }),
@@ -124,7 +127,7 @@ describe("Managing an active competition", () => {
       scoreEvents: [
         {
           id: makeScoreEventId(5),
-          fighterId: fighterRed,
+          fighterId: makeFighterId("1"),
           type: "ippon",
           code: IpponCode.Men,
           firstBlood: true,
@@ -136,7 +139,7 @@ describe("Managing an active competition", () => {
 
     expect(facade.view.state.activeFight).toBeUndefined();
     await facade.openFight(fightId1);
-    await facade.recordIppon({ side: "RED", code: IpponCode.Kote });
+    await facade.recordIppon({ fighterId: fighterRed, code: IpponCode.Kote });
     expect(facade.view.state.activeFight?.scoreEvents[1].id).toBe(6);
   });
 });
