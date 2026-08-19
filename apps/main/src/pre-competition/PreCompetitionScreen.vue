@@ -9,27 +9,23 @@ import { distributeFightersInPools, type FighterEntry } from "@hajime/core";
 import { poolToPoolDetails } from "./poolToPoolDetails.mapper.ts";
 import type { Pool } from "@hajime/core";
 import { RankingDetailBuilder } from "@hajime/ui";
-import { PoolCard } from "@hajime/ui";
 import { poolSetupToDropdownOption } from "./poolSetupToDropdownOption.mapper.ts";
 import { Button } from "@hajime/ui";
+import { shuffle } from "@hajime/core";
+import { PoolCreationCard } from "@hajime/ui";
+import type { CompetitionPhase } from "./competition-phase.ts";
+import { type CompetitionId, makeCompetitionId } from "@hajime/core";
+import { useContainer } from "../bootstrap/container/useContainer.ts";
 
 // -------------------------------------------
 // INPUTS
 // -------------------------------------------
-
+const competitionId: CompetitionId = makeCompetitionId("1");
 const selectedSetup = ref<PoolSetup>({ poolGroups: [], fightCount: 0 });
 const pools = ref<Pool[]>([]);
 const shouldSeparateClubMembers = false;
 const shouldSeparateSeededCompetitors = false;
-
-const poolsValidated = ref(false);
-
-const selectors = computed<SelectorItem[]>(() => [
-  { id: "pools", label: "Pools" },
-  { id: "bracket", label: "Bracket", disabled: !poolsValidated.value },
-]);
-const selectedView = ref<string>("pools");
-
+const competitionFormula: CompetitionPhase[] = ["POOLS", "BRACKET"];
 const fighters: FighterEntry[] = [
   { id: "1", isSeeded: true, club: "Paris Kendo Club" },
   { id: "2", isSeeded: false, club: "Paris Kendo Club" },
@@ -43,11 +39,28 @@ const fighters: FighterEntry[] = [
 ];
 const nbFighters = fighters.length;
 
-const title = ref("Select a pool repartition");
+// BUILDING SELECTORS
+const poolsValidated = ref(!competitionFormula.includes("POOLS"));
+const bracketValidated = ref(!competitionFormula.includes("BRACKET"));
 
+const selectors = computed<SelectorItem[]>(() => {
+  const items: SelectorItem[] = [];
+  if (competitionFormula.includes("POOLS")) {
+    items.push({ id: "pools", label: "Pools" });
+  }
+  if (competitionFormula.includes("BRACKET")) {
+    items.push({ id: "bracket", label: "Bracket", disabled: !poolsValidated.value });
+  }
+  return items;
+});
+
+const selectedView = ref<string>(selectors.value[0].id);
+const title = ref("Select a pool repartition");
 const options: DropdownOption[] = calculatePossiblePoolSetups(nbFighters).map(
   (poolSetup: PoolSetup) => poolSetupToDropdownOption(poolSetup),
 );
+
+const container = useContainer();
 
 // -------------------------------------------
 // FUNCTIONS
@@ -58,9 +71,14 @@ function onDropdownSelect(option: DropdownOption) {
   pools.value = distributeFightersInPools(
     fighters,
     selectedSetup.value,
+    shuffle,
     shouldSeparateClubMembers,
     shouldSeparateSeededCompetitors,
   );
+}
+
+async function onStart() {
+  await container.publishPoolDraw(makeCompetitionId(competitionId), pools.value);
 }
 </script>
 
@@ -79,7 +97,7 @@ function onDropdownSelect(option: DropdownOption) {
         @select="onDropdownSelect"
       />
       <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
-        <PoolCard
+        <PoolCreationCard
           v-for="pool of pools"
           :key="pool.number"
           :pool-details="poolToPoolDetails(pool)"
@@ -88,14 +106,24 @@ function onDropdownSelect(option: DropdownOption) {
           "
         />
       </div>
-      <div v-if="!poolsValidated" class="flex justify-end">
-        <Button :disabled="pools.length == 0" @click="poolsValidated = true">
+      <div class="flex gap-1 justify-end">
+        <Button v-if="!poolsValidated" :disabled="pools.length == 0" @click="poolsValidated = true">
           Validate Pools
         </Button>
+        <Button :disabled="!poolsValidated || !bracketValidated" @click="onStart()"> Start </Button>
       </div>
     </section>
 
-    <section v-if="selectedView === 'bracket'">BRACKET</section>
+    <section v-if="selectedView === 'bracket'">
+      <!--      TODO: DEVELOP BRACKET DEFINITION SCREEN -->
+      BRACKET
+      <div class="flex gap-1 justify-end">
+        <Button v-if="!bracketValidated" @click="bracketValidated = true">
+          Validate Bracket
+        </Button>
+        <Button :disabled="!poolsValidated || !bracketValidated" @click="onStart()"> Start </Button>
+      </div>
+    </section>
   </div>
 </template>
 

@@ -17,6 +17,7 @@ import { NoopSaveGeneratedFightsAdapter } from "../../features/active-competitio
 import { LocalStorageSaveBracketAdapter } from "../../features/competition-preparation/adapters/local-storage-save-bracket.adapter.ts";
 import { competitionDrawStore } from "../../persistence/competition-draw.store.ts";
 import { bracketDraftStore } from "../../persistence/bracket-draft.store.ts";
+import { buildPoolDraw, type Pool } from "@hajime/core";
 
 export interface AppContainer {
   retrieveCompetitions: RetrieveCompetitionsQuery;
@@ -24,6 +25,7 @@ export interface AppContainer {
   loadCompetition(competitionId: CompetitionId): Promise<void>;
   publishDraw(competitionId: CompetitionId, draw: CompetitionDraw): Promise<void>;
   generateBracketDraw(competitionId: CompetitionId, fighters: FighterEntry[]): Promise<void>;
+  publishPoolDraw(competitionId: CompetitionId, pools: Pool[]): Promise<void>;
 }
 
 export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
@@ -100,11 +102,22 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
     await publishCompetitionDraw(competitionId, { pools: [], bracketRounds, fights });
   }
 
+  async function publishPoolDraw(competitionId: CompetitionId, pools: Pool[]): Promise<void> {
+    currentCompetitionId = competitionId; // ← règle le piège n°2
+    const { pools: poolRecords, fights } = buildPoolDraw(pools, uuidGenerator);
+    await publishCompetitionDraw(competitionId, {
+      pools: poolRecords,
+      bracketRounds: [],
+      fights,
+    });
+  }
+
   return {
     retrieveCompetitions: new DemoRetrieveCompetitionsQuery(),
     activeCompetition,
     loadCompetition,
     publishDraw: publishCompetitionDraw,
     generateBracketDraw,
+    publishPoolDraw,
   };
 }

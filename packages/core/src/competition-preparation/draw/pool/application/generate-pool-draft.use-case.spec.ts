@@ -32,6 +32,7 @@ describe("Generating a pool draft", () => {
       competitionId,
       makeFighters(6),
       TWO_POOLS_OF_THREE,
+      (x) => x,
     );
 
     expect(pools.length).toBe(2);
@@ -49,6 +50,7 @@ describe("Generating a pool draft", () => {
         competitionId,
         makeFighters(6),
         TWO_POOLS_OF_FOUR,
+        (x) => x,
       ),
     ).rejects.toThrow("Fighter amount doesn't fit pool setup capacity");
 
@@ -66,12 +68,14 @@ describe("Generating a pool draft", () => {
       competitionA,
       makeFighters(6),
       TWO_POOLS_OF_THREE,
+      (x) => x,
     );
     const poolsB = await generatePoolDraftUseCase(
       { savePoolDraft },
       competitionB,
       makeFighters(8),
       TWO_POOLS_OF_FOUR,
+      (x) => x,
     );
 
     expect(savePoolDraft.getPools(competitionA)).toStrictEqual(poolsA);

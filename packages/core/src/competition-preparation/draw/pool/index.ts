@@ -7,3 +7,4 @@ export * from "./domain/setup/pool-setup.ts";
 export * from "./domain/setup/pool-setup.service.ts";
 export * from "./application/generate-pool-draft.use-case.ts";
 export * from "./ports/save-pool-draft.port.ts";
+export * from "./application/build-pool-draw.ts";

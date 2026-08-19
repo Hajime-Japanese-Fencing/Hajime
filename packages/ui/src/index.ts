@@ -25,6 +25,7 @@ export {
 } from "./components/RankingDetails/ranking-detail.interface.ts";
 
 export { default as PoolCard } from "./components/PoolCard/PoolCard.vue";
+export { default as PoolCreationCard } from "./components/PoolCreationCard/PoolCreationCard.vue";
 export type { FighterDetails } from "./components/PoolCard/fighter-details.interface.ts";
 export type { PoolDetails } from "./components/PoolCard/pool-details.interface.ts";
 

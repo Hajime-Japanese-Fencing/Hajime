@@ -6,6 +6,7 @@ import { toPoolFighter } from "./pool-fighter.ts";
 export function distributeFightersInPools(
   fighters: FighterEntry[],
   poolSetup: PoolSetup,
+  randomize: (entries: FighterEntry[]) => FighterEntry[] = (x) => x,
   shouldSeparateClubMembers: boolean = false,
   shouldSeparateSeededCompetitors: boolean = false,
 ): Pool[] {
@@ -30,7 +31,7 @@ export function distributeFightersInPools(
 
   // --- FIGHTERS DISTRIBUTION ---
   const sortedFighters = sortFighters(
-    fighters,
+    randomize(fighters),
     shouldSeparateSeededCompetitors,
     shouldSeparateClubMembers,
   );
