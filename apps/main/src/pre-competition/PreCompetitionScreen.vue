@@ -14,10 +14,13 @@ import { Button } from "@hajime/ui";
 import { shuffle } from "@hajime/core";
 import { PoolCreationCard } from "@hajime/ui";
 import type { CompetitionPhase } from "./competition-phase.ts";
+import { type CompetitionId, makeCompetitionId } from "@hajime/core";
+import { useContainer } from "../bootstrap/container/useContainer.ts";
 
 // -------------------------------------------
 // INPUTS
 // -------------------------------------------
+const competitionId: CompetitionId = makeCompetitionId("1");
 const selectedSetup = ref<PoolSetup>({ poolGroups: [], fightCount: 0 });
 const pools = ref<Pool[]>([]);
 const shouldSeparateClubMembers = false;
@@ -57,6 +60,8 @@ const options: DropdownOption[] = calculatePossiblePoolSetups(nbFighters).map(
   (poolSetup: PoolSetup) => poolSetupToDropdownOption(poolSetup),
 );
 
+const container = useContainer();
+
 // -------------------------------------------
 // FUNCTIONS
 // -------------------------------------------
@@ -72,7 +77,9 @@ function onDropdownSelect(option: DropdownOption) {
   );
 }
 
-function onStart() {}
+async function onStart() {
+  await container.publishPoolDraw(makeCompetitionId(competitionId), pools.value);
+}
 </script>
 
 <!--TEMPORARY: rankingDetails names are defined from fighter ids -->
