@@ -13,6 +13,8 @@ export type { DropdownOption } from "./components/Navigation/dropdown-option.int
 export { default as AlertError } from "./components/DataDisplay/AlertError.vue";
 export { default as Badge } from "./components/DataDisplay/Badge.vue";
 export { default as TablePlaceholder } from "./components/DataDisplay/TablePlaceholder.vue";
+export { default as NewCompetition } from "./components/DataInput/NewCompetition.vue";
+export type { NewCompetitionPayload } from "./components/DataInput/new-competition-payload.interface.ts";
 export * from "./components/DataDisplay/types.ts";
 
 export { default as Modal } from "./components/Actions/Modal/Modal.vue";
