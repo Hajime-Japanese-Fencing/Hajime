@@ -19,12 +19,14 @@ export async function generatePoolDraftUseCase(
   competitionId: CompetitionId,
   fighters: FighterEntry[],
   poolSetup: PoolSetup,
+  randomize: (element: FighterEntry[]) => FighterEntry[],
   shouldSeparateClubMembers = false,
   shouldSeparateSeededCompetitors = false,
 ): Promise<Pool[]> {
   const pools = distributeFightersInPools(
     fighters,
     poolSetup,
+    randomize,
     shouldSeparateClubMembers,
     shouldSeparateSeededCompetitors,
   );

@@ -55,7 +55,7 @@ describe("Distributing competitors into pools", () => {
       expectedNbPools += poolGroup.amount;
     }
 
-    const pools = distributeFightersInPools(fighters, poolSetup);
+    const pools = distributeFightersInPools(fighters, poolSetup, (x) => x);
 
     expect(pools.length).toBe(expectedNbPools);
   });
@@ -80,7 +80,7 @@ describe("Distributing competitors into pools", () => {
       ],
     };
 
-    const pools = distributeFightersInPools(fighters, poolSetup, true);
+    const pools = distributeFightersInPools(fighters, poolSetup, (x) => x, true);
     const nbOfAInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club A").length;
     const nbOfBInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club B").length;
     const nbOfCInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club C").length;
@@ -116,7 +116,7 @@ describe("Distributing competitors into pools", () => {
       ],
     };
 
-    const pools = distributeFightersInPools(fighters, poolSetup, true);
+    const pools = distributeFightersInPools(fighters, poolSetup, (x) => x, true);
     const nbOfAInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club A").length;
     const nbOfCInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club C").length;
     const nbOfAInPool2 = pools[1].fighters.filter((f) => f.fighter.club == "club A").length;
@@ -148,7 +148,7 @@ describe("Distributing competitors into pools", () => {
       ],
     };
 
-    const pools = distributeFightersInPools(fighters, poolSetup);
+    const pools = distributeFightersInPools(fighters, poolSetup, (x) => x);
 
     const nbOfAInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club A").length;
     const nbOfBInPool1 = pools[0].fighters.filter((f) => f.fighter.club == "club B").length;
@@ -185,7 +185,7 @@ describe("Distributing competitors into pools", () => {
       ],
     };
 
-    const pools = distributeFightersInPools(fighters, poolSetup, false, true);
+    const pools = distributeFightersInPools(fighters, poolSetup, (x) => x, false, true);
     const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeeded).length;
     const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeeded).length;
 
@@ -213,7 +213,7 @@ describe("Distributing competitors into pools", () => {
       ],
     };
 
-    const pools = distributeFightersInPools(fighters, poolSetup, false, true);
+    const pools = distributeFightersInPools(fighters, poolSetup, (x) => x, false, true);
     const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeeded).length;
     const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeeded).length;
 
@@ -241,7 +241,7 @@ describe("Distributing competitors into pools", () => {
       ],
     };
 
-    const pools = distributeFightersInPools(fighters, poolSetup);
+    const pools = distributeFightersInPools(fighters, poolSetup, (x) => x);
     const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeeded).length;
     const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeeded).length;
 
@@ -269,7 +269,7 @@ describe("Distributing competitors into pools", () => {
       ],
     };
 
-    const pools = distributeFightersInPools(fighters, poolSetup, true, true);
+    const pools = distributeFightersInPools(fighters, poolSetup, (x) => x, true, true);
 
     const nbOfSeriesHeadsInPool1 = pools[0].fighters.filter((f) => f.fighter.isSeeded).length;
     const nbOfSeriesHeadsInPool2 = pools[1].fighters.filter((f) => f.fighter.isSeeded).length;
