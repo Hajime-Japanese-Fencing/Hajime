@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import type { Fight, FightSide, AssignIpponEvent, Action } from "./types.ts";
-import type { ScoreEvent, ScoreEventId, FightId } from "@hajime/core";
+import type { ScoreEvent, ScoreEventId, FightId, FighterId } from "@hajime/core";
 import { FightStatus, Side, SideLabel, AssignableIpponCode, hansoku } from "@hajime/core";
 import SwapButton from "./SwapButton.vue";
 import FightRow from "./FightRow.vue";
@@ -25,7 +25,7 @@ const emit = defineEmits<{
   forfeitFight: [fightId: FightId];
   assignIppon: [fightId: FightId, event: AssignIpponEvent];
   removeIppon: [fightId: FightId, scoreEventId: ScoreEventId];
-  assignHansoku: [fightId: FightId, side: Side];
+  assignHansoku: [fightId: FightId, fighterId: FighterId];
   removeHansoku: [fightId: FightId, scoreEventId: ScoreEventId];
 }>();
 
@@ -93,9 +93,9 @@ function closeFight(fight: Fight) {
   }
 }
 
-function assignIppon(fightId: FightId, side: Side, code: AssignableIpponCode) {
+function assignIppon(fightId: FightId, fighterId: FighterId, code: AssignableIpponCode) {
   emit("assignIppon", fightId, {
-    side,
+    fighterId,
     code,
   });
 }
@@ -104,23 +104,19 @@ function removeIppon(fightId: FightId, eventId: ScoreEventId) {
   emit("removeIppon", fightId, eventId);
 }
 
-function assignHansoku(fightId: FightId, side: Side) {
-  emit("assignHansoku", fightId, side);
+function assignHansoku(fightId: FightId, fighterId: FighterId) {
+  emit("assignHansoku", fightId, fighterId);
 }
 
 function removeHansoku(fightId: FightId, eventId: ScoreEventId) {
   emit("removeHansoku", fightId, eventId);
 }
 
-function getIppons(fight: Fight, side: Side): ScoreEvent[] {
-  const fighterId = side === Side.Red ? fight.fighter1.fighterId : fight.fighter2.fighterId;
-
+function getIppons(fight: Fight, fighterId: FighterId): ScoreEvent[] {
   return fight.scoreEvents.filter((e) => e.type === "ippon" && e.fighterId === fighterId);
 }
 
-function getHansoku(fight: Fight, side: Side): ScoreEvent[] {
-  const fighterId = side === Side.Red ? fight.fighter1.fighterId : fight.fighter2.fighterId;
-
+function getHansoku(fight: Fight, fighterId: FighterId): ScoreEvent[] {
   return fight.scoreEvents.filter((e) => e.type === "hansoku" && e.fighterId === fighterId);
 }
 </script>
@@ -162,12 +158,12 @@ function getHansoku(fight: Fight, side: Side): ScoreEvent[] {
           <template #left-assign>
             <div class="flex gap-2">
               <IpponAssignButtons
-                @assign="(code) => assignIppon(fight.id, leftSide.side, code)"
+                @assign="(code) => assignIppon(fight.id, fight.fighter1.fighterId, code)"
                 v-if="fight.editable"
               />
               <AssignButton
                 :tooltip="hansoku.label"
-                @assign="assignHansoku(fight.id, leftSide.side)"
+                @assign="assignHansoku(fight.id, fight.fighter1.fighterId)"
                 v-if="fight.editable"
               >
                 {{ hansoku.code }}
@@ -176,7 +172,7 @@ function getHansoku(fight: Fight, side: Side): ScoreEvent[] {
           </template>
           <template #left-hansoku>
             <IpponResultList
-              :events="getHansoku(fight, leftSide.side)"
+              :events="getHansoku(fight, fight.fighter1.fighterId)"
               :removable="fight.editable"
               alignment="start"
               @remove="(id) => removeHansoku(fight.id, id)"
@@ -184,7 +180,7 @@ function getHansoku(fight: Fight, side: Side): ScoreEvent[] {
           </template>
           <template #left-score>
             <IpponResultList
-              :events="getIppons(fight, leftSide.side)"
+              :events="getIppons(fight, fight.fighter1.fighterId)"
               :removable="fight.editable"
               alignment="end"
               @remove="(id) => removeIppon(fight.id, id)"
@@ -194,12 +190,12 @@ function getHansoku(fight: Fight, side: Side): ScoreEvent[] {
           <template #right-assign>
             <div class="flex gap-2">
               <IpponAssignButtons
-                @assign="(code) => assignIppon(fight.id, rightSide.side, code)"
+                @assign="(code) => assignIppon(fight.id, fight.fighter2.fighterId, code)"
                 v-if="fight.editable"
               />
               <AssignButton
                 :tooltip="hansoku.label"
-                @assign="assignHansoku(fight.id, rightSide.side)"
+                @assign="assignHansoku(fight.id, fight.fighter2.fighterId)"
                 v-if="fight.editable"
               >
                 {{ hansoku.code }}
@@ -208,7 +204,7 @@ function getHansoku(fight: Fight, side: Side): ScoreEvent[] {
           </template>
           <template #right-hansoku>
             <IpponResultList
-              :events="getHansoku(fight, rightSide.side)"
+              :events="getHansoku(fight, fight.fighter2.fighterId)"
               :removable="fight.editable"
               alignment="end"
               @remove="(id) => removeHansoku(fight.id, id)"
@@ -216,7 +212,7 @@ function getHansoku(fight: Fight, side: Side): ScoreEvent[] {
           </template>
           <template #right-score>
             <IpponResultList
-              :events="getIppons(fight, rightSide.side)"
+              :events="getIppons(fight, fight.fighter2.fighterId)"
               :removable="fight.editable"
               alignment="start"
               @remove="(id) => removeIppon(fight.id, id)"

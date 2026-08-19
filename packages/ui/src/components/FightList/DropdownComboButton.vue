@@ -5,7 +5,7 @@ import Button from "../Actions/Button/Button.vue";
 import type { Action } from "./types.ts";
 
 const props = defineProps<{
-  id: number;
+  id: string;
 }>();
 
 const emit = defineEmits<{

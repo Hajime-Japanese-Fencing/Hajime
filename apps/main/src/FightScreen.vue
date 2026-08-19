@@ -9,7 +9,7 @@ import {
   type FightId,
   type FighterEntry,
   type ScoreEventId,
-  type Side,
+  type FighterId,
 } from "@hajime/core";
 import { useContainer } from "./bootstrap/container/useContainer.ts";
 import { useActiveCompetition } from "./features/active-competition/composables/use-active-competition.ts";
@@ -126,15 +126,15 @@ function onForfeitFight(_id: FightId) {
 function onAssignIppon(_fightId: FightId, event: AssignIpponEvent) {
   if (event.code === "Δ") return;
 
-  void activeCompetition.recordIppon({ side: event.side, code: event.code });
+  void activeCompetition.recordIppon({ fighterId: event.fighterId, code: event.code });
 }
 
 function onRemoveIppon(_fightId: FightId, scoreEventId: ScoreEventId) {
   void activeCompetition.removeScoreEvent({ scoreEventId, type: "ippon" });
 }
 
-function onAssignHansoku(_fightId: FightId, side: Side) {
-  void activeCompetition.recordHansoku({ side });
+function onAssignHansoku(_fightId: FightId, fighterId: FighterId) {
+  void activeCompetition.recordHansoku({ fighterId });
 }
 
 function onRemoveHansoku(_fightId: FightId, scoreEventId: ScoreEventId) {

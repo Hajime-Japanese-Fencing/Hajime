@@ -4,7 +4,6 @@ import type { FighterId } from "../../shared/fighter-id.ts";
 import type { FightId } from "../../shared/fight-id.ts";
 import type { IpponCode } from "../../shared/ippons.ts";
 import type { ScoreEventId } from "../../shared/score-event-id.ts";
-import type { Side } from "../../shared/side.ts";
 import { cancelFight } from "./cancel-fight.use-case.ts";
 import type { FightActionResult } from "./command-result.ts";
 import { finishFight } from "./finish-fight.use-case.ts";
@@ -36,8 +35,8 @@ export interface ActiveCompetition extends CompetitionDrawReceiver {
   cancelActiveFight(): Promise<FightActionResult>;
   validateActiveFight(): Promise<FightActionResult>;
   forfeitActiveFight(): Promise<FightActionResult>;
-  recordIppon(input: { side: Side; code: IpponCode }): Promise<FightActionResult>;
-  recordHansoku(input: { side: Side }): Promise<FightActionResult>;
+  recordIppon(input: { fighterId: FighterId; code: IpponCode }): Promise<FightActionResult>;
+  recordHansoku(input: { fighterId: FighterId }): Promise<FightActionResult>;
   removeScoreEvent(input: {
     scoreEventId: ScoreEventId;
     type: ScoreEventType;
@@ -83,7 +82,7 @@ export function createActiveCompetition(deps: ActiveCompetitionDeps): ActiveComp
   }
 
   async function recordScore(
-    input: { side: Side },
+    input: { fighterId: FighterId },
     record: (fightId: FightId, fighterId: FighterId) => Promise<FightActionResult>,
   ): Promise<FightActionResult> {
     const fightId = activeFightId();
@@ -92,13 +91,7 @@ export function createActiveCompetition(deps: ActiveCompetitionDeps): ActiveComp
     const fight = state.snapshot().fightsById[fightId];
     if (!fight) return { ok: false, reason: "fight_not_found" };
 
-    const fighterId = input.side === "RED" ? fight.redFighterId : fight.whiteFighterId;
-    // --- fighterId IS ONLY EVER null FOR A BYE'S "WHITE" SIDE, AND A BYE CAN NEVER BE THE
-    // ACTIVE FIGHT (IT'S CREATED DIRECTLY AS "finished", SO startFight ALWAYS REJECTS IT) —
-    // THIS IS PURE TYPE-SAFETY DEFENCE, NOT A REACHABLE PATH. ---
-    if (!fighterId) return { ok: false, reason: "scoring_not_allowed" };
-
-    return record(fightId, fighterId);
+    return record(fightId, input.fighterId);
   }
 
   return {
