@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { FightStatus } from "../../shared/fight-status.ts";
 import type { FightId } from "../../shared/fight-id.ts";
-import { makeFightId } from "../../shared/fight-id.ts";
 import { makeBracketRoundId } from "../../shared/bracket-round-id.ts";
 import { makeFighterId } from "../../shared/fighter-id.ts";
 import { makeScoreEventId } from "../../shared/score-event-id.ts";
@@ -102,7 +101,6 @@ describe("Finishing a fight", () => {
       fightsById: { [fightId1]: fight },
       bracketRoundsById: { [semiFinalId]: rounds[0], [finalId]: rounds[1] },
       activeFightId: fightId1,
-      nextFightId: makeFightId(2),
     });
 
     await expect(

@@ -78,10 +78,13 @@ export function presentPendingMatch(
   };
 }
 
-// --- SYNTHETIC, NEGATIVE FightId FOR A PENDING MATCH THAT HAS NO REAL FightRecord YET.
-// NEGATIVE SO IT CAN NEVER COLLIDE WITH A REAL (POSITIVE, SEQUENTIALLY-MINTED) FightId, AND
-// DETERMINISTIC FROM (bracketRoundId, matchIndex) SO THE ROW KEEPS A STABLE :key ACROSS
-// RE-RENDERS UNTIL IT GETS PROMOTED INTO A REAL FIGHT. ---
+// --- DETERMINISTIC ID FOR A PENDING MATCH THAT HAS NO REAL FightRecord YET, SO THE ROW KEEPS A
+// STABLE :key ACROSS RE-RENDERS UNTIL IT GETS PROMOTED INTO A REAL FIGHT (SEE FightList.vue's
+// v-for). BUILT FROM (bracketRoundId, matchIndex) RATHER THAN RANDOM ON PURPOSE — ITS "pending:"
+// PREFIX CAN NEVER COLLIDE WITH A REAL FightId, WHICH IS ALWAYS A crypto.randomUUID() (SEE
+// buildBracketDraw / advanceBracket's promoteReadyMatches). NO NEED FOR THE OLD "NEGATIVE
+// NUMBER" TRICK ANYMORE — THAT ONLY EXISTED TO AVOID COLLIDING WITH REAL IDS BACK WHEN THEY WERE
+// SEQUENTIALLY-MINTED POSITIVE INTEGERS. ---
 function makePendingFightId(bracketRoundId: BracketRoundId, matchIndex: number) {
-  return makeFightId(-(Number(bracketRoundId) * 1000 + matchIndex + 1));
+  return makeFightId(`pending:${bracketRoundId}:${matchIndex}`);
 }

@@ -9,7 +9,7 @@ import {
   type FightId,
   type FighterEntry,
   type ScoreEventId,
-  type Side,
+  type FighterId,
 } from "@hajime/core";
 import { useContainer } from "./bootstrap/container/useContainer.ts";
 import { useActiveCompetition } from "./features/active-competition/composables/use-active-competition.ts";
@@ -45,26 +45,35 @@ watch(
   { immediate: true },
 );
 
-// --- TEMPORARY: NO FIGHTER REGISTRATION SCREEN YET, SO THIS IS A FIXED ROSTER JUST TO EXERCISE
-// THE REAL generateBracketUseCase -> buildBracketDraw PIPELINE END TO END. 5 FIGHTERS (NOT A
-// POWER OF TWO) SO THE GENERATED BRACKET HAS BYES TO MAP, NOT JUST STRAIGHTFORWARD FIRST-ROUND
-// FIGHTS. TO REPLACE ONCE FIGHTER REGISTRATION EXISTS. ---
-const DEMO_BRACKET_FIGHTERS: FighterEntry[] = [
-  { id: "kondo", isSeeded: false, club: "Demo Dojo" },
-  { id: "fujita", isSeeded: false, club: "Demo Dojo" },
-  { id: "saito", isSeeded: false, club: "Demo Dojo" },
-  { id: "aoki", isSeeded: false, club: "Demo Dojo" },
-  { id: "endo", isSeeded: false, club: "Demo Dojo" },
-];
+// --- TEMPORARY: NO FIGHTER REGISTRATION SCREEN YET, SO THIS IS A GENERATED ROSTER JUST TO
+// EXERCISE THE REAL generateBracketUseCase -> buildBracketDraw PIPELINE END TO END. TO REPLACE
+// ONCE FIGHTER REGISTRATION EXISTS. ---
+function makeDemoFighters(count: number): FighterEntry[] {
+  return Array.from({ length: count }, (_, index) => ({
+    id: `fighter-${index + 1}`,
+    isSeeded: false,
+    club: "Demo Dojo",
+  }));
+}
+
+// --- DEFAULTS TO 8 (A POWER OF TWO, NO BYES) SO THE FIRST-EVER CLICK PRODUCES A "CLEAN" DRAW —
+// PICK AN ODD COUNT (E.G. 5) TO EXERCISE BYE HANDLING INSTEAD. generateBracket REJECTS FEWER
+// THAN 2 FIGHTERS, SO THE BUTTON STAYS DISABLED BELOW THAT. ---
+const fighterCount = ref(8);
+const isFighterCountValid = computed(
+  () => Number.isInteger(fighterCount.value) && fighterCount.value >= 2,
+);
 
 const isGeneratingBracket = ref(false);
 
 async function onGenerateBracketDraft() {
+  if (!isFighterCountValid.value) return;
+
   isGeneratingBracket.value = true;
   try {
     await container.generateBracketDraw(
       makeCompetitionId(props.competitionId),
-      DEMO_BRACKET_FIGHTERS,
+      makeDemoFighters(fighterCount.value),
     );
   } finally {
     isGeneratingBracket.value = false;
@@ -117,15 +126,15 @@ function onForfeitFight(_id: FightId) {
 function onAssignIppon(_fightId: FightId, event: AssignIpponEvent) {
   if (event.code === "Δ") return;
 
-  void activeCompetition.recordIppon({ side: event.side, code: event.code });
+  void activeCompetition.recordIppon({ fighterId: event.fighterId, code: event.code });
 }
 
 function onRemoveIppon(_fightId: FightId, scoreEventId: ScoreEventId) {
   void activeCompetition.removeScoreEvent({ scoreEventId, type: "ippon" });
 }
 
-function onAssignHansoku(_fightId: FightId, side: Side) {
-  void activeCompetition.recordHansoku({ side });
+function onAssignHansoku(_fightId: FightId, fighterId: FighterId) {
+  void activeCompetition.recordHansoku({ fighterId });
 }
 
 function onRemoveHansoku(_fightId: FightId, scoreEventId: ScoreEventId) {
@@ -145,15 +154,25 @@ function onExport() {
 </script>
 
 <template>
-  <div class="mb-4 flex gap-2">
+  <div class="mb-4 flex items-center gap-2">
     <Button @click="onExport">Export to PDF</Button>
-    <Button :disabled="isGeneratingBracket" @click="onGenerateBracketDraft">
+    <Button :disabled="isGeneratingBracket || !isFighterCountValid" @click="onGenerateBracketDraft">
       Générer un tableau (démo)
     </Button>
+    <label class="flex items-center gap-1 text-sm">
+      Combattants
+      <input
+        v-model.number="fighterCount"
+        type="number"
+        min="2"
+        step="1"
+        class="w-16 rounded border px-2 py-1"
+      />
+    </label>
   </div>
   <div class="flex gap-4">
     <SelectorList
-      v-if="phaseItems.length > 1"
+      v-if="phaseItems.length > 0"
       v-model="selectedPhase"
       :items="phaseItems"
       class="w-40 shrink-0"

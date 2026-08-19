@@ -5,7 +5,7 @@ import {
   type RetrieveCompetitionsQuery,
 } from "@hajime/core";
 
-export class DemoRetrieveCompetitionsAdapter implements RetrieveCompetitionsQuery {
+export class DemoRetrieveCompetitionsQuery implements RetrieveCompetitionsQuery {
   async retrieveAll() {
     return [
       {

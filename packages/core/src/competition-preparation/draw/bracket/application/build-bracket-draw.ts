@@ -1,8 +1,10 @@
 import type { Bracket, BracketMatch } from "../domain/bracket.ts";
+import { makeFightId } from "../../../../shared/fight-id.ts";
 import { makeBracketRoundId } from "../../../../shared/bracket-round-id.ts";
-import { makeFightId, type FightId } from "../../../../shared/fight-id.ts";
 import { makeFighterId } from "../../../../shared/fighter-id.ts";
 import { FightStatus } from "../../../../shared/fight-status.ts";
+import type { IdGenerator } from "../../../../shared/id-generator.ts";
+import type { FightId } from "../../../../shared/fight-id.ts";
 import type {
   BracketPendingMatch,
   BracketRoundRecord,
@@ -19,18 +21,16 @@ export interface BracketDraw {
  * objects) into the runtime shape the rest of the app consumes: `BracketRoundRecord[]` +
  * `FightRecord[]`, as used by `CompetitionDraw` / `ActiveCompetitionState`.
  *
- * `startingFightId` lets a caller avoid id collisions when this draw's fights are combined with
- * fights minted elsewhere (e.g. a pool phase draw published alongside this bracket). Defaults to
- * 1 since a caller loading this draw alone (via `applyDraw`/`loadCompetition`) recomputes
- * `nextFightId` from the fights themselves anyway.
+ * Each fight gets a fresh UUID (`crypto.randomUUID()`), so there's no id-collision risk to manage
+ * across combined draws (e.g. a pool phase draw published alongside this bracket) — unlike the
+ * old incrementing-counter scheme, no `startingFightId` is needed here.
  */
-export function buildBracketDraw(bracket: Bracket, startingFightId: number = 1): BracketDraw {
+export function buildBracketDraw(bracket: Bracket, idGenerator: IdGenerator): BracketDraw {
   const roundIds = bracket.rounds.map((_, index) => makeBracketRoundId(index + 1));
   const thirdPlaceRoundId = bracket.thirdPlaceMatch
     ? makeBracketRoundId(roundIds.length + 1)
     : null;
 
-  let nextFightId = startingFightId;
   const fights: FightRecord[] = [];
 
   const bracketRounds: BracketRoundRecord[] = bracket.rounds.map((round, roundIndex) => {
@@ -39,7 +39,7 @@ export function buildBracketDraw(bracket: Bracket, startingFightId: number = 1):
 
     round.matches.forEach((match, matchIndex) => {
       if (match.fighter1 !== null && match.fighter2 !== null) {
-        const fightId = makeFightId(nextFightId++);
+        const fightId = makeFightId(idGenerator());
 
         fights.push({
           id: fightId,
@@ -64,7 +64,7 @@ export function buildBracketDraw(bracket: Bracket, startingFightId: number = 1):
       // ROUNDS WITH ONLY fighter1 KNOWN ARE GENUINELY PENDING (WAITING ON AN ADJACENT MATCH'S
       // WINNER), SO THEY FALL THROUGH TO THE pendingMatches CASE BELOW INSTEAD. ---
       if (roundIndex === 0 && match.fighter1 !== null && match.fighter2 === null) {
-        const fightId = makeFightId(nextFightId++);
+        const fightId = makeFightId(idGenerator());
 
         fights.push({
           id: fightId,

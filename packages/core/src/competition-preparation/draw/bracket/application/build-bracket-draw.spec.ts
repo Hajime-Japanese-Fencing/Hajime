@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vite-plus/test";
 import { generateBracket } from "../domain/generate-bracket.service.ts";
-import { makeFighterId } from "../../../../shared/fighter-id.ts";
-import { makeFightId } from "../../../../shared/fight-id.ts";
-import { FightStatus } from "../../../../shared/fight-status.ts";
-import type { FighterEntry } from "../../../../shared/fighter.ts";
+import type { FighterEntry } from "@hajime/core";
 import { buildBracketDraw } from "./build-bracket-draw.ts";
+import { uuidGenerator, FightStatus, makeFighterId } from "@hajime/core";
 
 // --- ALL FIGHTERS ARE SEEDED SO rankFighters/rankFightersSeparatedByClubs NEVER SHUFFLES
 // THEM (SHUFFLE ONLY APPLIES TO NON-SEEDED FIGHTERS) — KEEPS THE RESULTING BRACKET LAYOUT
@@ -15,13 +13,13 @@ function makeSeededFighters(ids: string[]): FighterEntry[] {
 
 describe("buildBracketDraw", () => {
   it("turns a bracket with no bye and no third-place match into rounds and playable first-round fights", () => {
+    // Assert that first round fights are playable, while next round fights are pending
     const bracket = generateBracket(makeSeededFighters(["w", "x", "y", "z"]));
 
-    const draw = buildBracketDraw(bracket);
+    const draw = buildBracketDraw(bracket, uuidGenerator);
 
-    expect(draw.fights).toEqual([
+    expect(draw.fights).toMatchObject([
       {
-        id: makeFightId(1),
         poolId: null,
         bracketRoundId: draw.bracketRounds[0].id,
         bracketMatchIndex: 0,
@@ -31,7 +29,6 @@ describe("buildBracketDraw", () => {
         scoreEvents: [],
       },
       {
-        id: makeFightId(2),
         poolId: null,
         bracketRoundId: draw.bracketRounds[0].id,
         bracketMatchIndex: 1,
@@ -51,7 +48,9 @@ describe("buildBracketDraw", () => {
       feedsRoundId: finalRound.id,
       loserFeedsRoundId: undefined,
       dependsOnRoundId: null,
-      fightIds: [makeFightId(1), makeFightId(2)],
+      // --- READ BACK FROM draw.fights RATHER THAN HARDCODED — SAME REASON AS ABOVE. THIS STILL
+      // VERIFIES firstRound ACTUALLY POINTS AT THE TWO REAL FIGHTS JUST CREATED, IN ORDER. ---
+      fightIds: draw.fights.map((fight) => fight.id),
       pendingMatches: [],
     });
 
@@ -71,14 +70,13 @@ describe("buildBracketDraw", () => {
     // GETS THE BYE AND generateBracket ALREADY PROPAGATES IT INTO THE FINAL. ---
     const bracket = generateBracket(makeSeededFighters(["a", "b", "c"]));
 
-    const draw = buildBracketDraw(bracket);
+    const draw = buildBracketDraw(bracket, uuidGenerator);
 
     // --- BOTH THE BYE AND THE REAL b VS c MATCH BECOME FightRecords — NOTHING IS DROPPED. ---
     expect(draw.fights).toHaveLength(2);
 
     const [byeFight, realFight] = draw.fights;
-    expect(byeFight).toEqual({
-      id: makeFightId(1),
+    expect(byeFight).toMatchObject({
       poolId: null,
       bracketRoundId: draw.bracketRounds[0].id,
       bracketMatchIndex: 0,
@@ -112,7 +110,7 @@ describe("buildBracketDraw", () => {
       true,
     );
 
-    const draw = buildBracketDraw(bracket);
+    const draw = buildBracketDraw(bracket, uuidGenerator);
 
     expect(draw.fights).toHaveLength(4);
     expect(draw.bracketRounds).toHaveLength(4);
@@ -146,17 +144,9 @@ describe("buildBracketDraw", () => {
   it("does not create a third-place round when it wasn't requested", () => {
     const bracket = generateBracket(makeSeededFighters(["f1", "f2", "f3", "f4"]), false, false);
 
-    const draw = buildBracketDraw(bracket);
+    const draw = buildBracketDraw(bracket, uuidGenerator);
 
     expect(draw.bracketRounds.every((round) => round.kind !== "thirdPlace")).toBe(true);
     expect(draw.bracketRounds.every((round) => round.loserFeedsRoundId === undefined)).toBe(true);
-  });
-
-  it("mints fight ids starting from the given startingFightId", () => {
-    const bracket = generateBracket(makeSeededFighters(["w", "x", "y", "z"]));
-
-    const draw = buildBracketDraw(bracket, 50);
-
-    expect(draw.fights.map((fight) => fight.id)).toEqual([makeFightId(50), makeFightId(51)]);
   });
 });

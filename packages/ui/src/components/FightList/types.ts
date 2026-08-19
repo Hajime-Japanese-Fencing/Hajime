@@ -33,7 +33,7 @@ export interface FightSide {
 }
 
 export type AssignIpponEvent = {
-  side: Side;
+  fighterId: FighterId;
   code: AssignableIpponCode;
 };
 
