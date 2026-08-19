@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, useId } from "vue";
 import Button from "../Actions/Button/Button.vue";
 import CloseButton from "../Overlay/CloseButton.vue";
-import type { NewCompetitionPayload } from "./new-competition-payload.interface.ts";
+import {
+  CompetitionFormat,
+  CompetitionFormatLabel,
+  type NewCompetitionPayload,
+} from "./new-competition-payload.interface.ts";
 
 const emit = defineEmits<{
   create: [payload: NewCompetitionPayload];
@@ -12,6 +16,12 @@ const dialogRef = ref<HTMLDialogElement | null>(null);
 const name = ref("");
 const place = ref("");
 const date = ref("");
+const format = ref<CompetitionFormat>(CompetitionFormat.Bracket);
+
+// --- UNIQUE PER INSTANCE SO TWO <NewCompetition> ON THE SAME PAGE DON'T SHARE ONE NATIVE RADIO
+// GROUP (RADIOS ARE GROUPED BY THE name ATTRIBUTE ALONE, GLOBALLY ACROSS THE DOCUMENT — A
+// HARDCODED name WOULD LET PICKING A FORMAT IN ONE MODAL SILENTLY UNCHECK THE OTHER). ---
+const formatGroupName = useId();
 
 function openModal(): void {
   dialogRef.value?.showModal();
@@ -22,7 +32,7 @@ function closeModal(): void {
 }
 
 function onSubmit(): void {
-  emit("create", { name: name.value, place: place.value, date: date.value });
+  emit("create", { name: name.value, place: place.value, date: date.value, format: format.value });
   closeModal();
 }
 
@@ -33,6 +43,7 @@ function resetForm(): void {
   name.value = "";
   place.value = "";
   date.value = "";
+  format.value = CompetitionFormat.Bracket;
 }
 </script>
 
@@ -73,6 +84,32 @@ function resetForm(): void {
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Date</legend>
           <input v-model="date" type="date" required class="input w-full" />
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">Format</legend>
+          <div class="flex flex-col gap-2">
+            <label class="label cursor-pointer justify-start gap-2">
+              <input
+                v-model="format"
+                type="radio"
+                :name="formatGroupName"
+                :value="CompetitionFormat.Bracket"
+                class="radio radio-primary"
+              />
+              {{ CompetitionFormatLabel[CompetitionFormat.Bracket] }}
+            </label>
+            <label class="label cursor-pointer justify-start gap-2">
+              <input
+                v-model="format"
+                type="radio"
+                :name="formatGroupName"
+                :value="CompetitionFormat.PoolAndBracket"
+                class="radio radio-primary"
+              />
+              {{ CompetitionFormatLabel[CompetitionFormat.PoolAndBracket] }}
+            </label>
+          </div>
         </fieldset>
 
         <div class="modal-action">
