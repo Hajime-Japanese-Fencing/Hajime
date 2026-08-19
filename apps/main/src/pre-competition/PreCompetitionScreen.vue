@@ -12,8 +12,8 @@ import { RankingDetailBuilder } from "@hajime/ui";
 import { poolSetupToDropdownOption } from "./poolSetupToDropdownOption.mapper.ts";
 import { Button } from "@hajime/ui";
 import { shuffle } from "@hajime/core";
-import type { CompetitionFormula } from "./competition-formula.ts";
 import { PoolCreationCard } from "@hajime/ui";
+import type { CompetitionPhase } from "./competition-phase.ts";
 
 // -------------------------------------------
 // INPUTS
@@ -22,7 +22,7 @@ const selectedSetup = ref<PoolSetup>({ poolGroups: [], fightCount: 0 });
 const pools = ref<Pool[]>([]);
 const shouldSeparateClubMembers = false;
 const shouldSeparateSeededCompetitors = false;
-const competitionFormula: CompetitionFormula = ["POOLS", "BRACKET"];
+const competitionFormula: CompetitionPhase[] = ["POOLS", "BRACKET"];
 const fighters: FighterEntry[] = [
   { id: "1", isSeeded: true, club: "Paris Kendo Club" },
   { id: "2", isSeeded: false, club: "Paris Kendo Club" },
@@ -37,18 +37,19 @@ const fighters: FighterEntry[] = [
 const nbFighters = fighters.length;
 
 // BUILDING SELECTORS
-const poolsValidated = ref(false);
-const selectors = computed<SelectorItem[]>(() => []);
+const poolsValidated = ref(!competitionFormula.includes("POOLS"));
+const bracketValidated = ref(!competitionFormula.includes("BRACKET"));
 
-if (competitionFormula.find((phase) => phase == "POOLS")) {
-  selectors.value.push({ id: "pools", label: "Pools" });
-} else {
-  poolsValidated.value = true;
-}
-
-if (competitionFormula.find((phase) => phase == "BRACKET")) {
-  selectors.value.push({ id: "bracket", label: "Bracket", disabled: !poolsValidated.value });
-}
+const selectors = computed<SelectorItem[]>(() => {
+  const items: SelectorItem[] = [];
+  if (competitionFormula.includes("POOLS")) {
+    items.push({ id: "pools", label: "Pools" });
+  }
+  if (competitionFormula.includes("BRACKET")) {
+    items.push({ id: "bracket", label: "Bracket", disabled: !poolsValidated.value });
+  }
+  return items;
+});
 
 const selectedView = ref<string>(selectors.value[0].id);
 const title = ref("Select a pool repartition");
@@ -70,6 +71,8 @@ function onDropdownSelect(option: DropdownOption) {
     shouldSeparateSeededCompetitors,
   );
 }
+
+function onStart() {}
 </script>
 
 <!--TEMPORARY: rankingDetails names are defined from fighter ids -->
@@ -96,16 +99,23 @@ function onDropdownSelect(option: DropdownOption) {
           "
         />
       </div>
-      <div v-if="!poolsValidated" class="flex justify-end">
-        <Button :disabled="pools.length == 0" @click="poolsValidated = true">
+      <div class="flex gap-1 justify-end">
+        <Button v-if="!poolsValidated" :disabled="pools.length == 0" @click="poolsValidated = true">
           Validate Pools
         </Button>
+        <Button :disabled="!poolsValidated || !bracketValidated" @click="onStart()"> Start </Button>
       </div>
     </section>
 
     <section v-if="selectedView === 'bracket'">
       <!--      TODO: DEVELOP BRACKET DEFINITION SCREEN -->
       BRACKET
+      <div class="flex gap-1 justify-end">
+        <Button v-if="!bracketValidated" @click="bracketValidated = true">
+          Validate Bracket
+        </Button>
+        <Button :disabled="!poolsValidated || !bracketValidated" @click="onStart()"> Start </Button>
+      </div>
     </section>
   </div>
 </template>
