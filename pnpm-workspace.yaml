@@ -25,6 +25,7 @@ catalog:
   lucide-vue-next: ^1.0.0
   jspdf: ^4.2.1
   jspdf-autotable: ^5.0.8
+  dexie: ^4.4.5
 overrides:
   vite: "catalog:"
   vitest: "catalog:"

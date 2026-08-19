@@ -50,16 +50,14 @@ export function buildBracketExport(view: ActiveCompetitionView): BracketExport {
 
   const rounds = [...view.bracketRounds]
     .sort((a, b) => a.order - b.order)
-    .map(
-      (round): BracketExportRound => ({
-        label:
-          round.kind === "thirdPlace"
-            ? THIRD_PLACE_LABEL
-            : getBracketRoundLabel(round.order, totalMainRounds),
-        kind: round.kind ?? "main",
-        matches: buildRoundMatches(round, view.bracketRoundFights(round.id)),
-      }),
-    );
+    .map((round): BracketExportRound => ({
+      label:
+        round.kind === "thirdPlace"
+          ? THIRD_PLACE_LABEL
+          : getBracketRoundLabel(round.order, totalMainRounds),
+      kind: round.kind ?? "main",
+      matches: buildRoundMatches(round, view.bracketRoundFights(round.id)),
+    }));
 
   return { rounds };
 }

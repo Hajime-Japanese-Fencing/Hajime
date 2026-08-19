@@ -13,6 +13,7 @@
     "test:core:ui": "vp run --filter @hajime/core test:ui"
   },
   "dependencies": {
+    "dexie": "catalog:",
     "jspdf": "catalog:",
     "jspdf-autotable": "catalog:"
   },
@@ -20,9 +21,6 @@
     "@commitlint/cli": "^21.2.0",
     "@commitlint/config-conventional": "^21.2.0",
     "vite-plus": "catalog:"
-  },
-  "optionalDependencies": {
-    "@voidzero-dev/vite-plus-linux-x64-gnu": "^0.2.1"
   },
   "devEngines": {
     "packageManager": {

@@ -13,6 +13,7 @@
     "@tanstack/store": "catalog:",
     "@tanstack/vue-query": "catalog:",
     "@tanstack/vue-store": "catalog:",
+    "dexie": "catalog:",
     "vue": "^3.5.34",
     "vue-router": "catalog:"
   },
