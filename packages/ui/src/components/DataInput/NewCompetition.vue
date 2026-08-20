@@ -17,6 +17,8 @@ const name = ref("");
 const place = ref("");
 const date = ref("");
 const format = ref<CompetitionFormat>(CompetitionFormat.Bracket);
+const repulseByClub = ref(true);
+const repulseBySeed = ref(true);
 
 // --- UNIQUE PER INSTANCE SO TWO <NewCompetition> ON THE SAME PAGE DON'T SHARE ONE NATIVE RADIO
 // GROUP (RADIOS ARE GROUPED BY THE name ATTRIBUTE ALONE, GLOBALLY ACROSS THE DOCUMENT — A
@@ -32,7 +34,14 @@ function closeModal(): void {
 }
 
 function onSubmit(): void {
-  emit("create", { name: name.value, place: place.value, date: date.value, format: format.value });
+  emit("create", {
+    name: name.value,
+    place: place.value,
+    date: date.value,
+    format: format.value,
+    repulseByClub: repulseByClub.value,
+    repulseBySeed: repulseBySeed.value,
+  });
   closeModal();
 }
 
@@ -44,6 +53,8 @@ function resetForm(): void {
   place.value = "";
   date.value = "";
   format.value = CompetitionFormat.Bracket;
+  repulseByClub.value = true;
+  repulseBySeed.value = true;
 }
 </script>
 
@@ -86,31 +97,45 @@ function resetForm(): void {
           <input v-model="date" type="date" required class="input w-full" />
         </fieldset>
 
-        <fieldset class="fieldset">
-          <legend class="fieldset-legend">Format</legend>
-          <div class="flex flex-col gap-2">
-            <label class="label cursor-pointer justify-start gap-2">
-              <input
-                v-model="format"
-                type="radio"
-                :name="formatGroupName"
-                :value="CompetitionFormat.Bracket"
-                class="radio radio-primary"
-              />
-              {{ CompetitionFormatLabel[CompetitionFormat.Bracket] }}
+        <div class="flex justify-between">
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">Format</legend>
+            <div class="flex flex-col gap-2">
+              <label class="label cursor-pointer justify-start gap-2">
+                <input
+                  v-model="format"
+                  type="radio"
+                  :name="formatGroupName"
+                  :value="CompetitionFormat.Bracket"
+                  class="radio radio-primary"
+                />
+                {{ CompetitionFormatLabel[CompetitionFormat.Bracket] }}
+              </label>
+              <label class="label cursor-pointer justify-start gap-2">
+                <input
+                  v-model="format"
+                  type="radio"
+                  :name="formatGroupName"
+                  :value="CompetitionFormat.PoolAndBracket"
+                  class="radio radio-primary"
+                />
+                {{ CompetitionFormatLabel[CompetitionFormat.PoolAndBracket] }}
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">Répartition</legend>
+            <label class="label cursor-pointer justify-between gap-4">
+              Répulsion par club
+              <input v-model="repulseByClub" type="checkbox" class="toggle toggle-primary" />
             </label>
-            <label class="label cursor-pointer justify-start gap-2">
-              <input
-                v-model="format"
-                type="radio"
-                :name="formatGroupName"
-                :value="CompetitionFormat.PoolAndBracket"
-                class="radio radio-primary"
-              />
-              {{ CompetitionFormatLabel[CompetitionFormat.PoolAndBracket] }}
+            <label class="label cursor-pointer justify-between gap-4">
+              Répulsion par seed
+              <input v-model="repulseBySeed" type="checkbox" class="toggle toggle-primary" />
             </label>
-          </div>
-        </fieldset>
+          </fieldset>
+        </div>
 
         <div class="modal-action">
           <Button type="button" color="secondary" variant="ghost" @click="closeModal">

@@ -25,4 +25,10 @@ export interface NewCompetitionPayload {
   place: string;
   date: string;
   format: CompetitionFormat;
+  // --- WHETHER THE DRAW SHOULD KEEP FIGHTERS OF THE SAME CLUB / SAME SEED APART FOR AS LONG AS
+  // POSSIBLE (E.G. IN OPPOSITE HALVES OF THE BRACKET, OR DIFFERENT POOLS) — LIKE format, THIS IS A
+  // DRAW-GENERATION SETTING WITH NO core EQUIVALENT YET (build-bracket-draw / POOL DRAW DON'T
+  // ACCEPT SUCH CONSTRAINTS TODAY), SO IT'S CARRIED HERE UNTIL A REAL USE-CASE CONSUMES IT. ---
+  repulseByClub: boolean;
+  repulseBySeed: boolean;
 }
