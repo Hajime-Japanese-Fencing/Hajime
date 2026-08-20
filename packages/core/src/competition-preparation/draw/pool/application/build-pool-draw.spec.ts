@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vite-plus/test";
 import { buildPoolDraw } from "./build-pool-draw.ts";
+import { makeFighterId } from "../../../../shared/fighter-id.ts";
 
 describe("buildPoolDraw", () => {
   it("turns each pool into a PoolRecord and generates its pool fights", () => {
@@ -10,9 +11,9 @@ describe("buildPoolDraw", () => {
       number: 1,
       size: 3,
       fighters: [
-        { fighter: { id: "a", isSeeded: false, club: "X" } },
-        { fighter: { id: "b", isSeeded: false, club: "Y" } },
-        { fighter: { id: "c", isSeeded: false, club: "Z" } },
+        { fighter: { id: makeFighterId("a"), isSeeded: false, club: "X" } },
+        { fighter: { id: makeFighterId("b"), isSeeded: false, club: "Y" } },
+        { fighter: { id: makeFighterId("c"), isSeeded: false, club: "Z" } },
       ],
     };
 

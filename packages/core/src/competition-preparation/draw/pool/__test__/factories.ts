@@ -1,10 +1,11 @@
 import type { FighterEntry } from "../../../../shared/fighter.ts";
+import { makeFighterId } from "../../../../shared/fighter-id.ts";
 import type { PoolFighter } from "../domain/distribution/pool-fighter.ts";
 import type { Pool } from "../domain/pool.ts";
 
 export function poolFighterEntryFactory(fighterEntry: Partial<FighterEntry>): FighterEntry {
   return {
-    id: "1",
+    id: makeFighterId("1"),
     isSeeded: false,
     club: "Club A",
     ...fighterEntry,
@@ -18,7 +19,7 @@ export function makePoolFighter(
 ): PoolFighter {
   return {
     fighter: {
-      id,
+      id: makeFighterId(id),
       isSeeded,
       club,
     },

@@ -3,16 +3,17 @@ import { distributeFightersInPools } from "./pool-distribution.service.ts";
 import type { PoolSetup } from "../setup/pool-setup.ts";
 import { poolFighterEntryFactory } from "../../__test__/factories.ts";
 import type { FighterEntry } from "../../../../../shared/fighter.ts";
+import { makeFighterId } from "../../../../../shared/fighter-id.ts";
 
 describe("Distributing competitors into pools", () => {
   it("should reject a pool setup whose capacity differs from the competitor count", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", club: "club A" }),
-      poolFighterEntryFactory({ id: "2", club: "club A" }),
-      poolFighterEntryFactory({ id: "3", club: "club B" }),
-      poolFighterEntryFactory({ id: "4", club: "club B" }),
-      poolFighterEntryFactory({ id: "5", club: "club C" }),
-      poolFighterEntryFactory({ id: "6", club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("1"), club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("2"), club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("3"), club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("4"), club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("5"), club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("6"), club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -32,12 +33,12 @@ describe("Distributing competitors into pools", () => {
 
   it("should build a pool list with the correct number of pools from the setup", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", isSeeded: false, club: "club A" }),
-      poolFighterEntryFactory({ id: "2", isSeeded: false, club: "club A" }),
-      poolFighterEntryFactory({ id: "3", isSeeded: false, club: "club B" }),
-      poolFighterEntryFactory({ id: "4", isSeeded: false, club: "club B" }),
-      poolFighterEntryFactory({ id: "5", isSeeded: false, club: "club C" }),
-      poolFighterEntryFactory({ id: "6", isSeeded: false, club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("1"), isSeeded: false, club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("2"), isSeeded: false, club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("3"), isSeeded: false, club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("4"), isSeeded: false, club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("5"), isSeeded: false, club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("6"), isSeeded: false, club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -62,12 +63,12 @@ describe("Distributing competitors into pools", () => {
 
   it("should separate competitors from the same club when possible", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", club: "club A" }),
-      poolFighterEntryFactory({ id: "2", club: "club A" }),
-      poolFighterEntryFactory({ id: "3", club: "club B" }),
-      poolFighterEntryFactory({ id: "4", club: "club B" }),
-      poolFighterEntryFactory({ id: "5", club: "club C" }),
-      poolFighterEntryFactory({ id: "6", club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("1"), club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("2"), club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("3"), club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("4"), club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("5"), club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("6"), club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -98,12 +99,12 @@ describe("Distributing competitors into pools", () => {
 
   it("should spread the maximum of same club members if not enough pools to separate them and the option is selected", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", club: "club A" }),
-      poolFighterEntryFactory({ id: "2", club: "club A" }),
-      poolFighterEntryFactory({ id: "3", club: "club A" }),
-      poolFighterEntryFactory({ id: "4", club: "club A" }),
-      poolFighterEntryFactory({ id: "5", club: "club C" }),
-      poolFighterEntryFactory({ id: "6", club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("1"), club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("2"), club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("3"), club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("4"), club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("5"), club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("6"), club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -130,12 +131,12 @@ describe("Distributing competitors into pools", () => {
 
   it("should keep club members together when separation is disabled", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", club: "club A" }),
-      poolFighterEntryFactory({ id: "2", club: "club A" }),
-      poolFighterEntryFactory({ id: "3", club: "club B" }),
-      poolFighterEntryFactory({ id: "4", club: "club B" }),
-      poolFighterEntryFactory({ id: "5", club: "club C" }),
-      poolFighterEntryFactory({ id: "6", club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("1"), club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("2"), club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("3"), club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("4"), club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("5"), club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("6"), club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -167,12 +168,12 @@ describe("Distributing competitors into pools", () => {
 
   it("should separate seeded competitors when possible", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", isSeeded: true, club: "club A" }),
-      poolFighterEntryFactory({ id: "2", club: "club A" }),
-      poolFighterEntryFactory({ id: "3", isSeeded: true, club: "club B" }),
-      poolFighterEntryFactory({ id: "4", club: "club B" }),
-      poolFighterEntryFactory({ id: "5", club: "club C" }),
-      poolFighterEntryFactory({ id: "6", club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("1"), isSeeded: true, club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("2"), club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("3"), isSeeded: true, club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("4"), club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("5"), club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("6"), club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -195,12 +196,12 @@ describe("Distributing competitors into pools", () => {
 
   it("should spread seeded competitors as evenly as possible when pools are limited", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", isSeeded: true, club: "club A" }),
-      poolFighterEntryFactory({ id: "2", isSeeded: true, club: "club A" }),
-      poolFighterEntryFactory({ id: "3", isSeeded: true, club: "club B" }),
-      poolFighterEntryFactory({ id: "4", isSeeded: true, club: "club B" }),
-      poolFighterEntryFactory({ id: "5", club: "club C" }),
-      poolFighterEntryFactory({ id: "6", club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("1"), isSeeded: true, club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("2"), isSeeded: true, club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("3"), isSeeded: true, club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("4"), isSeeded: true, club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("5"), club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("6"), club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -223,12 +224,12 @@ describe("Distributing competitors into pools", () => {
 
   it("should keep seeded competitors together when separation is disabled", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", isSeeded: true, club: "club A" }),
-      poolFighterEntryFactory({ id: "2", isSeeded: true, club: "club A" }),
-      poolFighterEntryFactory({ id: "3", isSeeded: true, club: "club B" }),
-      poolFighterEntryFactory({ id: "4", club: "club B" }),
-      poolFighterEntryFactory({ id: "5", club: "club C" }),
-      poolFighterEntryFactory({ id: "6", club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("1"), isSeeded: true, club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("2"), isSeeded: true, club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("3"), isSeeded: true, club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("4"), club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("5"), club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("6"), club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {
@@ -251,12 +252,12 @@ describe("Distributing competitors into pools", () => {
 
   it("should separate clubs and seeded competitors when possible", () => {
     const fighters: FighterEntry[] = [
-      poolFighterEntryFactory({ id: "1", club: "club A" }),
-      poolFighterEntryFactory({ id: "2", isSeeded: true, club: "club A" }),
-      poolFighterEntryFactory({ id: "3", club: "club B" }),
-      poolFighterEntryFactory({ id: "4", isSeeded: true, club: "club B" }),
-      poolFighterEntryFactory({ id: "5", club: "club C" }),
-      poolFighterEntryFactory({ id: "6", club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("1"), club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("2"), isSeeded: true, club: "club A" }),
+      poolFighterEntryFactory({ id: makeFighterId("3"), club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("4"), isSeeded: true, club: "club B" }),
+      poolFighterEntryFactory({ id: makeFighterId("5"), club: "club C" }),
+      poolFighterEntryFactory({ id: makeFighterId("6"), club: "club C" }),
     ];
 
     const poolSetup: PoolSetup = {

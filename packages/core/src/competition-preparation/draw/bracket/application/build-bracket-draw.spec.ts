@@ -1,14 +1,15 @@
 import { describe, expect, it } from "vite-plus/test";
 import { generateBracket } from "../domain/generate-bracket.service.ts";
-import type { FighterEntry } from "@hajime/core";
+import type { FighterEntry } from "../../../../shared/fighter.ts";
 import { buildBracketDraw } from "./build-bracket-draw.ts";
-import { uuidGenerator, FightStatus, makeFighterId } from "@hajime/core";
+import { uuidGenerator, FightStatus } from "@hajime/core";
+import { makeFighterId } from "../../../../shared/fighter-id.ts";
 
 // --- ALL FIGHTERS ARE SEEDED SO rankFighters/rankFightersSeparatedByClubs NEVER SHUFFLES
 // THEM (SHUFFLE ONLY APPLIES TO NON-SEEDED FIGHTERS) — KEEPS THE RESULTING BRACKET LAYOUT
 // DETERMINISTIC FOR THESE TESTS. ---
 function makeSeededFighters(ids: string[]): FighterEntry[] {
-  return ids.map((id) => ({ id, isSeeded: true, club: "club A" }));
+  return ids.map((id) => ({ id: makeFighterId(id), isSeeded: true, club: "club A" }));
 }
 
 describe("buildBracketDraw", () => {
