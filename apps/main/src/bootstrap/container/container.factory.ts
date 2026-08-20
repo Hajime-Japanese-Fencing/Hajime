@@ -1,31 +1,36 @@
 import {
   buildBracketDraw,
   createActiveCompetition,
+  createCompetitionUseCase,
   generateBracketUseCase,
   publishDraw,
   uuidGenerator,
   type ActiveCompetition,
   type CompetitionDraw,
   type CompetitionId,
+  type CompetitionOverview,
+  type CreateCompetitionInput,
   type FighterEntry,
+  type IdGenerator,
   type RetrieveCompetitionsQuery,
+  type SaveCompetitionPort,
 } from "@hajime/core";
 import { DemoRetrieveCompetitionsQuery } from "../../features/competition-overview/adapters/demo-retrieve-competitions.query.ts";
+import { BrowserSaveCompetitionAdapter } from "../../features/competition-overview/adapters/browser-save-competition.adapter.ts";
 import { LocalStorageLoadCompetitionFightsAdapter } from "../../features/active-competition/adapters/local-storage-load-competition-fights.adapter.ts";
 import { NoopFightResultAdapter } from "../../features/active-competition/adapters/noop-fight-result.adapter.ts";
 import { NoopSaveGeneratedFightsAdapter } from "../../features/active-competition/adapters/noop-save-generated-fights.adapter.ts";
 import { LocalStorageSaveBracketAdapter } from "../../features/competition-preparation/adapters/local-storage-save-bracket.adapter.ts";
 import { competitionDrawStore } from "../../persistence/competition-draw.store.ts";
 import { bracketDraftStore } from "../../persistence/bracket-draft.store.ts";
-import { buildPoolDraw, type Pool } from "@hajime/core";
 
 export interface AppContainer {
   retrieveCompetitions: RetrieveCompetitionsQuery;
+  createCompetition(input: CreateCompetitionInput): Promise<CompetitionOverview>;
   activeCompetition: ActiveCompetition;
   loadCompetition(competitionId: CompetitionId): Promise<void>;
   publishDraw(competitionId: CompetitionId, draw: CompetitionDraw): Promise<void>;
   generateBracketDraw(competitionId: CompetitionId, fighters: FighterEntry[]): Promise<void>;
-  publishPoolDraw(competitionId: CompetitionId, pools: Pool[]): Promise<void>;
 }
 
 export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
@@ -36,6 +41,15 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
   let currentCompetitionId: CompetitionId | null = null;
 
   const saveBracket = new LocalStorageSaveBracketAdapter();
+  // --- SaveCompetitionPort'S CONCRETE IMPLEMENTATION LIVES HERE, AND ONLY HERE — THIS IS THE ONE
+  // LINE createCompetition WOULD NEED TO CHANGE TO SWITCH BACKENDS (E.G. BACK TO AN IN-MEMORY
+  // ADAPTER FOR A DEMO BUILD), MIRRORING HOW retrieveCompetitions BELOW IS THE ONE PLACE THAT
+  // PICKS DemoRetrieveCompetitionsQuery OVER BrowserRetrieveCompetitionsQuery. ---
+  const saveCompetition: SaveCompetitionPort = new BrowserSaveCompetitionAdapter();
+  // --- SAME REASONING AS saveCompetition ABOVE: THE ONE PLACE THIS CONTAINER PICKS ITS CONCRETE
+  // IdGenerator, REUSED BY EVERY USE-CASE/BUILDER THAT NEEDS ONE (createCompetition,
+  // generateBracketDraw) INSTEAD OF EACH REFERENCING uuidGenerator DIRECTLY. ---
+  const generateId: IdGenerator = uuidGenerator;
   const activeCompetition = createActiveCompetition({
     loadCompetitionFights: new LocalStorageLoadCompetitionFightsAdapter(),
     // --- NO-OP: SEE THE SUBSCRIPTION BELOW FOR WHY. ---
@@ -63,14 +77,15 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
     });
   });
 
-  // --- LAST-CHANCE SAFETY NET FOR THE DEBOUNCED localStorage WRITES: WITHOUT THIS, CLOSING
-  // THE TAB WITHIN THE DEBOUNCE WINDOW (SEE persisted-record-store.ts) COULD DROP THE MOST
-  // RECENT SCORE EVENT OR DRAW. FLUSHING IS SYNCHRONOUS AND CHEAP (JUST A localStorage WRITE),
-  // SO DOING IT ON "beforeunload" IS SAFE. ---
+  // SAFETY NET FOR THE DEBOUNCED localStorage WRITES
   window.addEventListener("beforeunload", () => {
     competitionDrawStore.flush();
     bracketDraftStore.flush();
   });
+
+  async function createCompetition(input: CreateCompetitionInput): Promise<CompetitionOverview> {
+    return createCompetitionUseCase({ saveCompetition, generateId }, input);
+  }
 
   async function loadCompetition(competitionId: CompetitionId): Promise<void> {
     currentCompetitionId = competitionId;
@@ -97,27 +112,17 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
     currentCompetitionId = competitionId;
 
     const bracket = await generateBracketUseCase({ saveBracket }, competitionId, fighters);
-    const { bracketRounds, fights } = buildBracketDraw(bracket, uuidGenerator);
+    const { bracketRounds, fights } = buildBracketDraw(bracket, generateId);
 
     await publishCompetitionDraw(competitionId, { pools: [], bracketRounds, fights });
   }
 
-  async function publishPoolDraw(competitionId: CompetitionId, pools: Pool[]): Promise<void> {
-    currentCompetitionId = competitionId; // ← règle le piège n°2
-    const { pools: poolRecords, fights } = buildPoolDraw(pools, uuidGenerator);
-    await publishCompetitionDraw(competitionId, {
-      pools: poolRecords,
-      bracketRounds: [],
-      fights,
-    });
-  }
-
   return {
     retrieveCompetitions: new DemoRetrieveCompetitionsQuery(),
+    createCompetition,
     activeCompetition,
     loadCompetition,
     publishDraw: publishCompetitionDraw,
     generateBracketDraw,
-    publishPoolDraw,
   };
 }
