@@ -5,10 +5,11 @@ import { poolFighterEntryFactory } from "../__test__/factories.ts";
 import { makeCompetitionId } from "../../../../shared/competition-id.ts";
 import type { PoolSetup } from "../domain/setup/pool-setup.ts";
 import type { FighterEntry } from "../../../../shared/fighter.ts";
+import { makeFighterId } from "../../../../shared/fighter-id.ts";
 
 function makeFighters(count: number): FighterEntry[] {
   return Array.from({ length: count }, (_, i) =>
-    poolFighterEntryFactory({ id: `fighter-${i + 1}` }),
+    poolFighterEntryFactory({ id: makeFighterId(`fighter-${i + 1}`) }),
   );
 }
 

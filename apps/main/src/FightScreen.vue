@@ -6,6 +6,7 @@ import {
   buildBracketExport,
   buildPoolExport,
   makeCompetitionId,
+  makeFighterId,
   type FightId,
   type FighterEntry,
   type ScoreEventId,
@@ -49,7 +50,7 @@ watch(
 // ONCE FIGHTER REGISTRATION EXISTS. ---
 function makeDemoFighters(count: number): FighterEntry[] {
   return Array.from({ length: count }, (_, index) => ({
-    id: `fighter-${index + 1}`,
+    id: makeFighterId(`fighter-${index + 1}`),
     isSeeded: false,
     club: "Demo Dojo",
   }));

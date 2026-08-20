@@ -2,7 +2,7 @@
 import { type SelectorItem, SelectorList } from "@hajime/ui";
 import { computed, ref } from "vue";
 import { poolToPoolDetails } from "./pre-competition/poolToPoolDetails.mapper.ts";
-import type { Pool } from "@hajime/core";
+import { makeFighterId, type Pool } from "@hajime/core";
 import { RankingDetailBuilder } from "@hajime/ui";
 import { PoolCard } from "@hajime/ui";
 import FightScreen from "./FightScreen.vue";
@@ -16,27 +16,27 @@ const testPools: Pool[] = [
     number: 1,
     size: 3,
     fighters: [
-      { fighter: { id: "1", isSeeded: false, club: "Unknown club" } },
-      { fighter: { id: "2", isSeeded: false, club: "Unknown club" } },
-      { fighter: { id: "3", isSeeded: false, club: "Unknown club" } },
+      { fighter: { id: makeFighterId("1"), isSeeded: false, club: "Unknown club" } },
+      { fighter: { id: makeFighterId("2"), isSeeded: false, club: "Unknown club" } },
+      { fighter: { id: makeFighterId("3"), isSeeded: false, club: "Unknown club" } },
     ],
   },
   {
     number: 2,
     size: 3,
     fighters: [
-      { fighter: { id: "4", isSeeded: false, club: "Unknown club" } },
-      { fighter: { id: "5", isSeeded: false, club: "Unknown club" } },
-      { fighter: { id: "6", isSeeded: false, club: "Unknown club" } },
+      { fighter: { id: makeFighterId("4"), isSeeded: false, club: "Unknown club" } },
+      { fighter: { id: makeFighterId("5"), isSeeded: false, club: "Unknown club" } },
+      { fighter: { id: makeFighterId("6"), isSeeded: false, club: "Unknown club" } },
     ],
   },
   {
     number: 3,
     size: 3,
     fighters: [
-      { fighter: { id: "7", isSeeded: false, club: "Unknown club" } },
-      { fighter: { id: "8", isSeeded: false, club: "Unknown club" } },
-      { fighter: { id: "9", isSeeded: false, club: "Unknown club" } },
+      { fighter: { id: makeFighterId("7"), isSeeded: false, club: "Unknown club" } },
+      { fighter: { id: makeFighterId("8"), isSeeded: false, club: "Unknown club" } },
+      { fighter: { id: makeFighterId("9"), isSeeded: false, club: "Unknown club" } },
     ],
   },
 ];
