@@ -28,7 +28,6 @@ const props = defineProps<{
 const container = useContainer();
 const activeCompetition = useActiveCompetition(container.activeCompetition);
 const {
-  phaseItems,
   selectedPhase,
   groupItems,
   selectedGroupId,
@@ -171,13 +170,6 @@ function onExport() {
     </label>
   </div>
   <div class="flex gap-4">
-    <SelectorList
-      v-if="phaseItems.length > 0"
-      v-model="selectedPhase"
-      :items="phaseItems"
-      class="w-40 shrink-0"
-    />
-
     <SelectorList
       v-if="groupItems.length > 1"
       v-model="selectedGroupId"

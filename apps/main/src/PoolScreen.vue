@@ -41,13 +41,17 @@ const testPools: Pool[] = [
   },
 ];
 
+defineProps<{
+  competitionId: string;
+}>();
+
 const pools: Pool[] = testPools;
 
 const selectors = computed<SelectorItem[]>(() => [
-  { id: "pools", label: "Pools" },
   { id: "fights", label: "Fights" },
+  { id: "pools", label: "Pools" },
 ]);
-const selectedView = ref<string>("pools");
+const selectedView = ref<string>("fights");
 
 // -------------------------------------------
 // FUNCTIONS
@@ -60,7 +64,7 @@ const selectedView = ref<string>("pools");
   <div class="flex gap-4">
     <SelectorList :items="selectors" v-model="selectedView" />
 
-    <section v-if="selectedView === 'pools'" class="flex flex-1 flex-col gap-1 justify-between">
+    <section v-if="selectedView == 'pools'" class="flex flex-1 flex-col gap-1 justify-between">
       <div>Pool Repartition</div>
       <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(18rem,1fr))]">
         <PoolCard
@@ -74,8 +78,8 @@ const selectedView = ref<string>("pools");
       </div>
     </section>
 
-    <section v-if="selectedView === 'bracket'">
-      <FightScreen competitionId="1" />
+    <section v-if="selectedView == 'fights'">
+      <FightScreen :competitionId="competitionId" />
     </section>
   </div>
 </template>

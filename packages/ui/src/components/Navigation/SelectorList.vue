@@ -6,9 +6,11 @@ withDefaults(
   defineProps<{
     items: SelectorItem[];
     size?: "xs" | "sm" | "md" | "lg" | "xl";
+    direction?: "row" | "col";
   }>(),
   {
     size: "md",
+    direction: "col",
   },
 );
 
@@ -33,7 +35,7 @@ function progressStyle(progress: number | undefined): Record<string, string> | u
 </script>
 
 <template>
-  <div class="flex flex-col gap-1">
+  <div class="flex gap-1" :class="direction == 'col' ? 'flex-col' : ''">
     <Button
       v-for="item in items"
       :key="item.id"
@@ -42,7 +44,7 @@ function progressStyle(progress: number | undefined): Record<string, string> | u
       :size="size"
       :disabled="item.disabled"
       :style="progressStyle(item.progress)"
-      block
+      :block="direction == 'col'"
       class="justify-start"
       @click="
         selectedId = item.id;

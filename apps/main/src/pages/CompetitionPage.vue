@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
-import FightScreen from "../FightScreen.vue";
 import { BackButton, Button } from "@hajime/ui";
 import PreCompetitionScreen from "../pre-competition/PreCompetitionScreen.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import PoolScreen from "../PoolScreen.vue";
+import { type SelectorItem, SelectorList } from "@hajime/ui";
 
 const route = useRoute();
 const router = useRouter();
 
 const competitionId = route.params.id as string;
 const isSetup = ref(false);
+const selectors = computed<SelectorItem[]>(() => [
+  { id: "pools", label: "Pools" },
+  { id: "bracket", label: "Bracket" },
+]);
+const selectedView = ref<string>("pools");
 </script>
 
 <template>
@@ -23,12 +29,24 @@ const isSetup = ref(false);
     <Button @click="isSetup = !isSetup">isSetup: {{ isSetup }}</Button>
     <!--------------------------------------------------------------------------->
 
-    <div v-if="isSetup">
-      <FightScreen :competitionId="competitionId" />
-    </div>
+    <section v-if="isSetup">
+      <SelectorList
+        :items="selectors"
+        v-model="selectedView"
+        direction="row"
+        size="sm"
+        class="mb-2"
+      />
 
-    <div v-else>
+      <section v-if="selectedView == 'pools'">
+        <PoolScreen :competitionId="competitionId"></PoolScreen>
+      </section>
+
+      <section v-if="selectedView == 'bracket'">BRACKET</section>
+    </section>
+
+    <section v-else>
       <PreCompetitionScreen :competitionId="competitionId" @start="isSetup = true" />
-    </div>
+    </section>
   </main>
 </template>
