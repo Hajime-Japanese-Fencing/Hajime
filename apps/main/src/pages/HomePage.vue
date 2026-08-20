@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { AlertError, TablePlaceholder } from "@hajime/ui";
+import { AlertError, NewCompetition, TablePlaceholder } from "@hajime/ui";
 import CompetitionList from "../features/competition-overview/components/CompetitionList.vue";
 import { useCompetitions } from "../features/competition-overview/queries/use-competitions.ts";
 
@@ -15,6 +15,8 @@ function onSelectCompetition(id: string) {
 <template>
   <main class="container mx-auto p-6">
     <h1 class="text-3xl font-bold mb-6">Competitions</h1>
+
+    <NewCompetition />
 
     <TablePlaceholder v-if="isLoading" :rows="5" :columns="4" />
 
