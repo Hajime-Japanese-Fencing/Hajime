@@ -24,4 +24,5 @@ export * from "./competition-overview/application/create-competition.use-case.ts
 export * from "./active-competition/index.ts";
 export * from "./competition-preparation/draw/bracket/index.ts";
 export * from "./competition-preparation/draw/pool/index.ts";
+export * from "./competition-preparation/roster/index.ts";
 export * from "./shared/utilitary.ts";
