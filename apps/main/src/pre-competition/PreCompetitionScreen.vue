@@ -14,19 +14,11 @@ import { Button } from "@hajime/ui";
 import { shuffle } from "@hajime/core";
 import { PoolCreationCard } from "@hajime/ui";
 import type { CompetitionPhase } from "./competition-phase.ts";
-import { type CompetitionId, makeCompetitionId } from "@hajime/core";
 import { useContainer } from "../bootstrap/container/useContainer.ts";
+import { useActiveCompetition } from "../features/active-competition/composables/use-active-competition.ts";
+import { makeCompetitionId } from "@hajime/core";
 
-// -------------------------------------------
-// INPUTS
-// -------------------------------------------
-const competitionId: CompetitionId = makeCompetitionId("1");
-const selectedSetup = ref<PoolSetup>({ poolGroups: [], fightCount: 0 });
-const pools = ref<Pool[]>([]);
-const shouldSeparateClubMembers = false;
-const shouldSeparateSeededCompetitors = false;
-const competitionFormula: CompetitionPhase[] = ["POOLS", "BRACKET"];
-const fighters: FighterEntry[] = [
+const testFighters: FighterEntry[] = [
   { id: "1", isSeeded: true, club: "Paris Kendo Club" },
   { id: "2", isSeeded: false, club: "Paris Kendo Club" },
   { id: "3", isSeeded: false, club: "Lyon Kendo Club" },
@@ -37,6 +29,24 @@ const fighters: FighterEntry[] = [
   { id: "8", isSeeded: false, club: "Bordeaux Kendo" },
   { id: "9", isSeeded: false, club: "Toulouse Kendo Kai" },
 ];
+
+// -------------------------------------------
+// INPUTS
+// -------------------------------------------
+const props = defineProps<{
+  competitionId: string;
+}>();
+const container = useContainer();
+const activeCompetition = useActiveCompetition(container.activeCompetition);
+const fighters: FighterEntry[] = testFighters;
+const competitionFormula: CompetitionPhase[] = ["POOLS", "BRACKET"];
+
+const shouldSeparateClubMembers = false;
+const shouldSeparateSeededCompetitors = false;
+
+const selectedSetup = ref<PoolSetup>({ poolGroups: [], fightCount: 0 });
+const pools = ref<Pool[]>([]);
+
 const nbFighters = fighters.length;
 
 // BUILDING SELECTORS
@@ -60,8 +70,6 @@ const options: DropdownOption[] = calculatePossiblePoolSetups(nbFighters).map(
   (poolSetup: PoolSetup) => poolSetupToDropdownOption(poolSetup),
 );
 
-const container = useContainer();
-
 // -------------------------------------------
 // FUNCTIONS
 // -------------------------------------------
@@ -77,9 +85,14 @@ function onDropdownSelect(option: DropdownOption) {
   );
 }
 
-async function onStart() {
-  await container.publishPoolDraw(makeCompetitionId(competitionId), pools.value);
+async function onPoolValidation() {
+  poolsValidated.value = true;
+  await container.publishPoolDraw(makeCompetitionId(props.competitionId), pools.value);
 }
+
+const emit = defineEmits<{
+  start: [];
+}>();
 </script>
 
 <!--TEMPORARY: rankingDetails names are defined from fighter ids -->
@@ -107,10 +120,12 @@ async function onStart() {
         />
       </div>
       <div class="flex gap-1 justify-end">
-        <Button v-if="!poolsValidated" :disabled="pools.length == 0" @click="poolsValidated = true">
+        <Button v-if="!poolsValidated" :disabled="pools.length == 0" @click="onPoolValidation()">
           Validate Pools
         </Button>
-        <Button :disabled="!poolsValidated || !bracketValidated" @click="onStart()"> Start </Button>
+        <Button :disabled="!poolsValidated || !bracketValidated" @click="emit('start')">
+          Start
+        </Button>
       </div>
     </section>
 
@@ -121,7 +136,9 @@ async function onStart() {
         <Button v-if="!bracketValidated" @click="bracketValidated = true">
           Validate Bracket
         </Button>
-        <Button :disabled="!poolsValidated || !bracketValidated" @click="onStart()"> Start </Button>
+        <Button :disabled="!poolsValidated || !bracketValidated" @click="emit('start')">
+          Start
+        </Button>
       </div>
     </section>
   </div>
