@@ -17,7 +17,6 @@ import {
   type RetrieveCompetitionsQuery,
   type SaveCompetitionPort,
 } from "@hajime/core";
-import { BrowserRetrieveCompetitionsQuery } from "../../features/competition-overview/adapters/browser-retrieve-competition.query.ts";
 import { BrowserSaveCompetitionAdapter } from "../../features/competition-overview/adapters/browser-save-competition.adapter.ts";
 import { LocalStorageLoadCompetitionFightsAdapter } from "../../features/active-competition/adapters/local-storage-load-competition-fights.adapter.ts";
 import { NoopFightResultAdapter } from "../../features/active-competition/adapters/noop-fight-result.adapter.ts";
@@ -25,6 +24,7 @@ import { NoopSaveGeneratedFightsAdapter } from "../../features/active-competitio
 import { LocalStorageSaveBracketAdapter } from "../../features/competition-preparation/adapters/local-storage-save-bracket.adapter.ts";
 import { competitionDrawStore } from "../../persistence/competition-draw.store.ts";
 import { bracketDraftStore } from "../../persistence/bracket-draft.store.ts";
+import { DemoRetrieveCompetitionsQuery } from "../../features/competition-overview/adapters/demo-retrieve-competitions.query.ts";
 
 export interface AppContainer {
   retrieveCompetitions: RetrieveCompetitionsQuery;
@@ -126,7 +126,7 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
   }
 
   return {
-    retrieveCompetitions: new BrowserRetrieveCompetitionsQuery(),
+    retrieveCompetitions: new DemoRetrieveCompetitionsQuery(),
     createCompetition,
     createFighter,
     activeCompetition,
