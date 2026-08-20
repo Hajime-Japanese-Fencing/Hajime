@@ -15,7 +15,7 @@ import {
   type RetrieveCompetitionsQuery,
   type SaveCompetitionPort,
 } from "@hajime/core";
-import { DemoRetrieveCompetitionsQuery } from "../../features/competition-overview/adapters/demo-retrieve-competitions.query.ts";
+import { BrowserRetrieveCompetitionsQuery } from "../../features/competition-overview/adapters/browser-retrieve-competition.query.ts";
 import { BrowserSaveCompetitionAdapter } from "../../features/competition-overview/adapters/browser-save-competition.adapter.ts";
 import { LocalStorageLoadCompetitionFightsAdapter } from "../../features/active-competition/adapters/local-storage-load-competition-fights.adapter.ts";
 import { NoopFightResultAdapter } from "../../features/active-competition/adapters/noop-fight-result.adapter.ts";
@@ -44,7 +44,8 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
   // --- SaveCompetitionPort'S CONCRETE IMPLEMENTATION LIVES HERE, AND ONLY HERE — THIS IS THE ONE
   // LINE createCompetition WOULD NEED TO CHANGE TO SWITCH BACKENDS (E.G. BACK TO AN IN-MEMORY
   // ADAPTER FOR A DEMO BUILD), MIRRORING HOW retrieveCompetitions BELOW IS THE ONE PLACE THAT
-  // PICKS DemoRetrieveCompetitionsQuery OVER BrowserRetrieveCompetitionsQuery. ---
+  // PICKS BrowserRetrieveCompetitionsQuery OVER DemoRetrieveCompetitionsQuery (STILL AVAILABLE,
+  // JUST UNUSED FOR NOW). ---
   const saveCompetition: SaveCompetitionPort = new BrowserSaveCompetitionAdapter();
   // --- SAME REASONING AS saveCompetition ABOVE: THE ONE PLACE THIS CONTAINER PICKS ITS CONCRETE
   // IdGenerator, REUSED BY EVERY USE-CASE/BUILDER THAT NEEDS ONE (createCompetition,
@@ -118,7 +119,7 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
   }
 
   return {
-    retrieveCompetitions: new DemoRetrieveCompetitionsQuery(),
+    retrieveCompetitions: new BrowserRetrieveCompetitionsQuery(),
     createCompetition,
     activeCompetition,
     loadCompetition,
