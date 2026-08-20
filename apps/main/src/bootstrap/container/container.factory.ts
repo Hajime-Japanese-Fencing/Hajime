@@ -2,6 +2,7 @@ import {
   buildBracketDraw,
   createActiveCompetition,
   createCompetitionUseCase,
+  createFighterUseCase,
   generateBracketUseCase,
   publishDraw,
   uuidGenerator,
@@ -10,6 +11,7 @@ import {
   type CompetitionId,
   type CompetitionOverview,
   type CreateCompetitionInput,
+  type CreateFighterInput,
   type FighterEntry,
   type IdGenerator,
   type RetrieveCompetitionsQuery,
@@ -27,6 +29,7 @@ import { bracketDraftStore } from "../../persistence/bracket-draft.store.ts";
 export interface AppContainer {
   retrieveCompetitions: RetrieveCompetitionsQuery;
   createCompetition(input: CreateCompetitionInput): Promise<CompetitionOverview>;
+  createFighter(input: CreateFighterInput): FighterEntry;
   activeCompetition: ActiveCompetition;
   loadCompetition(competitionId: CompetitionId): Promise<void>;
   publishDraw(competitionId: CompetitionId, draw: CompetitionDraw): Promise<void>;
@@ -88,6 +91,10 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
     return createCompetitionUseCase({ saveCompetition, generateId }, input);
   }
 
+  function createFighter(input: CreateFighterInput): FighterEntry {
+    return createFighterUseCase({ generateId }, input);
+  }
+
   async function loadCompetition(competitionId: CompetitionId): Promise<void> {
     currentCompetitionId = competitionId;
     await activeCompetition.loadCompetition(competitionId);
@@ -121,6 +128,7 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
   return {
     retrieveCompetitions: new BrowserRetrieveCompetitionsQuery(),
     createCompetition,
+    createFighter,
     activeCompetition,
     loadCompetition,
     publishDraw: publishCompetitionDraw,

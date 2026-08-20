@@ -5,7 +5,11 @@ import type { DropdownOption } from "@hajime/ui";
 import { computed, ref } from "vue";
 import type { PoolSetup } from "@hajime/core";
 import { calculatePossiblePoolSetups } from "@hajime/core";
-import { distributeFightersInPools, type FighterEntry } from "@hajime/core";
+import {
+  distributeFightersInPools,
+  type CreateFighterInput,
+  type FighterEntry,
+} from "@hajime/core";
 import { poolToPoolDetails } from "./poolToPoolDetails.mapper.ts";
 import type { Pool } from "@hajime/core";
 import { RankingDetailBuilder } from "@hajime/ui";
@@ -18,16 +22,16 @@ import { useContainer } from "../bootstrap/container/useContainer.ts";
 import { useActiveCompetition } from "../features/active-competition/composables/use-active-competition.ts";
 import { makeCompetitionId } from "@hajime/core";
 
-const testFighters: FighterEntry[] = [
-  { id: "1", isSeeded: true, club: "Paris Kendo Club" },
-  { id: "2", isSeeded: false, club: "Paris Kendo Club" },
-  { id: "3", isSeeded: false, club: "Lyon Kendo Club" },
-  { id: "4", isSeeded: true, club: "Lyon Kendo Club" },
-  { id: "5", isSeeded: false, club: "Marseille Kenshikan" },
-  { id: "6", isSeeded: false, club: "Marseille Kenshikan" },
-  { id: "7", isSeeded: true, club: "Bordeaux Kendo" },
-  { id: "8", isSeeded: false, club: "Bordeaux Kendo" },
-  { id: "9", isSeeded: false, club: "Toulouse Kendo Kai" },
+const testFighterInputs: CreateFighterInput[] = [
+  { isSeeded: true, club: "Paris Kendo Club" },
+  { isSeeded: false, club: "Paris Kendo Club" },
+  { isSeeded: false, club: "Lyon Kendo Club" },
+  { isSeeded: true, club: "Lyon Kendo Club" },
+  { isSeeded: false, club: "Marseille Kenshikan" },
+  { isSeeded: false, club: "Marseille Kenshikan" },
+  { isSeeded: true, club: "Bordeaux Kendo" },
+  { isSeeded: false, club: "Bordeaux Kendo" },
+  { isSeeded: false, club: "Toulouse Kendo Kai" },
 ];
 
 // -------------------------------------------
@@ -38,7 +42,8 @@ const props = defineProps<{
 }>();
 const container = useContainer();
 const activeCompetition = useActiveCompetition(container.activeCompetition);
-const fighters: FighterEntry[] = testFighters;
+// Fighter data now features a real ID from create-fighter use case
+const fighters: FighterEntry[] = testFighterInputs.map((input) => container.createFighter(input));
 const competitionFormula: CompetitionPhase[] = ["POOLS", "BRACKET"];
 
 const shouldSeparateClubMembers = false;
