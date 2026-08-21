@@ -19,8 +19,17 @@ import { shuffle } from "@hajime/core";
 import { PoolCreationCard } from "@hajime/ui";
 import type { CompetitionPhase } from "./competition-phase.ts";
 import { useContainer } from "../bootstrap/container/useContainer.ts";
-import { useActiveCompetition } from "../features/active-competition/composables/use-active-competition.ts";
-import { makeCompetitionId } from "@hajime/core";
+import {
+  type BracketRoundRecord,
+  type CompetitionDraw,
+  type FightId,
+  type FightRecord,
+  organizePoolFights,
+  type PoolFight,
+  type PoolRecord,
+  type PoolTurn,
+} from "@hajime/core";
+import { toPoolFightRecord, toPoolRecord } from "./pool-record.mapper.ts";
 
 const testFighterInputs: CreateFighterInput[] = [
   { isSeeded: true, club: "Paris Kendo Club" },
@@ -37,11 +46,12 @@ const testFighterInputs: CreateFighterInput[] = [
 // -------------------------------------------
 // INPUTS
 // -------------------------------------------
-const props = defineProps<{
-  competitionId: string;
-}>();
+// const props = defineProps<{
+//   competitionId: CompetitionId;
+// }>();
 const container = useContainer();
-const activeCompetition = useActiveCompetition(container.activeCompetition);
+// const activeCompetition = useActiveCompetition(container.activeCompetition);
+
 // Fighter data now features a real ID from create-fighter use case
 const fighters: FighterEntry[] = testFighterInputs.map((input) => container.createFighter(input));
 const competitionFormula: CompetitionPhase[] = ["POOLS", "BRACKET"];
@@ -74,6 +84,16 @@ const title = ref("Select a pool repartition");
 const options: DropdownOption[] = calculatePossiblePoolSetups(nbFighters).map(
   (poolSetup: PoolSetup) => poolSetupToDropdownOption(poolSetup),
 );
+const poolRecords = ref<PoolRecord[]>([]);
+const bracketRecords = ref<BracketRoundRecord[]>([]);
+const fightRecords = ref<FightRecord[]>([]);
+const competitionDraw = computed<CompetitionDraw>(() => {
+  return {
+    pools: poolRecords.value,
+    bracketRounds: bracketRecords.value,
+    fights: fightRecords.value,
+  };
+});
 
 // -------------------------------------------
 // FUNCTIONS
@@ -90,13 +110,39 @@ function onDropdownSelect(option: DropdownOption) {
   );
 }
 
-async function onPoolValidation() {
+function onPoolsValidation() {
   poolsValidated.value = true;
-  await container.publishPoolDraw(makeCompetitionId(props.competitionId), pools.value);
+
+  const poolsTurns: PoolTurn[][] = pools.value.map((pool) => organizePoolFights(pool));
+
+  // ADDING ALL POOL RECORDS TO THE LIST
+  poolRecords.value = pools.value.map((pool, i) => toPoolRecord(pool, poolsTurns[i]));
+
+  // ADDING ALL FIGHTS RECORDS TO THE LIST
+  poolRecords.value.map((poolRecord: PoolRecord) => {
+    poolRecord.fightIds.forEach((fightId: FightId) => {
+      const fight = findPoolFightById(poolsTurns, fightId);
+      if (!fight) return;
+
+      fightRecords.value.push(toPoolFightRecord(poolRecord.id, fight));
+    });
+  });
+}
+
+function onBracketValidation() {
+  bracketValidated.value = true;
+}
+
+function findPoolFightById(poolsTurns: PoolTurn[][], fightId: FightId): PoolFight | undefined {
+  return poolsTurns
+    .flat()
+    .flatMap((turn) => turn.fights)
+    .find((f) => f.id === fightId);
 }
 
 const emit = defineEmits<{
   start: [];
+  draw: [draw: CompetitionDraw];
 }>();
 </script>
 
@@ -125,10 +171,13 @@ const emit = defineEmits<{
         />
       </div>
       <div class="flex gap-1 justify-end">
-        <Button v-if="!poolsValidated" :disabled="pools.length == 0" @click="onPoolValidation()">
+        <Button v-if="!poolsValidated" :disabled="pools.length == 0" @click="onPoolsValidation()">
           Validate Pools
         </Button>
-        <Button :disabled="!poolsValidated || !bracketValidated" @click="emit('start')">
+        <Button
+          :disabled="!poolsValidated || !bracketValidated"
+          @click="(emit('draw', competitionDraw), emit('start'))"
+        >
           Start
         </Button>
       </div>
@@ -138,9 +187,7 @@ const emit = defineEmits<{
       <!--      TODO: DEVELOP BRACKET DEFINITION SCREEN -->
       BRACKET
       <div class="flex gap-1 justify-end">
-        <Button v-if="!bracketValidated" @click="bracketValidated = true">
-          Validate Bracket
-        </Button>
+        <Button v-if="!bracketValidated" @click="onBracketValidation()"> Validate Bracket </Button>
         <Button :disabled="!poolsValidated || !bracketValidated" @click="emit('start')">
           Start
         </Button>
