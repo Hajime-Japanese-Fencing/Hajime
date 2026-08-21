@@ -6,6 +6,7 @@ import type { Pool } from "../domain/pool.ts";
 export function poolFighterEntryFactory(fighterEntry: Partial<FighterEntry>): FighterEntry {
   return {
     id: makeFighterId("1"),
+    name: "Fighter",
     isSeeded: false,
     club: "Club A",
     ...fighterEntry,
@@ -20,6 +21,7 @@ export function makePoolFighter(
   return {
     fighter: {
       id: makeFighterId(id),
+      name: "Fighter1",
       isSeeded,
       club,
     },

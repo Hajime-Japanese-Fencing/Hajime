@@ -23,15 +23,15 @@ import { useActiveCompetition } from "../features/active-competition/composables
 import { makeCompetitionId } from "@hajime/core";
 
 const testFighterInputs: CreateFighterInput[] = [
-  { isSeeded: true, club: "Paris Kendo Club" },
-  { isSeeded: false, club: "Paris Kendo Club" },
-  { isSeeded: false, club: "Lyon Kendo Club" },
-  { isSeeded: true, club: "Lyon Kendo Club" },
-  { isSeeded: false, club: "Marseille Kenshikan" },
-  { isSeeded: false, club: "Marseille Kenshikan" },
-  { isSeeded: true, club: "Bordeaux Kendo" },
-  { isSeeded: false, club: "Bordeaux Kendo" },
-  { isSeeded: false, club: "Toulouse Kendo Kai" },
+  { name: "Fighter1", isSeeded: true, club: "Paris Kendo Club" },
+  { name: "Fighter2", isSeeded: false, club: "Paris Kendo Club" },
+  { name: "Fighter3", isSeeded: false, club: "Lyon Kendo Club" },
+  { name: "Fighter4", isSeeded: true, club: "Lyon Kendo Club" },
+  { name: "Fighter5", isSeeded: false, club: "Marseille Kenshikan" },
+  { name: "Fighter6", isSeeded: false, club: "Marseille Kenshikan" },
+  { name: "Fighter7", isSeeded: true, club: "Bordeaux Kendo" },
+  { name: "Fighter8", isSeeded: false, club: "Bordeaux Kendo" },
+  { name: "Fighter9", isSeeded: false, club: "Toulouse Kendo Kai" },
 ];
 
 // -------------------------------------------
@@ -100,8 +100,6 @@ const emit = defineEmits<{
 }>();
 </script>
 
-<!--TEMPORARY: rankingDetails names are defined from fighter ids -->
-<!--TODO: need to add name to fighter entry data format-->
 <template>
   <div class="flex gap-4">
     <SelectorList :items="selectors" v-model="selectedView" />
@@ -120,7 +118,7 @@ const emit = defineEmits<{
           :key="pool.number"
           :pool-details="poolToPoolDetails(pool)"
           :ranking-details="
-            pool.fighters.map((f) => new RankingDetailBuilder().withName(f.fighter.id).build())
+            pool.fighters.map((f) => new RankingDetailBuilder().withName(f.fighter.name).build())
           "
         />
       </div>

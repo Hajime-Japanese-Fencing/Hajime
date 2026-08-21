@@ -11,6 +11,7 @@ import type { BracketMatch } from "./bracket.ts";
 function makeFighters(count: number, seriesHeadCount = 0): FighterEntry[] {
   return Array.from({ length: count }, (_, i) => ({
     id: makeFighterId(`fighter-${i + 1}`),
+    name: "Fighter",
     isSeeded: i < seriesHeadCount,
     club: "club A",
   }));
@@ -144,10 +145,10 @@ describe("Building a direct-elimination bracket", () => {
 
   it("should not pair two fighters from the same club in the first round", () => {
     const fighters: FighterEntry[] = [
-      { id: makeFighterId("fighter-1"), isSeeded: false, club: "club A" },
-      { id: makeFighterId("fighter-2"), isSeeded: false, club: "club A" },
-      { id: makeFighterId("fighter-3"), isSeeded: false, club: "club B" },
-      { id: makeFighterId("fighter-4"), isSeeded: false, club: "club B" },
+      { id: makeFighterId("fighter-1"), name: "Fighter1", isSeeded: false, club: "club A" },
+      { id: makeFighterId("fighter-2"), name: "Fighter2", isSeeded: false, club: "club A" },
+      { id: makeFighterId("fighter-3"), name: "Fighter3", isSeeded: false, club: "club B" },
+      { id: makeFighterId("fighter-4"), name: "Fighter4", isSeeded: false, club: "club B" },
     ];
 
     const { bracket } = allFightersInBracket(fighters);
@@ -170,14 +171,14 @@ describe("Building a direct-elimination bracket", () => {
       // each (there are exactly enough of both), so the single leftover fighter placed against
       // the series head is deterministically from club A too, regardless of the shuffle.
       const fighters: FighterEntry[] = [
-        { id: makeFighterId("series-head"), isSeeded: true, club: "club A" },
-        { id: makeFighterId("other-a-1"), isSeeded: false, club: "club A" },
-        { id: makeFighterId("other-a-2"), isSeeded: false, club: "club A" },
-        { id: makeFighterId("other-a-3"), isSeeded: false, club: "club A" },
-        { id: makeFighterId("other-a-4"), isSeeded: false, club: "club A" },
-        { id: makeFighterId("other-b-1"), isSeeded: false, club: "club B" },
-        { id: makeFighterId("other-b-2"), isSeeded: false, club: "club B" },
-        { id: makeFighterId("other-b-3"), isSeeded: false, club: "club B" },
+        { id: makeFighterId("series-head"), name: "Fighter1", isSeeded: true, club: "club A" },
+        { id: makeFighterId("other-a-1"), name: "Fighter2", isSeeded: false, club: "club A" },
+        { id: makeFighterId("other-a-2"), name: "Fighter3", isSeeded: false, club: "club A" },
+        { id: makeFighterId("other-a-3"), name: "Fighter4", isSeeded: false, club: "club A" },
+        { id: makeFighterId("other-a-4"), name: "Fighter5", isSeeded: false, club: "club A" },
+        { id: makeFighterId("other-b-1"), name: "Fighter6", isSeeded: false, club: "club B" },
+        { id: makeFighterId("other-b-2"), name: "Fighter7", isSeeded: false, club: "club B" },
+        { id: makeFighterId("other-b-3"), name: "Fighter8", isSeeded: false, club: "club B" },
       ];
 
       const { bracket } = allFightersInBracket(fighters);
@@ -238,6 +239,7 @@ describe("Advancing a winner to the next round", () => {
 
     const impostor: FighterEntry = {
       id: makeFighterId("not-in-this-bracket"),
+      name: "Impostor",
       isSeeded: false,
       club: "club A",
     };
@@ -459,6 +461,7 @@ describe("Assigning a third-place participant", () => {
 
     const impostor: FighterEntry = {
       id: makeFighterId("not-in-this-bracket"),
+      name: "Impostor",
       isSeeded: false,
       club: "club A",
     };

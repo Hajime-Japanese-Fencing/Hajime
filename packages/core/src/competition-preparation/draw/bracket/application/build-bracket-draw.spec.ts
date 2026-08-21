@@ -9,7 +9,12 @@ import { makeFighterId } from "../../../../shared/fighter-id.ts";
 // THEM (SHUFFLE ONLY APPLIES TO NON-SEEDED FIGHTERS) — KEEPS THE RESULTING BRACKET LAYOUT
 // DETERMINISTIC FOR THESE TESTS. ---
 function makeSeededFighters(ids: string[]): FighterEntry[] {
-  return ids.map((id) => ({ id: makeFighterId(id), isSeeded: true, club: "club A" }));
+  return ids.map((id) => ({
+    id: makeFighterId(id),
+    name: "Fighter",
+    isSeeded: true,
+    club: "club A",
+  }));
 }
 
 describe("buildBracketDraw", () => {

@@ -11,9 +11,9 @@ describe("buildPoolDraw", () => {
       number: 1,
       size: 3,
       fighters: [
-        { fighter: { id: makeFighterId("a"), isSeeded: false, club: "X" } },
-        { fighter: { id: makeFighterId("b"), isSeeded: false, club: "Y" } },
-        { fighter: { id: makeFighterId("c"), isSeeded: false, club: "Z" } },
+        { fighter: { id: makeFighterId("a"), name: "Fighter1", isSeeded: false, club: "X" } },
+        { fighter: { id: makeFighterId("b"), name: "Fighter2", isSeeded: false, club: "Y" } },
+        { fighter: { id: makeFighterId("c"), name: "Fighter3", isSeeded: false, club: "Z" } },
       ],
     };
 

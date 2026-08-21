@@ -51,6 +51,7 @@ watch(
 function makeDemoFighters(count: number): FighterEntry[] {
   return Array.from({ length: count }, (_, index) => ({
     id: makeFighterId(`fighter-${index + 1}`),
+    name: "Fighter",
     isSeeded: false,
     club: "Demo Dojo",
   }));

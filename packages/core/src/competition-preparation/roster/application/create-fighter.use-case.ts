@@ -7,6 +7,7 @@ export interface CreateFighterUseCaseDeps {
 }
 
 export interface CreateFighterInput {
+  name: string;
   club: string;
   isSeeded: boolean;
 }
@@ -21,6 +22,7 @@ export function createFighterUseCase(
 ): FighterEntry {
   return {
     id: makeFighterId(deps.generateId()),
+    name: input.name,
     club: input.club,
     isSeeded: input.isSeeded,
   };
