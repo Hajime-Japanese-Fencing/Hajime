@@ -10,7 +10,7 @@ import {
   type PoolTurn,
 } from "@hajime/core";
 
-export function makePoolRecord(pool: Pool, poolTurns: PoolTurn[]): PoolRecord {
+export function toPoolRecord(pool: Pool, poolTurns: PoolTurn[]): PoolRecord {
   const poolId = makePoolId(pool.number);
   const fighterIds: FighterId[] = pool.fighters.map((fighter) => fighter.fighter.id);
   const fightIds: FightId[] = [];
@@ -24,7 +24,7 @@ export function makePoolRecord(pool: Pool, poolTurns: PoolTurn[]): PoolRecord {
   };
 }
 
-export function makePoolFightRecord(poolId: PoolId, fight: PoolFight): FightRecord {
+export function toPoolFightRecord(poolId: PoolId, fight: PoolFight): FightRecord {
   return {
     id: fight.id,
     poolId: poolId,
