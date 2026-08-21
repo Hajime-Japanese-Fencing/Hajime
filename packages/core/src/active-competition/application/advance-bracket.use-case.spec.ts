@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { makeBracketRoundId } from "../../shared/bracket-round-id.ts";
+import { makeCompetitionId } from "../../shared/competition-id.ts";
 import { makeFighterId } from "../../shared/fighter-id.ts";
 import { makeFightId } from "../../shared/fight-id.ts";
 import { FightStatus } from "../../shared/fight-status.ts";
@@ -9,8 +10,9 @@ import type { FightRecord } from "../../shared/fight-record.ts";
 import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
 import { advanceBracket } from "./advance-bracket.use-case.ts";
 
-const semiFinalId = makeBracketRoundId(1);
-const finalId = makeBracketRoundId(2);
+const competitionId = makeCompetitionId("competition-1");
+const semiFinalId = makeBracketRoundId(competitionId, 1);
+const finalId = makeBracketRoundId(competitionId, 2);
 
 const generateId = () => "generated-fight-id";
 

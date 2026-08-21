@@ -1,6 +1,9 @@
 import type { Bracket, BracketMatch } from "../domain/bracket.ts";
 import { makeFightId } from "../../../../shared/fight-id.ts";
-import { makeBracketRoundId } from "../../../../shared/bracket-round-id.ts";
+import {
+  makeBracketRoundId,
+  makeThirdPlaceBracketRoundId,
+} from "../../../../shared/bracket-round-id.ts";
 import { makeFighterId } from "../../../../shared/fighter-id.ts";
 import { FightStatus } from "../../../../shared/fight-status.ts";
 import type { IdGenerator } from "../../../../shared/id-generator.ts";
@@ -10,6 +13,7 @@ import type {
   BracketRoundRecord,
 } from "../../../../shared/bracket-round-record.ts";
 import type { FightRecord } from "../../../../shared/fight-record.ts";
+import type { CompetitionId } from "../../../../shared/competition-id.ts";
 
 export interface BracketDraw {
   readonly bracketRounds: BracketRoundRecord[];
@@ -25,10 +29,14 @@ export interface BracketDraw {
  * across combined draws (e.g. a pool phase draw published alongside this bracket) — unlike the
  * old incrementing-counter scheme, no `startingFightId` is needed here.
  */
-export function buildBracketDraw(bracket: Bracket, idGenerator: IdGenerator): BracketDraw {
-  const roundIds = bracket.rounds.map((_, index) => makeBracketRoundId(index + 1));
+export function buildBracketDraw(
+  bracket: Bracket,
+  idGenerator: IdGenerator,
+  competitionId: CompetitionId,
+): BracketDraw {
+  const roundIds = bracket.rounds.map((_, index) => makeBracketRoundId(competitionId, index + 1));
   const thirdPlaceRoundId = bracket.thirdPlaceMatch
-    ? makeBracketRoundId(roundIds.length + 1)
+    ? makeThirdPlaceBracketRoundId(competitionId)
     : null;
 
   const fights: FightRecord[] = [];

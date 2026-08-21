@@ -121,7 +121,7 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
     currentCompetitionId = competitionId;
 
     const bracket = await generateBracketUseCase({ saveBracket }, competitionId, fighters);
-    const { bracketRounds, fights } = buildBracketDraw(bracket, generateId);
+    const { bracketRounds, fights } = buildBracketDraw(bracket, generateId, competitionId);
 
     await publishCompetitionDraw(competitionId, { pools: [], bracketRounds, fights });
   }

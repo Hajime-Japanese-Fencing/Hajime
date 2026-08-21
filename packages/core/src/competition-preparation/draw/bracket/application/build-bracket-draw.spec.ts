@@ -4,6 +4,7 @@ import type { FighterEntry } from "../../../../shared/fighter.ts";
 import { buildBracketDraw } from "./build-bracket-draw.ts";
 import { uuidGenerator, FightStatus } from "@hajime/core";
 import { makeFighterId } from "../../../../shared/fighter-id.ts";
+import { makeCompetitionId } from "../../../../shared/competition-id.ts";
 
 // --- ALL FIGHTERS ARE SEEDED SO rankFighters/rankFightersSeparatedByClubs NEVER SHUFFLES
 // THEM (SHUFFLE ONLY APPLIES TO NON-SEEDED FIGHTERS) — KEEPS THE RESULTING BRACKET LAYOUT
@@ -22,7 +23,7 @@ describe("buildBracketDraw", () => {
     // Assert that first round fights are playable, while next round fights are pending
     const bracket = generateBracket(makeSeededFighters(["w", "x", "y", "z"]));
 
-    const draw = buildBracketDraw(bracket, uuidGenerator);
+    const draw = buildBracketDraw(bracket, uuidGenerator, makeCompetitionId("Competition"));
 
     expect(draw.fights).toMatchObject([
       {
@@ -76,7 +77,7 @@ describe("buildBracketDraw", () => {
     // GETS THE BYE AND generateBracket ALREADY PROPAGATES IT INTO THE FINAL. ---
     const bracket = generateBracket(makeSeededFighters(["a", "b", "c"]));
 
-    const draw = buildBracketDraw(bracket, uuidGenerator);
+    const draw = buildBracketDraw(bracket, uuidGenerator, makeCompetitionId("Competition"));
 
     // --- BOTH THE BYE AND THE REAL b VS c MATCH BECOME FightRecords — NOTHING IS DROPPED. ---
     expect(draw.fights).toHaveLength(2);
@@ -116,7 +117,7 @@ describe("buildBracketDraw", () => {
       true,
     );
 
-    const draw = buildBracketDraw(bracket, uuidGenerator);
+    const draw = buildBracketDraw(bracket, uuidGenerator, makeCompetitionId("Competition"));
 
     expect(draw.fights).toHaveLength(4);
     expect(draw.bracketRounds).toHaveLength(4);
@@ -150,7 +151,7 @@ describe("buildBracketDraw", () => {
   it("does not create a third-place round when it wasn't requested", () => {
     const bracket = generateBracket(makeSeededFighters(["f1", "f2", "f3", "f4"]), false, false);
 
-    const draw = buildBracketDraw(bracket, uuidGenerator);
+    const draw = buildBracketDraw(bracket, uuidGenerator, makeCompetitionId("Competition"));
 
     expect(draw.bracketRounds.every((round) => round.kind !== "thirdPlace")).toBe(true);
     expect(draw.bracketRounds.every((round) => round.loserFeedsRoundId === undefined)).toBe(true);

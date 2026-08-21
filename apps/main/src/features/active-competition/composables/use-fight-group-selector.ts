@@ -126,9 +126,7 @@ export function useFightGroupSelector(view: Ref<ActiveCompetitionView>) {
     }
 
     if (id.startsWith(ROUND_PREFIX)) {
-      const bracketRoundId = Number(id.slice(ROUND_PREFIX.length)) as Parameters<
-        ActiveCompetitionView["bracketRoundFights"]
-      >[0];
+      const bracketRoundId = id.slice(ROUND_PREFIX.length) as BracketRoundId;
       return [...view.value.bracketRoundFights(bracketRoundId)];
     }
 
@@ -143,7 +141,7 @@ export function useFightGroupSelector(view: Ref<ActiveCompetitionView>) {
     const id = selectedGroupId.value;
     if (!id || !id.startsWith(ROUND_PREFIX)) return [];
 
-    const bracketRoundId = Number(id.slice(ROUND_PREFIX.length)) as BracketRoundId;
+    const bracketRoundId = id.slice(ROUND_PREFIX.length) as BracketRoundId;
     const round = view.value.bracketRounds.find((round) => round.id === bracketRoundId);
     if (!round) return [];
 
@@ -160,7 +158,7 @@ export function useFightGroupSelector(view: Ref<ActiveCompetitionView>) {
     const id = selectedGroupId.value;
     if (!id || !id.startsWith(ROUND_PREFIX)) return true;
 
-    const bracketRoundId = Number(id.slice(ROUND_PREFIX.length)) as BracketRoundId;
+    const bracketRoundId = id.slice(ROUND_PREFIX.length) as BracketRoundId;
     const round = view.value.bracketRounds.find((round) => round.id === bracketRoundId);
     if (!round || !round.dependsOnRoundId) return true;
 
