@@ -10,9 +10,8 @@ export function makeBracketRoundId(
   return `${competitionId}:${roundNumber}` as BracketRoundId;
 }
 
-// --- THE THIRD-PLACE MATCH ISN'T A NUMBERED ROUND OF THE MAIN ELIMINATION LADDER (SEE
-// BracketRoundRecord's `kind` FIELD) — A DEDICATED CONSTRUCTOR KEEPS THAT DISTINCTION AT THE ID
-// LEVEL TOO, INSTEAD OF SLOTTING IT IN AS "JUST ONE MORE NUMBER" PAST THE LAST MAIN ROUND. ---
+// Specific constructor for third place matches, since it's handled differently from other matches
+// (not advancing winners, but taking losers from semi-finals instead)
 export function makeThirdPlaceBracketRoundId(competitionId: CompetitionId): BracketRoundId {
   return `${competitionId}:third-place` as BracketRoundId;
 }
