@@ -3,7 +3,12 @@ import { IpponCode } from "../../../shared/ippons.ts";
 import { makeScoreEventId, type ScoreEventId } from "../../../shared/score-event-id.ts";
 import type { FightRecord } from "../../../shared/fight-record.ts";
 import type { ScoreEvent, ScoreEventType } from "../../../shared/score-event.ts";
-import { canScore, type FightRuleResult, type Rejection } from "./fight-rules.ts";
+import {
+  canEditFight,
+  type FightRuleResult,
+  type Rejection,
+  scoreLimitReached,
+} from "./fight-rules.ts";
 
 export function recordIppon(
   fight: FightRecord,
@@ -65,7 +70,7 @@ export function removeScoreEvent(
   scoreEventId: ScoreEventId,
   expectedType: ScoreEventType,
 ): FightRuleResult {
-  if (!canScore(fight)) return { reason: "scoring_not_allowed" };
+  if (!canEditFight(fight)) return { reason: "scoring_not_allowed" };
 
   const scoreEvent = fight.scoreEvents.find((event) => event.id === scoreEventId);
   if (!scoreEvent) return { reason: "score_event_not_found" };
@@ -104,10 +109,11 @@ export function removeScoreEvent(
 }
 
 function scoringRejection(fight: FightRecord, fighterId: FighterId): Rejection | undefined {
-  if (!canScore(fight)) return { reason: "scoring_not_allowed" };
+  if (!canEditFight(fight)) return { reason: "scoring_not_allowed" };
   if (fighterId !== fight.redFighterId && fighterId !== fight.whiteFighterId) {
     return { reason: "fighter_not_in_fight" };
   }
+  if (scoreLimitReached(fight)) return { reason: "scoring_limit_reached" };
 }
 
 function countHansoku(scoreEvents: readonly ScoreEvent[], fighterId: FighterId): number {
