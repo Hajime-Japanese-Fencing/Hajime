@@ -16,6 +16,10 @@ const selectors = computed<SelectorItem[]>(() => [
   { id: "bracket", label: "Bracket" },
 ]);
 const selectedView = ref<string>("pools");
+
+function onStart() {
+  isSetup.value = true;
+}
 </script>
 
 <template>
@@ -46,7 +50,7 @@ const selectedView = ref<string>("pools");
     </section>
 
     <section v-else>
-      <PreCompetitionScreen :competitionId="competitionId" @start="isSetup = true" />
+      <PreCompetitionScreen :competitionId="competitionId" @start="onStart" />
     </section>
   </main>
 </template>
