@@ -58,6 +58,7 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
     loadCompetitionFights: new LocalStorageLoadCompetitionFightsAdapter(),
     // --- NO-OP: SEE THE SUBSCRIPTION BELOW FOR WHY. ---
     saveFightResult: new NoopFightResultAdapter(),
+    generateId: generateId,
   });
 
   // --- PERSISTS BY MIRRORING THE WHOLE REACTIVE ActiveCompetitionView TO localStorage ON EVERY

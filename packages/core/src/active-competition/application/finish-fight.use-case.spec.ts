@@ -11,6 +11,8 @@ import { fightId1, makeFightRecord } from "../__test__/fixtures.ts";
 import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 import { finishFight } from "./finish-fight.use-case.ts";
 
+const generateId = () => "generated-fight-id";
+
 class SpyFightResultRecorder implements FightResultRecorder {
   constructor(private readonly events: string[]) {}
 
@@ -31,7 +33,10 @@ describe("Finishing a fight", () => {
     );
 
     await expect(
-      finishFight({ state, saveFightResult: new SpyFightResultRecorder(events) }, fightId1),
+      finishFight(
+        { state, saveFightResult: new SpyFightResultRecorder(events), generateId },
+        fightId1,
+      ),
     ).resolves.toEqual({ ok: true });
 
     expect(state.snapshot().fightsById[fightId1].status).toBe(FightStatus.Finished);
@@ -47,7 +52,7 @@ describe("Finishing a fight", () => {
     });
 
     await expect(
-      finishFight({ state, saveFightResult: new SpyFightResultRecorder([]) }, fightId1),
+      finishFight({ state, saveFightResult: new SpyFightResultRecorder([]), generateId }, fightId1),
     ).resolves.toEqual({
       ok: false,
       reason: "illegal_transition",
@@ -104,7 +109,7 @@ describe("Finishing a fight", () => {
     });
 
     await expect(
-      finishFight({ state, saveFightResult: new SpyFightResultRecorder([]) }, fightId1),
+      finishFight({ state, saveFightResult: new SpyFightResultRecorder([]), generateId }, fightId1),
     ).resolves.toEqual({ ok: true });
 
     expect(state.snapshot().bracketRoundsById[finalId].pendingMatches).toEqual([

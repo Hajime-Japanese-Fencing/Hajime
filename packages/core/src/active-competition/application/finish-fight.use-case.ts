@@ -5,10 +5,12 @@ import type { ActiveCompetitionState } from "../state/competition-state.ts";
 import type { FightActionResult } from "./command-result.ts";
 import { toCommandRejection } from "./rejection-to-command-result.ts";
 import { advanceBracket } from "./advance-bracket.use-case.ts";
+import type { IdGenerator } from "../../shared/id-generator.ts";
 
 export interface FinishFightDeps {
   saveFightResult: FightResultRecorder;
   state: ActiveCompetitionState;
+  generateId: IdGenerator;
 }
 
 export async function finishFight(
@@ -30,7 +32,7 @@ export async function finishFight(
   // NEXT ROUND, PROMOTE IT INTO A REAL FIGHT IF BOTH SIDES ARE NOW KNOWN). A NO-OP FOR POOL
   // FIGHTS, AND HARMLESS IF THE RESULT IS CURRENTLY TIED (NOTHING TO ADVANCE YET) — EITHER
   // WAY finishFight ITSELF STILL SUCCEEDED, SO WE DON'T SURFACE advanceBracket's OUTCOME. ---
-  await advanceBracket({ state: deps.state }, fightId);
+  await advanceBracket({ state: deps.state, generateId: deps.generateId }, fightId);
 
   return { ok: true };
 }
