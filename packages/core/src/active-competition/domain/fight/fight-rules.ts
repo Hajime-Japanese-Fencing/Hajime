@@ -6,7 +6,8 @@ export type RejectionReason =
   | "scoring_not_allowed"
   | "fighter_not_in_fight"
   | "score_event_not_found"
-  | "score_event_type_mismatch";
+  | "score_event_type_mismatch"
+  | "scoring_limit_reached";
 
 export interface Rejection {
   readonly reason: RejectionReason;
@@ -35,8 +36,20 @@ export function finishFight(fight: FightRecord): FightRuleResult {
   return { ...fight, status: FightStatus.Finished };
 }
 
-export function canScore(fight: FightRecord): boolean {
+export function canEditFight(fight: FightRecord): boolean {
   return fight.status === FightStatus.InProgress;
+}
+
+export function scoreLimitReached(fight: FightRecord): boolean {
+  const scores = fight.scoreEvents;
+  const fighter1Events = scores.filter(
+    (scoreEvent) => scoreEvent.type === "ippon" && scoreEvent.fighterId === fight.redFighterId,
+  );
+  const fighter2Events = scores.filter(
+    (scoreEvent) => scoreEvent.type === "ippon" && scoreEvent.fighterId === fight.whiteFighterId,
+  );
+
+  return fighter1Events.length >= 2 || fighter2Events.length >= 2;
 }
 
 export function isRejection(result: FightRuleResult): result is Rejection {

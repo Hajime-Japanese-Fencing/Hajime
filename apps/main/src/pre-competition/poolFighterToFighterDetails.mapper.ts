@@ -6,10 +6,7 @@ export function poolFighterToFighterDetails(
   number: number,
 ): FighterDetails {
   return {
-    // TEMPORARY: NO NAME IN FIGHTER ENTRY
-    // ----------------------------------------------
-    fighterName: poolFighter.fighter.id,
-    // ----------------------------------------------
+    fighterName: poolFighter.fighter.name,
     poolRank: 1,
     number: number,
   };

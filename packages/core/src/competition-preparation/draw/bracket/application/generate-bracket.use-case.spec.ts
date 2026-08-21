@@ -8,6 +8,7 @@ import { makeFighterId } from "../../../../shared/fighter-id.ts";
 function makeFighters(count: number): FighterEntry[] {
   return Array.from({ length: count }, (_, i) => ({
     id: makeFighterId(`fighter-${i + 1}`),
+    name: "Fighter",
     isSeeded: false,
     club: "club A",
   }));

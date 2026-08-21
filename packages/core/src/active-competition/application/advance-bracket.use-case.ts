@@ -5,6 +5,7 @@ import { fillNextRoundSlot } from "../domain/bracket-progression.ts";
 import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
 import type { FightRecord } from "../../shared/fight-record.ts";
 import type { ActiveCompetitionState } from "../state/competition-state.ts";
+import type { IdGenerator } from "../../shared/id-generator.ts";
 
 export type AdvanceBracketResult =
   | { ok: true; promotedFightIds: FightId[] }
@@ -15,6 +16,7 @@ export type AdvanceBracketResult =
 
 export interface AdvanceBracketDeps {
   state: ActiveCompetitionState;
+  generateId: IdGenerator;
 }
 
 /**
@@ -63,7 +65,10 @@ export async function advanceBracket(
     loserId,
   );
 
-  const { updatedRounds, newFights, promotedFightIds } = promoteReadyMatches(bracketRounds);
+  const { updatedRounds, newFights, promotedFightIds } = promoteReadyMatches(
+    bracketRounds,
+    deps.generateId,
+  );
 
   deps.state.advanceBracket({ bracketRounds: updatedRounds, newFights });
 
@@ -73,7 +78,10 @@ export async function advanceBracket(
 // --- TURNS ANY PENDING MATCH THAT NOW HAS BOTH FIGHTERS KNOWN INTO A REAL, PLAYABLE
 // FightRecord, MINTING FRESH FIGHT IDS AS IT GOES. LEAVES ROUNDS WITH NOTHING TO PROMOTE
 // UNTOUCHED (SAME OBJECT REFERENCE) SO CALLERS CAN CHEAPLY TELL WHAT CHANGED. ---
-function promoteReadyMatches(bracketRounds: BracketRoundRecord[]): {
+function promoteReadyMatches(
+  bracketRounds: BracketRoundRecord[],
+  generateId: IdGenerator,
+): {
   updatedRounds: BracketRoundRecord[];
   newFights: FightRecord[];
   promotedFightIds: FightId[];
@@ -94,7 +102,7 @@ function promoteReadyMatches(bracketRounds: BracketRoundRecord[]): {
 
     const fightIds = [...round.fightIds];
     for (const match of readyMatches) {
-      const newFightId = makeFightId(crypto.randomUUID());
+      const newFightId = makeFightId(generateId());
 
       newFights.push({
         id: newFightId,

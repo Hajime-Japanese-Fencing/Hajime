@@ -58,6 +58,7 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
     loadCompetitionFights: new LocalStorageLoadCompetitionFightsAdapter(),
     // --- NO-OP: SEE THE SUBSCRIPTION BELOW FOR WHY. ---
     saveFightResult: new NoopFightResultAdapter(),
+    generateId: generateId,
   });
 
   // --- PERSISTS BY MIRRORING THE WHOLE REACTIVE ActiveCompetitionView TO localStorage ON EVERY
@@ -120,7 +121,7 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
     currentCompetitionId = competitionId;
 
     const bracket = await generateBracketUseCase({ saveBracket }, competitionId, fighters);
-    const { bracketRounds, fights } = buildBracketDraw(bracket, generateId);
+    const { bracketRounds, fights } = buildBracketDraw(bracket, generateId, competitionId);
 
     await publishCompetitionDraw(competitionId, { pools: [], bracketRounds, fights });
   }

@@ -2,10 +2,12 @@ import { computed, ref, watch, type Ref } from "vue";
 import {
   FightStatus,
   getBracketRoundLabel,
+  poolNumberOf,
   type ActiveCompetitionView,
   type BracketPendingMatch,
   type BracketRoundId,
   type FightRecord,
+  type PoolId,
 } from "@hajime/core";
 import type { SelectorItem } from "@hajime/ui";
 
@@ -63,10 +65,10 @@ export function useFightGroupSelector(view: Ref<ActiveCompetitionView>) {
   const groupItems = computed<SelectorItem[]>(() => {
     if (selectedPhase.value === "pool") {
       return [...view.value.pools]
-        .sort((a, b) => a.id - b.id)
+        .sort((a, b) => poolNumberOf(a.id) - poolNumberOf(b.id))
         .map((pool) => ({
           id: `${POOL_PREFIX}${pool.id}`,
-          label: `Pool ${pool.id}`,
+          label: `Pool ${poolNumberOf(pool.id)}`,
           progress: completionRatio(view.value.poolFights(pool.id)),
         }));
     }
@@ -119,16 +121,12 @@ export function useFightGroupSelector(view: Ref<ActiveCompetitionView>) {
     if (!id) return [];
 
     if (id.startsWith(POOL_PREFIX)) {
-      const poolId = Number(id.slice(POOL_PREFIX.length)) as Parameters<
-        ActiveCompetitionView["poolFights"]
-      >[0];
+      const poolId = id.slice(POOL_PREFIX.length) as PoolId;
       return [...view.value.poolFights(poolId)];
     }
 
     if (id.startsWith(ROUND_PREFIX)) {
-      const bracketRoundId = Number(id.slice(ROUND_PREFIX.length)) as Parameters<
-        ActiveCompetitionView["bracketRoundFights"]
-      >[0];
+      const bracketRoundId = id.slice(ROUND_PREFIX.length) as BracketRoundId;
       return [...view.value.bracketRoundFights(bracketRoundId)];
     }
 
@@ -143,7 +141,7 @@ export function useFightGroupSelector(view: Ref<ActiveCompetitionView>) {
     const id = selectedGroupId.value;
     if (!id || !id.startsWith(ROUND_PREFIX)) return [];
 
-    const bracketRoundId = Number(id.slice(ROUND_PREFIX.length)) as BracketRoundId;
+    const bracketRoundId = id.slice(ROUND_PREFIX.length) as BracketRoundId;
     const round = view.value.bracketRounds.find((round) => round.id === bracketRoundId);
     if (!round) return [];
 
@@ -160,7 +158,7 @@ export function useFightGroupSelector(view: Ref<ActiveCompetitionView>) {
     const id = selectedGroupId.value;
     if (!id || !id.startsWith(ROUND_PREFIX)) return true;
 
-    const bracketRoundId = Number(id.slice(ROUND_PREFIX.length)) as BracketRoundId;
+    const bracketRoundId = id.slice(ROUND_PREFIX.length) as BracketRoundId;
     const round = view.value.bracketRounds.find((round) => round.id === bracketRoundId);
     if (!round || !round.dependsOnRoundId) return true;
 

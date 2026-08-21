@@ -2,6 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 import { FightStatus } from "../../shared/fight-status.ts";
 import type { FightId } from "../../shared/fight-id.ts";
 import { makeBracketRoundId } from "../../shared/bracket-round-id.ts";
+import { makeCompetitionId } from "../../shared/competition-id.ts";
 import { makeFighterId } from "../../shared/fighter-id.ts";
 import { makeScoreEventId } from "../../shared/score-event-id.ts";
 import type { ScoreEvent } from "../../shared/score-event.ts";
@@ -10,6 +11,8 @@ import { FakeActiveCompetitionState } from "../__test__/fake-active-competition-
 import { fightId1, makeFightRecord } from "../__test__/fixtures.ts";
 import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 import { finishFight } from "./finish-fight.use-case.ts";
+
+const generateId = () => "generated-fight-id";
 
 class SpyFightResultRecorder implements FightResultRecorder {
   constructor(private readonly events: string[]) {}
@@ -31,7 +34,10 @@ describe("Finishing a fight", () => {
     );
 
     await expect(
-      finishFight({ state, saveFightResult: new SpyFightResultRecorder(events) }, fightId1),
+      finishFight(
+        { state, saveFightResult: new SpyFightResultRecorder(events), generateId },
+        fightId1,
+      ),
     ).resolves.toEqual({ ok: true });
 
     expect(state.snapshot().fightsById[fightId1].status).toBe(FightStatus.Finished);
@@ -47,7 +53,7 @@ describe("Finishing a fight", () => {
     });
 
     await expect(
-      finishFight({ state, saveFightResult: new SpyFightResultRecorder([]) }, fightId1),
+      finishFight({ state, saveFightResult: new SpyFightResultRecorder([]), generateId }, fightId1),
     ).resolves.toEqual({
       ok: false,
       reason: "illegal_transition",
@@ -55,8 +61,9 @@ describe("Finishing a fight", () => {
   });
 
   it("should advance the bracket when finishing a bracket fight with a clear winner", async () => {
-    const semiFinalId = makeBracketRoundId(1);
-    const finalId = makeBracketRoundId(2);
+    const competitionId = makeCompetitionId("competition-1");
+    const semiFinalId = makeBracketRoundId(competitionId, 1);
+    const finalId = makeBracketRoundId(competitionId, 2);
     const hayashi = makeFighterId("hayashi");
     const shimizu = makeFighterId("shimizu");
 
@@ -104,7 +111,7 @@ describe("Finishing a fight", () => {
     });
 
     await expect(
-      finishFight({ state, saveFightResult: new SpyFightResultRecorder([]) }, fightId1),
+      finishFight({ state, saveFightResult: new SpyFightResultRecorder([]), generateId }, fightId1),
     ).resolves.toEqual({ ok: true });
 
     expect(state.snapshot().bracketRoundsById[finalId].pendingMatches).toEqual([

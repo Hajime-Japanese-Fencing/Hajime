@@ -4,6 +4,7 @@ import { makeFighterId } from "../../../shared/fighter-id.ts";
 
 function makeInput(overrides: Partial<CreateFighterInput> = {}): CreateFighterInput {
   return {
+    name: "Fighter",
     club: "Paris Kendo Club",
     isSeeded: false,
     ...overrides,
@@ -36,5 +37,13 @@ describe("Creating a fighter", () => {
 
     expect(fighter.club).toBe(input.club);
     expect(fighter.isSeeded).toBe(input.isSeeded);
+  });
+
+  it("keeps the name from the input", () => {
+    const input = makeInput({ name: "FighterName" });
+
+    const fighter = createFighterUseCase({ generateId }, input);
+
+    expect(fighter.name).toBe(input.name);
   });
 });

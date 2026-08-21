@@ -19,12 +19,14 @@ import type { FightResultRecorder } from "../ports/save-fight-result.port.ts";
 import { createActiveCompetitionView } from "../state/active-competition-view.ts";
 import type { ActiveCompetitionView } from "../state/active-competition-view.ts";
 import { createCompetitionState } from "../state/competition-state.ts";
+import type { IdGenerator } from "../../shared/id-generator.ts";
 
 export type { ActiveCompetitionView } from "../state/active-competition-view.ts";
 
 export interface ActiveCompetitionDeps {
   readonly loadCompetitionFights: CompetitionDrawLoader;
   readonly saveFightResult: FightResultRecorder;
+  readonly generateId: IdGenerator;
 }
 
 export interface ActiveCompetition extends CompetitionDrawReceiver {
@@ -46,7 +48,7 @@ export interface ActiveCompetition extends CompetitionDrawReceiver {
 export function createActiveCompetition(deps: ActiveCompetitionDeps): ActiveCompetition {
   const state = createCompetitionState();
   const view = createActiveCompetitionView(state);
-  const useCaseDeps = { state, saveFightResult: deps.saveFightResult };
+  const useCaseDeps = { state, saveFightResult: deps.saveFightResult, generateId: deps.generateId };
 
   function activeFightId(): FightId | undefined {
     return state.snapshot().activeFightId ?? undefined;

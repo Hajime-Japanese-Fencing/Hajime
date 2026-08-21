@@ -29,6 +29,7 @@ function createFacade(data: CompetitionDraw) {
   const facade = createActiveCompetition({
     saveFightResult,
     loadCompetitionFights: new StubCompetitionDrawLoader(data),
+    generateId: () => "generated-fight-id",
   });
 
   return { facade, saveFightResult };

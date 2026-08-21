@@ -3,6 +3,7 @@ import { makePoolId } from "../../../../shared/pool-id.ts";
 import { makeFighterId } from "../../../../shared/fighter-id.ts";
 import { FightStatus } from "../../../../shared/fight-status.ts";
 import type { IdGenerator } from "../../../../shared/id-generator.ts";
+import type { CompetitionId } from "../../../../shared/competition-id.ts";
 import type { FightRecord } from "../../../../shared/fight-record.ts";
 import type { PoolRecord } from "../../../../shared/pool-record.ts";
 import type { Pool } from "../domain/pool.ts";
@@ -13,11 +14,15 @@ export interface PoolDraw {
   readonly fights: FightRecord[];
 }
 
-export function buildPoolDraw(pools: Pool[], idGenerator: IdGenerator): PoolDraw {
+export function buildPoolDraw(
+  pools: Pool[],
+  idGenerator: IdGenerator,
+  competitionId: CompetitionId,
+): PoolDraw {
   const fights: FightRecord[] = [];
 
   const poolRecords = pools.map((pool): PoolRecord => {
-    const poolId = makePoolId(pool.number);
+    const poolId = makePoolId(competitionId, pool.number);
     const fightIds: FightId[] = [];
 
     for (const turn of organizePoolFights(pool)) {

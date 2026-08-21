@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 import { makeBracketRoundId } from "../../shared/bracket-round-id.ts";
+import { makeCompetitionId } from "../../shared/competition-id.ts";
 import { makeFighterId } from "../../shared/fighter-id.ts";
 import { makeFightId } from "../../shared/fight-id.ts";
 import { FightStatus } from "../../shared/fight-status.ts";
@@ -9,8 +10,11 @@ import type { FightRecord } from "../../shared/fight-record.ts";
 import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
 import { advanceBracket } from "./advance-bracket.use-case.ts";
 
-const semiFinalId = makeBracketRoundId(1);
-const finalId = makeBracketRoundId(2);
+const competitionId = makeCompetitionId("competition-1");
+const semiFinalId = makeBracketRoundId(competitionId, 1);
+const finalId = makeBracketRoundId(competitionId, 2);
+
+const generateId = () => "generated-fight-id";
 
 const hayashi = makeFighterId("hayashi");
 const shimizu = makeFighterId("shimizu");
@@ -60,7 +64,7 @@ describe("advanceBracket", () => {
       bracketRoundsById: { [semiFinalId]: rounds[0], [finalId]: rounds[1] },
     });
 
-    const result = await advanceBracket({ state }, fight.id);
+    const result = await advanceBracket({ state, generateId }, fight.id);
 
     expect(result).toEqual({ ok: true, promotedFightIds: [] });
     expect(state.snapshot().bracketRoundsById[finalId].pendingMatches).toEqual([
@@ -114,7 +118,7 @@ describe("advanceBracket", () => {
       bracketRoundsById: { [semiFinalId]: rounds[0], [finalId]: rounds[1] },
     });
 
-    const result = await advanceBracket({ state }, fight.id);
+    const result = await advanceBracket({ state, generateId }, fight.id);
 
     // --- THE PROMOTED FIGHT NOW GETS A RANDOM UUID (crypto.randomUUID()), SO IT CAN'T BE
     // ASSERTED AGAINST A FIXED VALUE LIKE THE OLD makeFightId("10") — READ IT BACK OFF THE
@@ -143,7 +147,7 @@ describe("advanceBracket", () => {
     const fight = makeFinishedSemiFinal({ status: FightStatus.InProgress });
     const state = new FakeActiveCompetitionState({ fightsById: { [fight.id]: fight } });
 
-    await expect(advanceBracket({ state }, fight.id)).resolves.toEqual({
+    await expect(advanceBracket({ state, generateId }, fight.id)).resolves.toEqual({
       ok: false,
       reason: "not_finished",
     });
@@ -153,7 +157,7 @@ describe("advanceBracket", () => {
     const fight = makeFinishedSemiFinal({ bracketRoundId: null, bracketMatchIndex: null });
     const state = new FakeActiveCompetitionState({ fightsById: { [fight.id]: fight } });
 
-    await expect(advanceBracket({ state }, fight.id)).resolves.toEqual({
+    await expect(advanceBracket({ state, generateId }, fight.id)).resolves.toEqual({
       ok: false,
       reason: "not_a_bracket_fight",
     });
@@ -163,7 +167,7 @@ describe("advanceBracket", () => {
     const fight = makeFinishedSemiFinal({ scoreEvents: [] });
     const state = new FakeActiveCompetitionState({ fightsById: { [fight.id]: fight } });
 
-    await expect(advanceBracket({ state }, fight.id)).resolves.toEqual({
+    await expect(advanceBracket({ state, generateId }, fight.id)).resolves.toEqual({
       ok: false,
       reason: "no_winner_yet",
     });
@@ -172,7 +176,7 @@ describe("advanceBracket", () => {
   it("reports the fight as not found", async () => {
     const state = new FakeActiveCompetitionState();
 
-    await expect(advanceBracket({ state }, makeFightId("999"))).resolves.toEqual({
+    await expect(advanceBracket({ state, generateId }, makeFightId("999"))).resolves.toEqual({
       ok: false,
       reason: "fight_not_found",
     });

@@ -2,10 +2,12 @@ import { FightStatus } from "../../shared/fight-status.ts";
 import { makeFightId } from "../../shared/fight-id.ts";
 import { makeFighterId } from "../../shared/fighter-id.ts";
 import { makePoolId } from "../../shared/pool-id.ts";
+import { makeCompetitionId } from "../../shared/competition-id.ts";
 import type { FightRecord } from "../../shared/fight-record.ts";
 import type { PoolRecord } from "../../shared/pool-record.ts";
 
-export const poolId1 = makePoolId(1);
+export const competitionId1 = makeCompetitionId("competition-1");
+export const poolId1 = makePoolId(competitionId1, 1);
 
 export const fighterRed = makeFighterId("fighter-red");
 export const fighterWhite = makeFighterId("fighter-white");

@@ -3,8 +3,10 @@ import { FightStatus } from "../../../shared/fight-status.ts";
 import { makeFighterId } from "../../../shared/fighter-id.ts";
 import { IpponCode } from "../../../shared/ippons.ts";
 import { makeScoreEventId } from "../../../shared/score-event-id.ts";
+import type { FightRecord } from "../../../shared/fight-record.ts";
 import type { ScoreEvent } from "../../../shared/score-event.ts";
 import { fighterRed, fighterWhite, makeFightRecord } from "../../__test__/fixtures.ts";
+import { isRejection } from "./fight-rules.ts";
 import { recordHansoku, recordIppon, removeScoreEvent } from "./score-event-rules.ts";
 
 describe("Fight scoring", () => {
@@ -83,6 +85,189 @@ describe("Fight scoring", () => {
         reason: "fighter_not_in_fight",
       });
     });
+
+    it("should stop allowing to assign an Ippon to a fighter after he has already scored 2", () => {
+      const fighterId = makeFighterId("other");
+      const fight = makeFightRecord({ redFighterId: fighterId, status: FightStatus.InProgress });
+
+      const afterFirst = recordIppon(fight, fighterId, IpponCode.Men, makeScoreEventId(1));
+      expect(isRejection(afterFirst)).toBe(false);
+
+      const afterSecond = recordIppon(
+        afterFirst as FightRecord,
+        fighterId,
+        IpponCode.Kote,
+        makeScoreEventId(2),
+      );
+      expect(isRejection(afterSecond)).toBe(false);
+      expect((afterSecond as FightRecord).scoreEvents).toHaveLength(2);
+
+      expect(
+        recordIppon(afterSecond as FightRecord, fighterId, IpponCode.Men, makeScoreEventId(3)),
+      ).toEqual({ reason: "scoring_limit_reached" });
+    });
+
+    it("prioritizes the not-in-progress rejection over the scoring limit when both apply", () => {
+      const fighterId = makeFighterId("other");
+      const fight = makeFightRecord({
+        redFighterId: fighterId,
+        status: FightStatus.Finished,
+        scoreEvents: [
+          {
+            id: makeScoreEventId(1),
+            fighterId,
+            type: "ippon",
+            code: IpponCode.Men,
+            firstBlood: true,
+          },
+          {
+            id: makeScoreEventId(2),
+            fighterId,
+            type: "ippon",
+            code: IpponCode.Kote,
+            firstBlood: false,
+          },
+        ],
+      });
+
+      expect(recordIppon(fight, fighterId, IpponCode.Do, makeScoreEventId(3))).toEqual({
+        reason: "scoring_not_allowed",
+      });
+    });
+
+    it("allows scoring again after removing one of the two ippons that reached the limit", () => {
+      const fighterId = makeFighterId("other");
+      const fight = makeFightRecord({
+        redFighterId: fighterId,
+        status: FightStatus.InProgress,
+        scoreEvents: [
+          {
+            id: makeScoreEventId(1),
+            fighterId,
+            type: "ippon",
+            code: IpponCode.Men,
+            firstBlood: true,
+          },
+          {
+            id: makeScoreEventId(2),
+            fighterId,
+            type: "ippon",
+            code: IpponCode.Kote,
+            firstBlood: false,
+          },
+        ],
+      });
+
+      expect(recordIppon(fight, fighterId, IpponCode.Do, makeScoreEventId(3))).toEqual({
+        reason: "scoring_limit_reached",
+      });
+
+      const corrected = removeScoreEvent(fight, makeScoreEventId(2), "ippon") as FightRecord;
+
+      expect(
+        isRejection(recordIppon(corrected, fighterId, IpponCode.Do, makeScoreEventId(3))),
+      ).toBe(false);
+    });
+
+    it("reaches the limit with one real ippon and one hansoku-awarded ippon combined", () => {
+      // --- A FIGHTER CAN HIT THE 2-IPPON LIMIT THROUGH TWO DIFFERENT ROUTES AT ONCE: ONE
+      // IPPON SCORED BY TECHNIQUE, AND ONE AUTO-AWARDED BECAUSE THE OPPONENT RACKED UP TWO
+      // HANSOKU. scoreLimitReached SHOULDN'T CARE WHERE EACH ippon-TYPE EVENT CAME FROM. ---
+      const fighterId = makeFighterId("other");
+      const opponentId = fighterWhite;
+      const fight = makeFightRecord({
+        redFighterId: fighterId,
+        whiteFighterId: opponentId,
+        status: FightStatus.InProgress,
+        scoreEvents: [
+          {
+            id: makeScoreEventId(1),
+            fighterId,
+            type: "ippon",
+            code: IpponCode.Men,
+            firstBlood: true,
+          },
+          {
+            id: makeScoreEventId(2),
+            fighterId: opponentId,
+            type: "hansoku",
+            code: "Δ",
+            firstBlood: false,
+          },
+          {
+            id: makeScoreEventId(3),
+            fighterId: opponentId,
+            type: "hansoku",
+            code: "Δ",
+            firstBlood: false,
+          },
+          {
+            id: makeScoreEventId(4),
+            fighterId,
+            type: "ippon",
+            code: IpponCode.Ippon,
+            firstBlood: false,
+          },
+        ],
+      });
+
+      expect(recordIppon(fight, opponentId, IpponCode.Kote, makeScoreEventId(5))).toEqual({
+        reason: "scoring_limit_reached",
+      });
+    });
+
+    it("should stop allowing to assign an Ippon to a fighter after another has already scored 2", () => {
+      const redFighterId = makeFighterId("red");
+      const whiteFighterId = makeFighterId("white");
+      const fight = makeFightRecord({
+        redFighterId: redFighterId,
+        whiteFighterId: whiteFighterId,
+        status: FightStatus.InProgress,
+      });
+
+      const afterFirst = recordIppon(
+        fight,
+        redFighterId,
+        IpponCode.Men,
+        makeScoreEventId(1),
+      ) as FightRecord;
+      const afterSecond = recordIppon(
+        afterFirst,
+        redFighterId,
+        IpponCode.Kote,
+        makeScoreEventId(2),
+      ) as FightRecord;
+
+      expect(recordIppon(afterSecond, whiteFighterId, IpponCode.Men, makeScoreEventId(3))).toEqual({
+        reason: "scoring_limit_reached",
+      });
+    });
+
+    it("should allow to assign an Ippon to a fighter after another has already scored 1", () => {
+      const redFighterId = makeFighterId("red");
+      const whiteFighterId = makeFighterId("white");
+      const fight = makeFightRecord({
+        redFighterId: redFighterId,
+        whiteFighterId: whiteFighterId,
+        status: FightStatus.InProgress,
+      });
+
+      const afterFirst = recordIppon(
+        fight,
+        redFighterId,
+        IpponCode.Men,
+        makeScoreEventId(1),
+      ) as FightRecord;
+
+      const result = recordIppon(
+        afterFirst,
+        whiteFighterId,
+        IpponCode.Men,
+        makeScoreEventId(2),
+      ) as FightRecord;
+
+      expect(result.scoreEvents.length).toBe(2);
+    });
   });
 
   describe("recordHansoku", () => {
@@ -110,6 +295,41 @@ describe("Fight scoring", () => {
 
       expect(recordHansoku(fight, makeFighterId("other"), makeScoreEventId(1))).toEqual({
         reason: "fighter_not_in_fight",
+      });
+    });
+
+    it("rejects recording a hansoku for either fighter once a fighter has already scored 2 ippons", () => {
+      // --- scoreLimitReached LOOKS AT THE WHOLE MATCH, NOT JUST THE FIGHTER PASSED IN, SO
+      // ONCE ONE FIGHTER HAS SCORED SHOBU-ARI (2 IPPONS) THE MATCH SHOULD STOP ACCEPTING ANY
+      // FURTHER SCORE EVENT — INCLUDING A HANSOKU AGAINST THE *OTHER*, STILL-UNDER-THE-LIMIT
+      // FIGHTER. ---
+      const fighterId = makeFighterId("other");
+      const fight = makeFightRecord({
+        redFighterId: fighterId,
+        status: FightStatus.InProgress,
+        scoreEvents: [
+          {
+            id: makeScoreEventId(1),
+            fighterId,
+            type: "ippon",
+            code: IpponCode.Men,
+            firstBlood: true,
+          },
+          {
+            id: makeScoreEventId(2),
+            fighterId,
+            type: "ippon",
+            code: IpponCode.Kote,
+            firstBlood: false,
+          },
+        ],
+      });
+
+      expect(recordHansoku(fight, fighterWhite, makeScoreEventId(3))).toEqual({
+        reason: "scoring_limit_reached",
+      });
+      expect(recordHansoku(fight, fighterId, makeScoreEventId(3))).toEqual({
+        reason: "scoring_limit_reached",
       });
     });
   });
@@ -465,6 +685,67 @@ describe("Fight scoring", () => {
       expect(result).toEqual({
         ...fight,
         scoreEvents: [hansokuEvent(1, fighterRed), hansokuEvent(4, fighterWhite)],
+      });
+    });
+  });
+
+  describe("scoring limit reached purely through accumulated hansoku", () => {
+    // --- FOUR HANSOKU AGAINST fighterWhite AUTO-AWARD fighterRed TWO IPPONS (ONE PER PAIR),
+    // WHICH ON ITS OWN HITS THE 2-IPPON LIMIT EVEN THOUGH fighterRed NEVER SCORED A "REAL"
+    // IPPON BY TECHNIQUE. THIS IS THE SAME FINAL STATE AS THE "awards a second ippon once a
+    // fighter accumulates four hansoku" TEST ABOVE. ---
+    function hansokuEvent(id: number, fighterId = fighterWhite): ScoreEvent {
+      return {
+        id: makeScoreEventId(id),
+        fighterId,
+        type: "hansoku",
+        code: "Δ",
+        firstBlood: false,
+      };
+    }
+
+    function fightAtHansokuAwardedLimit(): FightRecord {
+      return makeFightRecord({
+        status: FightStatus.InProgress,
+        scoreEvents: [
+          hansokuEvent(1),
+          hansokuEvent(2),
+          {
+            id: makeScoreEventId(3),
+            fighterId: fighterRed,
+            type: "ippon",
+            code: IpponCode.Ippon,
+            firstBlood: true,
+          },
+          hansokuEvent(4),
+          hansokuEvent(5),
+          {
+            id: makeScoreEventId(6),
+            fighterId: fighterRed,
+            type: "ippon",
+            code: IpponCode.Ippon,
+            firstBlood: false,
+          },
+        ],
+      });
+    }
+
+    it("stops accepting ippons once two auto-awarded ippons reach the limit", () => {
+      const fight = fightAtHansokuAwardedLimit();
+
+      expect(recordIppon(fight, fighterWhite, IpponCode.Men, makeScoreEventId(7))).toEqual({
+        reason: "scoring_limit_reached",
+      });
+    });
+
+    it("stops accepting a hansoku for either fighter once two auto-awarded ippons reach the limit", () => {
+      const fight = fightAtHansokuAwardedLimit();
+
+      expect(recordHansoku(fight, fighterWhite, makeScoreEventId(7))).toEqual({
+        reason: "scoring_limit_reached",
+      });
+      expect(recordHansoku(fight, fighterRed, makeScoreEventId(7))).toEqual({
+        reason: "scoring_limit_reached",
       });
     });
   });

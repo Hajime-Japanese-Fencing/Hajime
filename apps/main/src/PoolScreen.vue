@@ -16,27 +16,90 @@ const testPools: Pool[] = [
     number: 1,
     size: 3,
     fighters: [
-      { fighter: { id: makeFighterId("1"), isSeeded: false, club: "Unknown club" } },
-      { fighter: { id: makeFighterId("2"), isSeeded: false, club: "Unknown club" } },
-      { fighter: { id: makeFighterId("3"), isSeeded: false, club: "Unknown club" } },
+      {
+        fighter: {
+          id: makeFighterId("1"),
+          name: "Fighter1",
+          isSeeded: false,
+          club: "Unknown club",
+        },
+      },
+      {
+        fighter: {
+          id: makeFighterId("2"),
+          name: "Fighter2",
+          isSeeded: false,
+          club: "Unknown club",
+        },
+      },
+      {
+        fighter: {
+          id: makeFighterId("3"),
+          name: "Fighter3",
+          isSeeded: false,
+          club: "Unknown club",
+        },
+      },
     ],
   },
   {
     number: 2,
     size: 3,
     fighters: [
-      { fighter: { id: makeFighterId("4"), isSeeded: false, club: "Unknown club" } },
-      { fighter: { id: makeFighterId("5"), isSeeded: false, club: "Unknown club" } },
-      { fighter: { id: makeFighterId("6"), isSeeded: false, club: "Unknown club" } },
+      {
+        fighter: {
+          id: makeFighterId("4"),
+          name: "Fighter1",
+          isSeeded: false,
+          club: "Unknown club",
+        },
+      },
+      {
+        fighter: {
+          id: makeFighterId("5"),
+          name: "Fighter2",
+          isSeeded: false,
+          club: "Unknown club",
+        },
+      },
+      {
+        fighter: {
+          id: makeFighterId("6"),
+          name: "Fighter3",
+          isSeeded: false,
+          club: "Unknown club",
+        },
+      },
     ],
   },
   {
     number: 3,
     size: 3,
     fighters: [
-      { fighter: { id: makeFighterId("7"), isSeeded: false, club: "Unknown club" } },
-      { fighter: { id: makeFighterId("8"), isSeeded: false, club: "Unknown club" } },
-      { fighter: { id: makeFighterId("9"), isSeeded: false, club: "Unknown club" } },
+      {
+        fighter: {
+          id: makeFighterId("7"),
+          name: "Fighter1",
+          isSeeded: false,
+          club: "Unknown club",
+        },
+      },
+      {
+        fighter: {
+          id: makeFighterId("8"),
+          name: "Fighter2",
+          isSeeded: false,
+          club: "Unknown club",
+        },
+      },
+      {
+        fighter: {
+          id: makeFighterId("9"),
+          name: "Fighter3",
+          isSeeded: false,
+          club: "Unknown club",
+        },
+      },
     ],
   },
 ];
@@ -58,8 +121,6 @@ const selectedView = ref<string>("fights");
 // -------------------------------------------
 </script>
 
-<!--TEMPORARY: rankingDetails names are defined from fighter ids -->
-<!--TODO: need to add name to fighter entry data format-->
 <template>
   <div class="flex gap-4">
     <SelectorList :items="selectors" v-model="selectedView" />
@@ -72,7 +133,7 @@ const selectedView = ref<string>("fights");
           :key="pool.number"
           :pool-details="poolToPoolDetails(pool)"
           :ranking-details="
-            pool.fighters.map((f) => new RankingDetailBuilder().withName(f.fighter.id).build())
+            pool.fighters.map((f) => new RankingDetailBuilder().withName(f.fighter.name).build())
           "
         />
       </div>
