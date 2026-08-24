@@ -5,6 +5,8 @@ import CloseButton from "../Overlay/CloseButton.vue";
 import {
   CompetitionFormat,
   CompetitionFormatLabel,
+  CompetitionType,
+  CompetitionTypeLabel,
   type NewCompetitionPayload,
 } from "./new-competition-payload.interface.ts";
 
@@ -17,6 +19,7 @@ const name = ref("");
 const place = ref("");
 const date = ref("");
 const format = ref<CompetitionFormat>(CompetitionFormat.Bracket);
+const type = ref<CompetitionType>(CompetitionType.Individual);
 const repulseByClub = ref(true);
 const repulseBySeed = ref(true);
 
@@ -24,6 +27,7 @@ const repulseBySeed = ref(true);
 // GROUP (RADIOS ARE GROUPED BY THE name ATTRIBUTE ALONE, GLOBALLY ACROSS THE DOCUMENT — A
 // HARDCODED name WOULD LET PICKING A FORMAT IN ONE MODAL SILENTLY UNCHECK THE OTHER). ---
 const formatGroupName = useId();
+const typeGroupName = useId();
 
 function openModal(): void {
   dialogRef.value?.showModal();
@@ -39,6 +43,7 @@ function onSubmit(): void {
     place: place.value,
     date: date.value,
     format: format.value,
+    type: type.value,
     repulseByClub: repulseByClub.value,
     repulseBySeed: repulseBySeed.value,
   });
@@ -53,6 +58,7 @@ function resetForm(): void {
   place.value = "";
   date.value = "";
   format.value = CompetitionFormat.Bracket;
+  type.value = CompetitionType.Individual;
   repulseByClub.value = true;
   repulseBySeed.value = true;
 }
@@ -125,15 +131,43 @@ function resetForm(): void {
           </fieldset>
 
           <fieldset class="fieldset">
+            <legend class="fieldset-legend">Type</legend>
+            <div class="flex flex-col gap-2">
+              <label class="label cursor-pointer justify-start gap-2">
+                <input
+                  v-model="type"
+                  type="radio"
+                  :name="typeGroupName"
+                  :value="CompetitionType.Individual"
+                  class="radio radio-primary"
+                />
+                {{ CompetitionTypeLabel[CompetitionType.Individual] }}
+              </label>
+              <label class="label cursor-pointer justify-start gap-2">
+                <input
+                  v-model="type"
+                  type="radio"
+                  :name="typeGroupName"
+                  :value="CompetitionType.Team"
+                  class="radio radio-primary"
+                />
+                {{ CompetitionTypeLabel[CompetitionType.Team] }}
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="fieldset">
             <legend class="fieldset-legend">Répartition</legend>
-            <label class="label cursor-pointer justify-between gap-4">
-              Répulsion par club
-              <input v-model="repulseByClub" type="checkbox" class="toggle toggle-primary" />
-            </label>
-            <label class="label cursor-pointer justify-between gap-4">
-              Répulsion par seed
-              <input v-model="repulseBySeed" type="checkbox" class="toggle toggle-primary" />
-            </label>
+            <div class="flex flex-col gap-2">
+              <label class="label cursor-pointer justify-between gap-4">
+                Répulsion par club
+                <input v-model="repulseByClub" type="checkbox" class="toggle toggle-primary" />
+              </label>
+              <label class="label cursor-pointer justify-between gap-4">
+                Répulsion par seed
+                <input v-model="repulseBySeed" type="checkbox" class="toggle toggle-primary" />
+              </label>
+            </div>
           </fieldset>
         </div>
 
