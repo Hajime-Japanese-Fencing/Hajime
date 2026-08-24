@@ -78,8 +78,7 @@ const nbFighters = fighters.length;
 //   return items;
 // });
 
-let selectedView = "";
-competitionFormula.includes("POOLS") ? (selectedView = "pools") : (selectedView = "bracket");
+const selectedView = competitionFormula.includes("POOLS") ? "pools" : "bracket";
 
 // const selectedView = ref<string>(selectors.value[0].id);
 const title = ref("Select a pool repartition");
