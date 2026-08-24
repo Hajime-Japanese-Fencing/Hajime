@@ -10,6 +10,7 @@ import {
   type PoolTurn,
 } from "@hajime/core";
 import type { CompetitionId } from "@hajime/core";
+import { buildPoolFighter } from "@hajime/core";
 
 export function toPoolRecord(
   competitionId: CompetitionId,
@@ -26,6 +27,14 @@ export function toPoolRecord(
     id: poolId,
     fighterIds: fighterIds,
     fightIds: fightIds,
+  };
+}
+
+export function recordToPool(record: PoolRecord, poolNumber: number): Pool {
+  return {
+    number: poolNumber,
+    size: record.fighterIds.length,
+    fighters: record.fighterIds.map((id) => new buildPoolFighter().withId(id).build()),
   };
 }
 
