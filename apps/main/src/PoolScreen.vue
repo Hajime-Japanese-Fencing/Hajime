@@ -2,7 +2,6 @@
 import { type SelectorItem, SelectorList } from "@hajime/ui";
 import { computed, ref } from "vue";
 import { poolToPoolDetails } from "./pre-competition/poolToPoolDetails.mapper.ts";
-import { type Pool } from "@hajime/core";
 import { RankingDetailBuilder } from "@hajime/ui";
 import { PoolCard } from "@hajime/ui";
 import FightScreen from "./FightScreen.vue";
@@ -112,10 +111,13 @@ defineProps<{
 }>();
 
 const container = useContainer();
-const competition = container.activeCompetition;
+const { pools: poolRecords } = useActiveCompetition(container.activeCompetition);
 
-const poolRecords = useActiveCompetition(competition).pools.value;
-const pools: Pool[] = poolRecords.map((record, index) => recordToPool(record, index));
+const pools = computed(() =>
+  poolRecords.value.map((record, i) =>
+    recordToPool(record, i + 1, (id) => container.activeCompetition.view.state.fighter(id)),
+  ),
+);
 
 const selectors = computed<SelectorItem[]>(() => [
   { id: "fights", label: "Fights" },

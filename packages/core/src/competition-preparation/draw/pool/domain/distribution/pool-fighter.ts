@@ -11,7 +11,7 @@ export function toPoolFighter(fighter: FighterEntry): PoolFighter {
   };
 }
 
-export class buildPoolFighter implements PoolFighter {
+export class BuildPoolFighter implements PoolFighter {
   fighter: FighterEntry = {
     club: "Unknown Club",
     id: makeFighterId("1"),
@@ -30,7 +30,7 @@ export class buildPoolFighter implements PoolFighter {
     };
   }
 
-  withId(id: FighterId): buildPoolFighter {
+  withId(id: FighterId): BuildPoolFighter {
     this.fighter.id = id;
     return this;
   }

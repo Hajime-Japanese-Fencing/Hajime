@@ -10,7 +10,8 @@ import {
   type PoolTurn,
 } from "@hajime/core";
 import type { CompetitionId } from "@hajime/core";
-import { buildPoolFighter } from "@hajime/core";
+import { BuildPoolFighter } from "@hajime/core";
+import { type FighterEntry, toPoolFighter } from "@hajime/core";
 
 export function toPoolRecord(
   competitionId: CompetitionId,
@@ -30,11 +31,18 @@ export function toPoolRecord(
   };
 }
 
-export function recordToPool(record: PoolRecord, poolNumber: number): Pool {
+export function recordToPool(
+  record: PoolRecord,
+  poolNumber: number,
+  resolveFighter: (id: FighterId) => FighterEntry | undefined,
+): Pool {
   return {
     number: poolNumber,
     size: record.fighterIds.length,
-    fighters: record.fighterIds.map((id) => new buildPoolFighter().withId(id).build()),
+    fighters: record.fighterIds.map((id) => {
+      const entry = resolveFighter(id);
+      return entry ? toPoolFighter(entry) : new BuildPoolFighter().withId(id).build(); // fallback tant que le stub est vide
+    }),
   };
 }
 
