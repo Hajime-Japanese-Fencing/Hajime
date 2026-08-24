@@ -15,6 +15,9 @@ function asSelectionSource<T>(store: ReadonlyStore<T>): {
 export function useActiveCompetition(competition: ActiveCompetition) {
   const view = useSelector(asSelectionSource(competition.view), (view) => view);
 
+  const pools = useSelector(asSelectionSource(competition.view), (v) => v.pools);
+  const bracketRounds = useSelector(asSelectionSource(competition.view), (v) => v.bracketRounds);
+
   return {
     view,
     openFight: (fightId: Parameters<ActiveCompetition["openFight"]>[0]) =>
@@ -29,5 +32,7 @@ export function useActiveCompetition(competition: ActiveCompetition) {
       competition.removeScoreEvent(input),
     recordHansoku: (input: Parameters<ActiveCompetition["recordHansoku"]>[0]) =>
       competition.recordHansoku(input),
+    pools,
+    bracketRounds,
   };
 }
