@@ -6,6 +6,8 @@ import type { FightRecord } from "../../shared/fight-record.ts";
 import type { PoolRecord } from "../../shared/pool-record.ts";
 import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
 import type { ActiveCompetitionState } from "./competition-state.ts";
+import type { FighterEntry } from "../../shared/fighter.ts";
+import type { FighterId } from "../../shared/fighter-id.ts";
 
 export interface ActiveCompetitionView {
   readonly activeFight: FightRecord | undefined;
@@ -14,6 +16,7 @@ export interface ActiveCompetitionView {
   readonly bracketRounds: readonly BracketRoundRecord[];
   poolFights(poolId: PoolId): readonly FightRecord[];
   bracketRoundFights(bracketRoundId: BracketRoundId): readonly FightRecord[];
+  fighter(id: FighterId): FighterEntry | undefined;
 }
 
 export function createActiveCompetitionView(
@@ -46,6 +49,18 @@ export function createActiveCompetitionView(
           .map((fightId) => snapshot.fightsById[fightId])
           .filter((fight): fight is FightRecord => fight !== undefined);
       },
+      fighter,
     };
   });
+}
+
+/*
+  TODO: replace the stub with real implementation
+ */
+const STUB_FIGHTERS: Record<FighterId, FighterEntry> = {
+  // Remove this when actual persistence is plugged in
+};
+
+function fighter(id: FighterId): FighterEntry | undefined {
+  return STUB_FIGHTERS[id];
 }
