@@ -5,11 +5,16 @@ import PreCompetitionScreen from "../pre-competition/PreCompetitionScreen.vue";
 import { computed, ref } from "vue";
 import PoolScreen from "../PoolScreen.vue";
 import { type SelectorItem, SelectorList } from "@hajime/ui";
+import type { CompetitionDraw } from "@hajime/core";
+import { useContainer } from "../bootstrap/container/useContainer.ts";
+import { makeCompetitionId } from "@hajime/core";
 
 const route = useRoute();
 const router = useRouter();
 
-const competitionId = route.params.id as string;
+const container = useContainer();
+
+const competitionId = makeCompetitionId(route.params.id as string);
 const isSetup = ref(false);
 const selectors = computed<SelectorItem[]>(() => [
   { id: "pools", label: "Pools" },
@@ -17,8 +22,10 @@ const selectors = computed<SelectorItem[]>(() => [
 ]);
 const selectedView = ref<string>("pools");
 
-function onStart() {
+async function onStart(draw: CompetitionDraw) {
+  await container.publishDraw(competitionId, draw);
   isSetup.value = true;
+  console.log("STARTED");
 }
 </script>
 

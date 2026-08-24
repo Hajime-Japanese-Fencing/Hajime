@@ -9,9 +9,14 @@ import {
   type PoolId,
   type PoolTurn,
 } from "@hajime/core";
+import type { CompetitionId } from "@hajime/core";
 
-export function toPoolRecord(pool: Pool, poolTurns: PoolTurn[]): PoolRecord {
-  const poolId = makePoolId(pool.number);
+export function toPoolRecord(
+  competitionId: CompetitionId,
+  pool: Pool,
+  poolTurns: PoolTurn[],
+): PoolRecord {
+  const poolId = makePoolId(competitionId, pool.number);
   const fighterIds: FighterId[] = pool.fighters.map((fighter) => fighter.fighter.id);
   const fightIds: FightId[] = [];
   for (let turn of poolTurns) {
