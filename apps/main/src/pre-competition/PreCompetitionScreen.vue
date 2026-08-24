@@ -30,6 +30,7 @@ import {
   type PoolTurn,
 } from "@hajime/core";
 import { toPoolFightRecord, toPoolRecord } from "./pool-record.mapper.ts";
+import type { CompetitionId } from "@hajime/core";
 
 const testFighterInputs: CreateFighterInput[] = [
   { name: "Fighter1", isSeeded: true, club: "Paris Kendo Club" },
@@ -46,11 +47,10 @@ const testFighterInputs: CreateFighterInput[] = [
 // -------------------------------------------
 // INPUTS
 // -------------------------------------------
-// const props = defineProps<{
-//   competitionId: CompetitionId;
-// }>();
+const props = defineProps<{
+  competitionId: CompetitionId;
+}>();
 const container = useContainer();
-// const activeCompetition = useActiveCompetition(container.activeCompetition);
 
 // Fighter data now features a real ID from create-fighter use case
 const fighters: FighterEntry[] = testFighterInputs.map((input) => container.createFighter(input));
@@ -116,7 +116,9 @@ function onPoolsValidation() {
   const poolsTurns: PoolTurn[][] = pools.value.map((pool) => organizePoolFights(pool));
 
   // ADDING ALL POOL RECORDS TO THE LIST
-  poolRecords.value = pools.value.map((pool, i) => toPoolRecord(pool, poolsTurns[i]));
+  poolRecords.value = pools.value.map((pool, i) =>
+    toPoolRecord(props.competitionId, pool, poolsTurns[i]),
+  );
 
   // ADDING ALL FIGHTS RECORDS TO THE LIST
   poolRecords.value.map((poolRecord: PoolRecord) => {
@@ -141,8 +143,7 @@ function findPoolFightById(poolsTurns: PoolTurn[][], fightId: FightId): PoolFigh
 }
 
 const emit = defineEmits<{
-  start: [];
-  draw: [draw: CompetitionDraw];
+  start: [draw: CompetitionDraw];
 }>();
 </script>
 
@@ -174,7 +175,7 @@ const emit = defineEmits<{
         </Button>
         <Button
           :disabled="!poolsValidated || !bracketValidated"
-          @click="(emit('draw', competitionDraw), emit('start'))"
+          @click="emit('start', competitionDraw)"
         >
           Start
         </Button>
@@ -186,7 +187,10 @@ const emit = defineEmits<{
       BRACKET
       <div class="flex gap-1 justify-end">
         <Button v-if="!bracketValidated" @click="onBracketValidation()"> Validate Bracket </Button>
-        <Button :disabled="!poolsValidated || !bracketValidated" @click="emit('start')">
+        <Button
+          :disabled="!poolsValidated || !bracketValidated"
+          @click="emit('start', competitionDraw)"
+        >
           Start
         </Button>
       </div>

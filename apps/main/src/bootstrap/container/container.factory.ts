@@ -101,8 +101,9 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
     await activeCompetition.loadCompetition(competitionId);
   }
 
-  const publishCompetitionDraw = (competitionId: CompetitionId, draw: CompetitionDraw) =>
-    publishDraw(
+  const publishCompetitionDraw = (competitionId: CompetitionId, draw: CompetitionDraw) => {
+    currentCompetitionId = competitionId;
+    return publishDraw(
       // --- NO-OP drawRepository: applyDraw() (CALLED FIRST, INSIDE publishDraw) UPDATES THE
       // REACTIVE STATE SYNCHRONOUSLY, SO THE SUBSCRIPTION ABOVE HAS ALREADY PERSISTED THE DRAW
       // BY THE TIME drawRepository.save() WOULD RUN. ---
@@ -110,6 +111,7 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
       competitionId,
       draw,
     );
+  };
 
   async function generateBracketDraw(
     competitionId: CompetitionId,
