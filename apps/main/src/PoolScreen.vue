@@ -113,11 +113,15 @@ defineProps<{
 const container = useContainer();
 const { pools: poolRecords } = useActiveCompetition(container.activeCompetition);
 
+console.log(poolRecords.value);
+
 const pools = computed(() =>
   poolRecords.value.map((record, i) =>
     recordToPool(record, i + 1, (id) => container.activeCompetition.view.state.fighter(id)),
   ),
 );
+
+console.log(pools.value);
 
 const selectors = computed<SelectorItem[]>(() => [
   { id: "fights", label: "Fights" },
