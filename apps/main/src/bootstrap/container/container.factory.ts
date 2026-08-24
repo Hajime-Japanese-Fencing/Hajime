@@ -6,18 +6,22 @@ import {
   generateBracketUseCase,
   publishDraw,
   uuidGenerator,
-  type ActiveCompetition,
-  type CompetitionDraw,
-  type CompetitionId,
-  type CompetitionOverview,
-  type CreateCompetitionInput,
-  type CreateFighterInput,
-  type FighterEntry,
-  type IdGenerator,
-  type RetrieveCompetitionsQuery,
-  type SaveCompetitionPort,
+  saveRosterUseCase,
 } from "@hajime/core";
-import { BrowserSaveCompetitionAdapter } from "../../features/competition-overview/adapters/browser-save-competition.adapter.ts";
+import type {
+  ActiveCompetition,
+  CompetitionDraw,
+  CompetitionId,
+  CompetitionOverview,
+  CreateCompetitionInput,
+  CreateFighterInput,
+  FighterEntry,
+  IdGenerator,
+  RetrieveCompetitionsQuery,
+  SaveCompetitionPort,
+  RosterRepositoryPort,
+} from "@hajime/core";
+import { BrowserSaveCompetitionQuery } from "../../features/competition-overview/adapters/browser-save-competition.query.ts";
 import { LocalStorageLoadCompetitionFightsAdapter } from "../../features/active-competition/adapters/local-storage-load-competition-fights.adapter.ts";
 import { NoopFightResultAdapter } from "../../features/active-competition/adapters/noop-fight-result.adapter.ts";
 import { NoopSaveGeneratedFightsAdapter } from "../../features/active-competition/adapters/noop-save-generated-fights.adapter.ts";
@@ -25,6 +29,7 @@ import { LocalStorageSaveBracketAdapter } from "../../features/competition-prepa
 import { competitionDrawStore } from "../../persistence/competition-draw.store.ts";
 import { bracketDraftStore } from "../../persistence/bracket-draft.store.ts";
 import { BrowserRetrieveCompetitionsQuery } from "../../features/competition-overview/adapters/browser-retrieve-competition.query.ts";
+import { BrowserRosterAdapter } from "../../features/competition-preparation/adapters/browser-roster.adapter.ts";
 
 export interface AppContainer {
   retrieveCompetitions: RetrieveCompetitionsQuery;
@@ -34,6 +39,7 @@ export interface AppContainer {
   loadCompetition(competitionId: CompetitionId): Promise<void>;
   publishDraw(competitionId: CompetitionId, draw: CompetitionDraw): Promise<void>;
   generateBracketDraw(competitionId: CompetitionId, fighters: FighterEntry[]): Promise<void>;
+  saveRoster(competitionId: CompetitionId, fighters: FighterEntry[]): Promise<void>;
 }
 
 export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
@@ -49,16 +55,18 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
   // ADAPTER FOR A DEMO BUILD), MIRRORING HOW retrieveCompetitions BELOW IS THE ONE PLACE THAT
   // PICKS BrowserRetrieveCompetitionsQuery OVER DemoRetrieveCompetitionsQuery (STILL AVAILABLE,
   // JUST UNUSED FOR NOW). ---
-  const saveCompetition: SaveCompetitionPort = new BrowserSaveCompetitionAdapter();
+  const saveCompetition: SaveCompetitionPort = new BrowserSaveCompetitionQuery();
   // --- SAME REASONING AS saveCompetition ABOVE: THE ONE PLACE THIS CONTAINER PICKS ITS CONCRETE
   // IdGenerator, REUSED BY EVERY USE-CASE/BUILDER THAT NEEDS ONE (createCompetition,
   // generateBracketDraw) INSTEAD OF EACH REFERENCING uuidGenerator DIRECTLY. ---
   const generateId: IdGenerator = uuidGenerator;
+  const rosterRepository: RosterRepositoryPort = new BrowserRosterAdapter();
   const activeCompetition = createActiveCompetition({
     loadCompetitionFights: new LocalStorageLoadCompetitionFightsAdapter(),
     // --- NO-OP: SEE THE SUBSCRIPTION BELOW FOR WHY. ---
     saveFightResult: new NoopFightResultAdapter(),
     generateId: generateId,
+    rosterRepository,
   });
 
   // --- PERSISTS BY MIRRORING THE WHOLE REACTIVE ActiveCompetitionView TO localStorage ON EVERY
@@ -101,6 +109,10 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
     await activeCompetition.loadCompetition(competitionId);
   }
 
+  async function saveRoster(competitionId: CompetitionId, fighters: FighterEntry[]): Promise<void> {
+    return saveRosterUseCase({ rosterRepository }, competitionId, fighters);
+  }
+
   const publishCompetitionDraw = (competitionId: CompetitionId, draw: CompetitionDraw) => {
     currentCompetitionId = competitionId;
     return publishDraw(
@@ -137,5 +149,6 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
     loadCompetition,
     publishDraw: publishCompetitionDraw,
     generateBracketDraw,
+    saveRoster,
   };
 }
