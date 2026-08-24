@@ -20,6 +20,7 @@ import { createActiveCompetitionView } from "../state/active-competition-view.ts
 import type { ActiveCompetitionView } from "../state/active-competition-view.ts";
 import { createCompetitionState } from "../state/competition-state.ts";
 import type { IdGenerator } from "../../shared/id-generator.ts";
+import type { RosterRepositoryPort } from "../../competition-preparation/roster/index.ts";
 
 export type { ActiveCompetitionView } from "../state/active-competition-view.ts";
 
@@ -27,6 +28,7 @@ export interface ActiveCompetitionDeps {
   readonly loadCompetitionFights: CompetitionDrawLoader;
   readonly saveFightResult: FightResultRecorder;
   readonly generateId: IdGenerator;
+  readonly rosterRepository: RosterRepositoryPort;
 }
 
 export interface ActiveCompetition extends CompetitionDrawReceiver {
@@ -62,6 +64,10 @@ export function createActiveCompetition(deps: ActiveCompetitionDeps): ActiveComp
     state.replace({
       ...data,
       nextScoreEventId: maxScoreEventId + 1,
+      // --- CompetitionDraw CARRIES NO FIGHTER DATA OF ITS OWN (ONLY pools/bracketRounds/fights) —
+      // PRESERVE WHATEVER ROSTER IS ALREADY IN STATE (LOADED VIA loadCompetition) INSTEAD OF
+      // WIPING fightersById OUT EVERY TIME A DRAW IS APPLIED. ---
+      fighters: Object.values(state.snapshot().fightersById),
     });
   }
 
@@ -100,7 +106,14 @@ export function createActiveCompetition(deps: ActiveCompetitionDeps): ActiveComp
     view,
     applyDraw,
     loadCompetition: (competitionId) =>
-      loadCompetition({ state, loadCompetitionFights: deps.loadCompetitionFights }, competitionId),
+      loadCompetition(
+        {
+          state,
+          loadCompetitionFights: deps.loadCompetitionFights,
+          rosterRepository: deps.rosterRepository,
+        },
+        competitionId,
+      ),
     openFight: (fightId) => startFight(useCaseDeps, fightId),
     closeFight,
     cancelActiveFight,

@@ -39,20 +39,18 @@ export interface PoolExport {
 export function buildPoolExport(view: ActiveCompetitionView): PoolExport {
   const pools = [...view.pools]
     .sort((a, b) => poolNumberOf(a.id) - poolNumberOf(b.id))
-    .map(
-      (pool): PoolExportGroup => ({
-        poolId: pool.id,
-        fighterIds: pool.fighterIds,
-        fights: view.poolFights(pool.id).map((fight) => ({
-          fighter1: fight.redFighterId,
-          // --- POOL FIGHTS NEVER HAVE A BYE (whiteFighterId IS ONLY EVER null FOR A BRACKET
-          // FIRST-ROUND BYE, SEE FightRecord) — SAFE TO ASSERT NON-null HERE. ---
-          fighter2: fight.whiteFighterId!,
-          winner: fight.status === FightStatus.Finished ? determineFightWinner(fight) : null,
-          status: fight.status,
-        })),
-      }),
-    );
+    .map((pool): PoolExportGroup => ({
+      poolId: pool.id,
+      fighterIds: pool.fighterIds,
+      fights: view.poolFights(pool.id).map((fight) => ({
+        fighter1: fight.redFighterId,
+        // --- POOL FIGHTS NEVER HAVE A BYE (whiteFighterId IS ONLY EVER null FOR A BRACKET
+        // FIRST-ROUND BYE, SEE FightRecord) — SAFE TO ASSERT NON-null HERE. ---
+        fighter2: fight.whiteFighterId!,
+        winner: fight.status === FightStatus.Finished ? determineFightWinner(fight) : null,
+        status: fight.status,
+      })),
+    }));
 
   return { pools };
 }

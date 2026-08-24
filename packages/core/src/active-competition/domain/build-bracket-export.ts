@@ -1,6 +1,6 @@
 import { FightStatus } from "../../shared/fight-status.ts";
 import type { FighterId } from "../../shared/fighter-id.ts";
-import { getBracketRoundLabel } from "../../competition-preparation/draw/bracket/domain/bracket-round-label.ts";
+import { getBracketRoundLabel } from "../../competition-preparation/draw/bracket/index.ts";
 import { determineFightWinner } from "./fight/fight-winner.ts";
 import type { FightRecord } from "../../shared/fight-record.ts";
 import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
@@ -50,16 +50,14 @@ export function buildBracketExport(view: ActiveCompetitionView): BracketExport {
 
   const rounds = [...view.bracketRounds]
     .sort((a, b) => a.order - b.order)
-    .map(
-      (round): BracketExportRound => ({
-        label:
-          round.kind === "thirdPlace"
-            ? THIRD_PLACE_LABEL
-            : getBracketRoundLabel(round.order, totalMainRounds),
-        kind: round.kind ?? "main",
-        matches: buildRoundMatches(round, view.bracketRoundFights(round.id)),
-      }),
-    );
+    .map((round): BracketExportRound => ({
+      label:
+        round.kind === "thirdPlace"
+          ? THIRD_PLACE_LABEL
+          : getBracketRoundLabel(round.order, totalMainRounds),
+      kind: round.kind ?? "main",
+      matches: buildRoundMatches(round, view.bracketRoundFights(round.id)),
+    }));
 
   return { rounds };
 }

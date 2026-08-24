@@ -49,18 +49,7 @@ export function createActiveCompetitionView(
           .map((fightId) => snapshot.fightsById[fightId])
           .filter((fight): fight is FightRecord => fight !== undefined);
       },
-      fighter,
+      fighter: (id: FighterId) => snapshot.fightersById[id],
     };
   });
-}
-
-/*
-  TODO: replace the stub with real implementation
- */
-const STUB_FIGHTERS: Record<FighterId, FighterEntry> = {
-  // Remove this when actual persistence is plugged in
-};
-
-function fighter(id: FighterId): FighterEntry | undefined {
-  return STUB_FIGHTERS[id];
 }

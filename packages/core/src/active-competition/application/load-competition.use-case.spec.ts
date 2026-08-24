@@ -2,6 +2,7 @@ import { describe, expect, it } from "vite-plus/test";
 import { makeCompetitionId, type CompetitionId } from "../../shared/competition-id.ts";
 import { makeScoreEventId } from "../../shared/score-event-id.ts";
 import { FakeActiveCompetitionState } from "../__test__/fake-active-competition-state.ts";
+import { FakeRosterRepository } from "../__test__/fake-roster-repository.adapter.ts";
 import { makeFightRecord, makePoolRecord } from "../__test__/fixtures.ts";
 import type { CompetitionDraw } from "../../shared/competition-draw.ts";
 import type { CompetitionDrawLoader } from "../ports/load-competition-fights.port.ts";
@@ -32,7 +33,11 @@ describe("Loading a competition", () => {
     const data = { pools: [makePoolRecord()], fights: [fight] };
 
     await loadCompetition(
-      { state, loadCompetitionFights: new StubCompetitionDrawLoader(data) },
+      {
+        state,
+        loadCompetitionFights: new StubCompetitionDrawLoader(data),
+        rosterRepository: new FakeRosterRepository(),
+      },
       makeCompetitionId("competition-1"),
     );
 
@@ -42,6 +47,7 @@ describe("Loading a competition", () => {
       fightsById: { [fight.id]: fight },
       activeFightId: null,
       nextScoreEventId: 5,
+      fightersById: {},
     });
   });
 });

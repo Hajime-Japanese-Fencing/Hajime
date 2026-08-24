@@ -5,6 +5,8 @@ import type { BracketRoundId } from "../../shared/bracket-round-id.ts";
 import type { FightRecord } from "../../shared/fight-record.ts";
 import type { PoolRecord } from "../../shared/pool-record.ts";
 import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
+import type { FighterEntry } from "../../shared/fighter.ts";
+import type { FighterId } from "../../shared/fighter-id.ts";
 
 export interface ActiveCompetitionSnapshot {
   readonly poolsById: Readonly<Record<PoolId, PoolRecord>>;
@@ -12,6 +14,7 @@ export interface ActiveCompetitionSnapshot {
   readonly fightsById: Readonly<Record<FightId, FightRecord>>;
   readonly activeFightId: FightId | null;
   readonly nextScoreEventId: number;
+  readonly fightersById: Readonly<Record<FighterId, FighterEntry>>;
 }
 
 export interface ActiveCompetitionState {
@@ -21,6 +24,7 @@ export interface ActiveCompetitionState {
     bracketRounds?: BracketRoundRecord[];
     fights: FightRecord[];
     nextScoreEventId: number;
+    fighters: FighterEntry[];
   }): void;
   commitFight(fight: FightRecord, activeFightId: FightId | null, nextScoreEventId: number): void;
   setActiveFightId(fightId: FightId | null): void;
@@ -38,6 +42,7 @@ export function createCompetitionState(): ActiveCompetitionState & {
     fightsById: {},
     activeFightId: null,
     nextScoreEventId: 1,
+    fightersById: {},
   });
 
   function snapshot(): ActiveCompetitionSnapshot {
@@ -49,6 +54,7 @@ export function createCompetitionState(): ActiveCompetitionState & {
     bracketRounds?: BracketRoundRecord[];
     fights: FightRecord[];
     nextScoreEventId: number;
+    fighters: FighterEntry[];
   }): void {
     store.setState(() => ({
       poolsById: indexById(data.pools),
@@ -56,6 +62,7 @@ export function createCompetitionState(): ActiveCompetitionState & {
       fightsById: indexById(data.fights),
       activeFightId: null,
       nextScoreEventId: data.nextScoreEventId,
+      fightersById: indexById(data.fighters),
     }));
   }
 

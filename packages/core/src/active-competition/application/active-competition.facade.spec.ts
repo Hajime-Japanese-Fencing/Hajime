@@ -4,6 +4,7 @@ import { makeFightId } from "../../shared/fight-id.ts";
 import { IpponCode } from "../../shared/ippons.ts";
 import { makeScoreEventId } from "../../shared/score-event-id.ts";
 import { FakeSaveFightResultAdapter } from "../__test__/fake-save-fight-result.adapter.ts";
+import { FakeRosterRepository } from "../__test__/fake-roster-repository.adapter.ts";
 import {
   fighterRed,
   fightId1,
@@ -30,6 +31,7 @@ function createFacade(data: CompetitionDraw) {
     saveFightResult,
     loadCompetitionFights: new StubCompetitionDrawLoader(data),
     generateId: () => "generated-fight-id",
+    rosterRepository: new FakeRosterRepository(),
   });
 
   return { facade, saveFightResult };

@@ -6,6 +6,7 @@ import type { FightId } from "../../shared/fight-id.ts";
 import type { FightRecord } from "../../shared/fight-record.ts";
 import type { PoolRecord } from "../../shared/pool-record.ts";
 import type { BracketRoundRecord } from "../../shared/bracket-round-record.ts";
+import type { FighterEntry } from "../../shared/fighter.ts";
 
 export class FakeActiveCompetitionState implements ActiveCompetitionState {
   private state: ActiveCompetitionSnapshot;
@@ -20,6 +21,7 @@ export class FakeActiveCompetitionState implements ActiveCompetitionState {
       fightsById: {},
       activeFightId: null,
       nextScoreEventId: 1,
+      fightersById: {},
       ...initial,
     };
   }
@@ -33,6 +35,7 @@ export class FakeActiveCompetitionState implements ActiveCompetitionState {
     bracketRounds?: BracketRoundRecord[];
     fights: FightRecord[];
     nextScoreEventId: number;
+    fighters: FighterEntry[];
   }): void {
     this.events.push("state:replace");
     this.state = {
@@ -41,6 +44,7 @@ export class FakeActiveCompetitionState implements ActiveCompetitionState {
       fightsById: toRecord(data.fights),
       activeFightId: null,
       nextScoreEventId: data.nextScoreEventId,
+      fightersById: toRecord(data.fighters),
     };
   }
 
