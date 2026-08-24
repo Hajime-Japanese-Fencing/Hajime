@@ -20,10 +20,11 @@ export function distributeFightersInPools(
 
   // --- POOL LIST INITIALIZATION ---
   let pools: Pool[] = [];
+  let poolNumber = 1;
   for (let poolGroup of poolSetup.poolGroups) {
     for (let i = 1; i <= poolGroup.amount; i++)
       pools.push({
-        number: i,
+        number: poolNumber++,
         size: poolGroup.poolSize,
         fighters: [],
       });
