@@ -24,7 +24,7 @@ import { NoopSaveGeneratedFightsAdapter } from "../../features/active-competitio
 import { LocalStorageSaveBracketAdapter } from "../../features/competition-preparation/adapters/local-storage-save-bracket.adapter.ts";
 import { competitionDrawStore } from "../../persistence/competition-draw.store.ts";
 import { bracketDraftStore } from "../../persistence/bracket-draft.store.ts";
-import { DemoRetrieveCompetitionsQuery } from "../../features/competition-overview/adapters/demo-retrieve-competitions.query.ts";
+import { BrowserRetrieveCompetitionsQuery } from "../../features/competition-overview/adapters/browser-retrieve-competition.query.ts";
 
 export interface AppContainer {
   retrieveCompetitions: RetrieveCompetitionsQuery;
@@ -129,7 +129,8 @@ export function bootstrapContainer(_: ImportMetaEnv): AppContainer {
   }
 
   return {
-    retrieveCompetitions: new DemoRetrieveCompetitionsQuery(),
+    retrieveCompetitions: new BrowserRetrieveCompetitionsQuery(),
+    //loadActiveCompetition: new BrowserLoadActiveCompetitionQuery(activeCompetition),
     createCompetition,
     createFighter,
     activeCompetition,
